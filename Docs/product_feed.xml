@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BF>
+    <PRODUCT>
+        <!-- signle product entity -->
+        <PRODUCT_NAME>
+            <!-- name of product (string) -->
+            <![CDATA[Leggings Arola]]>
+        </PRODUCT_NAME>
+        <BEST_SALES_RANK>
+            <!-- rank for sort order best sales (integer) -->
+            3374
+        </BEST_SALES_RANK>
+        <PRODUCT_ID>
+            <!-- original product id (integer) -->
+            919
+        </PRODUCT_ID>
+        <ITEM_GROUP_ID>
+            <!-- variants group id -->
+            12345
+        </ITEM_GROUP_ID>
+        <IS_NEW>
+            <!-- is product new? (bool) -->
+            0
+        </IS_NEW>
+        <SALE>
+            <!-- is product discounted (bool) -->
+            1
+        </SALE>
+        <BRAND>
+            <!-- product brand -->
+            <BRAND_ID>
+                <!-- brand id (integer) -->
+                123
+            </BRAND_ID>
+            <BRAND_NAME>
+                <!-- brand name (string) -->
+                <![CDATA[JENNIKA]]>
+            </BRAND_NAME>
+            <BRAND_IMG>
+                <!-- url of brand image (string) -->
+                http://img.example.com/brands/logo/jennika-7150.jpg
+            </BRAND_IMG>
+            <IS_PREMIUM>
+                <!-- is brand premium? (bool) -->
+                1
+            </IS_PREMIUM>
+        </BRAND>
+        <COLLECTIONS>
+            <!-- product collections list -->
+            <COLLECTION>
+                <!-- collection of the product -->
+                <COLLECTIONTEXT>
+                    <!-- collection name (string) -->
+                    <![CDATA[Jennika]]>
+                </COLLECTIONTEXT>
+                <COLLECTION_ID>
+                    <!-- collection id (integer) -->
+                    <![CDATA[78]]>
+                </COLLECTION_ID>
+            </COLLECTION>
+        </COLLECTIONS>    
+        <CATEGORIES>
+            <!-- product categories list -->
+            <CATEGORY>
+                <!-- specific category -->
+                <CATEGORYTEXT>
+                    <!-- category name (levels separated by | ) (string) -->
+                    <![CDATA[Jeans and Trousers | Leggings]]>
+                </CATEGORYTEXT>
+                <CATEGORYID>
+                    <!-- category id (integer) -->
+                    <![CDATA[118]]>
+                </CATEGORYID>
+            </CATEGORY>
+            <CATEGORY>
+                <CATEGORYTEXT>
+                    <!-- category name (levels separated by | ) (string) -->
+                    <![CDATA[Jeans and Trousers | Others]]>
+                </CATEGORYTEXT>
+                <CATEGORYID>
+                    <!-- category id (integer) -->
+                    <![CDATA[119]]>
+                </CATEGORYID>                
+            </CATEGORY>
+        </CATEGORIES>
+        <DESCRIPTION>
+            <!-- product description in HTML (string) -->
+            <![CDATA[This leggings are made of very cool material and looks like normal jeans.]]>
+        </DESCRIPTION>
+        <LINK>
+            <!-- product URL (string) -->
+            http://cz.example.com/leggins1/leggins-arola
+        </LINK>
+        <SIZES>
+            <!-- available sizes -->
+            <SIZE>
+                <!-- specific size object -->
+                <ID>
+                    <!-- original id of size (integer) -->
+                    19
+                </ID>
+                <NAME>
+                    <!-- size name (label) (string) -->
+                    universal S-L
+                </NAME>
+                <CODE>
+                    <!-- code of size (integer/string) -->
+                    14
+                </CODE>
+            </SIZE>
+        </SIZES>
+        <COLORS>
+            <!-- available colors -->
+            <COLOR>
+                <!-- specific color object -->
+                <IMAGES>
+                    <!-- images of color variant -->
+                    <IMAGE>
+                        <!-- image url (string) -->
+                        http://img.example.com/products/presentation/5c4bed9c5690da35dd74c988534fcee6eeb3a85f.jpg
+                    </IMAGE>
+                    <THUMBNAIL>
+                        <!-- url of thumbnail of previus image (string) --> 
+                        http://img.example.com/products/small/5c4bed9c5690da35dd74c988534fcee6eeb3a85f.jpg
+                    </THUMBNAIL>
+                    <IMAGE>
+                        http://img.example.com/products/presentation/d103b0be47e599434b089babc0d1d820227984aa.jpg
+                    </IMAGE>
+                    <THUMBNAIL>
+                        http://img.example.com/products/small/d103b0be47e599434b089babc0d1d820227984aa.jpg
+                    </THUMBNAIL>
+                </IMAGES>
+                <ID>
+                    <!-- id of color variant (integer) -->
+                    8
+                </ID>
+                <NAME>
+                    <!-- color name (string) -->
+                    black
+                </NAME>
+                <RGB>
+                    <!-- color RGB code (string) -->
+                    000000
+                </RGB>
+                <CODE>
+                    <!-- color code (integer/string) -->
+                    002
+                </CODE>
+            </COLOR>
+            <COLOR>
+                <IMAGES>
+                    <IMAGE>
+                        http://img.example.com/products/presentation/4d46565ce40012fd0de38e9401b2e37fa7f89af7.jpg
+                    </IMAGE>
+                    <THUMBNAIL>
+                        http://img.example.com/products/small/4d46565ce40012fd0de38e9401b2e37fa7f89af7.jpg
+                    </THUMBNAIL>
+                    <IMAGE>
+                        http://img.example.com/products/presentation/842787480d6b0ed034c3abcd077023d74bebee2a.jpg
+                    </IMAGE>
+                    <THUMBNAIL>
+                        http://img.example.com/products/small/842787480d6b0ed034c3abcd077023d74bebee2a.jpg
+                    </THUMBNAIL>
+                    <IMAGE>
+                        http://img.example.com/products/presentation/2136dde8bad682aa03997848b9f7ec5c66fd1aa9.jpg
+                    </IMAGE>
+                    <THUMBNAIL>
+                        http://img.example.com/products/small/2136dde8bad682aa03997848b9f7ec5c66fd1aa9.jpg
+                    </THUMBNAIL>
+                    <IMAGE>
+                        http://img.example.com/products/presentation/c622274dd4905f4498c4da405bd204bcc1f8c708.jpg
+                    </IMAGE>
+                    <THUMBNAIL>
+                        http://img.example.com/products/small/c622274dd4905f4498c4da405bd204bcc1f8c708.jpg
+                    </THUMBNAIL>
+                </IMAGES>
+                <ID>
+                    26
+                </ID>
+                <NAME>
+                    blue
+                </NAME>
+                <RGB>
+                    0033f0
+                </RGB>
+                <CODE>
+                    020
+                </CODE>
+            </COLOR>
+        </COLORS>
+        <SKUS>
+            <!-- available stock keeping units (variants) -->
+            <SKU>
+                <ID>
+                    <!-- stock keeping unit identifier (string) -->
+                    I000919-020-11
+                </ID>
+                <PCS_IN_STOCK>
+                    <!-- number of pieces in stock -->
+                    1
+                </PCS_IN_STOCK>
+                <COLOR_ID>
+                    <!-- variant color id -->
+                    4891
+                </COLOR_ID>
+                <SIZE_ID>
+                    <!-- variant size id -->
+                    4865
+                </SIZE_ID>
+            </SKU>
+            <SKU>
+                <ID>
+                    <!-- stock keeping unit identifier (string) -->
+                    I000919-020-10
+                </ID>
+                <PCS_IN_STOCK>
+                    0
+                </PCS_IN_STOCK>
+                <COLOR_ID>
+                    4891
+                </COLOR_ID>
+                <SIZE_ID>
+                    4865
+                </SIZE_ID>
+            </SKU>
+        </SKUS>
+        <PRICES>
+            <!-- prices object -->
+            <PRICE>
+                <!-- product price in shop currency (numeric) -->
+                340
+            </PRICE>
+            <PROMO_PRICE>
+                <!-- discount price of product in shop currency (numeric) -->
+                249
+            </PROMO_PRICE>
+        </PRICES>
+    </PRODUCT>
+</BF>
