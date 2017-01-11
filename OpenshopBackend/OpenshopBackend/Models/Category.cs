@@ -11,9 +11,11 @@ namespace OpenshopBackend.Models
         [Key]
         public Int32 CategoryId { get; set; }
         public Int32 RemoteId { get; set; }
+        public String Code { get; set; }
         public Int32 PartentId { get; set; }
         public String Name { get; set; }
         public String Type { get; set; }
         public ICollection<Category> Childrens { get; set; }
+        public ICollection<Product> Products { get; set; }
     }
 }

@@ -17,8 +17,31 @@ namespace OpenshopBackend.Api
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
+
+        public HttpResponseMessage GetShops(int shop = -1)
+        {
+            var shops = db.Shops
+                .ToList()
+                .Select(s => new
+                {
+                    id = s.ShopId,
+                    name = s.Name,
+                    description = s.Description,
+                    url = s.Url,
+                    logo = s.Logo,
+                    google_ua = s.GoogleUA,
+                    language = s.Language,
+                    currency = s.Currency,
+                    flag_icon = s.FlagIcon
+                });
+
+            var result = new { metadata = new { }, records = shops };
+
+            return Request.CreateResponse(HttpStatusCode.OK, result, Configuration.Formatters.JsonFormatter);
+        }
+
         // GET: api/List
-        public HttpResponseMessage GetNavigations()
+        public HttpResponseMessage GetNavigations(int shop = -1)
         {
             var categories = db.Categories
                 .ToList()
@@ -27,6 +50,49 @@ namespace OpenshopBackend.Api
             var result = new { navigation = categories };
 
             return Request.CreateResponse(HttpStatusCode.OK, result, Configuration.Formatters.JsonFormatter);
+        }
+
+        public HttpResponseMessage GetBanners()
+        {
+            var banners = db.Banners
+                .ToList()
+                .Select(s => new
+                {
+                    id = s.BannerId,
+                    name = s.Name,
+                    target = s.Target,
+                    imageUrl = s.ImageUrl
+                });
+
+            var result = new { metadata = new { }, records = banners };
+
+            return Request.CreateResponse(HttpStatusCode.OK, result, Configuration.Formatters.JsonFormatter);
+        }
+
+        [HttpGet]
+        public HttpResponseMessage GetDevices()
+        {
+            var devices = db.Devices
+                .ToList()
+                .Select(s => new
+                {
+                    id = s.DeviceId,
+                    device_token = s.DeviceToken,
+                    platform = s.Platform
+                });
+
+            var result = new { metadata = new { }, records = devices };
+
+            return Request.CreateResponse(HttpStatusCode.OK, result, Configuration.Formatters.JsonFormatter);
+        }
+
+        [HttpPost]
+        public HttpResponseMessage SetDevice(String message)
+        {
+
+            //return Request.CreateResponse(HttpStatusCode.OK, result, Configuration.Formatters.JsonFormatter);
+
+            return Request.CreateResponse(HttpStatusCode.OK);
         }
 
         //TODO: fix search related products
@@ -76,7 +142,7 @@ namespace OpenshopBackend.Api
                     name = s.Name,
                     price = s.Price,
                     price_formated = s.PriceFormated,
-                    category = s.CategoryId,
+                    category = s.Category.RemoteId,
                     brand = s.Brand.Name,
                     discounted_price = s.DisountedPrice,
                     discounted_price_formated = s.DisountedPriceFormated,

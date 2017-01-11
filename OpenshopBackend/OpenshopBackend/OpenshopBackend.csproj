@@ -228,27 +228,49 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\BannersController.cs" />
     <Compile Include="Controllers\BrandsController.cs" />
     <Compile Include="Controllers\CategoriesController.cs" />
     <Compile Include="Controllers\ColorsController.cs" />
+    <Compile Include="Controllers\DevicesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ProductsController.cs" />
+    <Compile Include="Controllers\ShopsController.cs" />
     <Compile Include="Controllers\SizesController.cs" />
     <Compile Include="ErrorHandler\AiHandleErrorAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201701031743380_ProductModel.cs" />
-    <Compile Include="Migrations\201701031743380_ProductModel.Designer.cs">
-      <DependentUpon>201701031743380_ProductModel.cs</DependentUpon>
+    <Compile Include="Migrations\201701101249150_initialmodel.cs" />
+    <Compile Include="Migrations\201701101249150_initialmodel.Designer.cs">
+      <DependentUpon>201701101249150_initialmodel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701102221515_ShopModel.cs" />
+    <Compile Include="Migrations\201701102221515_ShopModel.Designer.cs">
+      <DependentUpon>201701102221515_ShopModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701102254274_BannerModel.cs" />
+    <Compile Include="Migrations\201701102254274_BannerModel.Designer.cs">
+      <DependentUpon>201701102254274_BannerModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701111231350_CodeOnCateogryModel.cs" />
+    <Compile Include="Migrations\201701111231350_CodeOnCateogryModel.Designer.cs">
+      <DependentUpon>201701111231350_CodeOnCateogryModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701111233359_CodeOnBrandModel.cs" />
+    <Compile Include="Migrations\201701111233359_CodeOnBrandModel.Designer.cs">
+      <DependentUpon>201701111233359_CodeOnBrandModel.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\Banner.cs" />
     <Compile Include="Models\Brand.cs" />
     <Compile Include="Models\Category.cs" />
     <Compile Include="Models\Collection.cs" />
     <Compile Include="Models\Color.cs" />
+    <Compile Include="Models\Device.cs" />
+    <Compile Include="Models\Shop.cs" />
     <Compile Include="Models\Helper\Link.cs" />
     <Compile Include="Models\Helper\Metadata.cs" />
     <Compile Include="Models\Helper\Record.cs" />
@@ -273,6 +295,9 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Properties\PublishProfiles\OpenshopBackend - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\OpenshopBackend - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\VH Server.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -319,22 +344,12 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
-    <Content Include="Views\Categories\Create.cshtml" />
-    <Content Include="Views\Categories\Delete.cshtml" />
-    <Content Include="Views\Categories\Details.cshtml" />
-    <Content Include="Views\Categories\Edit.cshtml" />
-    <Content Include="Views\Categories\Index.cshtml" />
     <Content Include="Service References\Application Insights\ConnectedService.json" />
     <Content Include="Views\Products\Create.cshtml" />
     <Content Include="Views\Products\Delete.cshtml" />
     <Content Include="Views\Products\Details.cshtml" />
     <Content Include="Views\Products\Edit.cshtml" />
     <Content Include="Views\Products\Index.cshtml" />
-    <Content Include="Views\Brands\Create.cshtml" />
-    <Content Include="Views\Brands\Delete.cshtml" />
-    <Content Include="Views\Brands\Details.cshtml" />
-    <Content Include="Views\Brands\Edit.cshtml" />
-    <Content Include="Views\Brands\Index.cshtml" />
     <Content Include="Views\Colors\Create.cshtml" />
     <Content Include="Views\Colors\Delete.cshtml" />
     <Content Include="Views\Colors\Details.cshtml" />
@@ -345,6 +360,31 @@
     <Content Include="Views\Sizes\Details.cshtml" />
     <Content Include="Views\Sizes\Edit.cshtml" />
     <Content Include="Views\Sizes\Index.cshtml" />
+    <Content Include="Views\Shops\Create.cshtml" />
+    <Content Include="Views\Shops\Delete.cshtml" />
+    <Content Include="Views\Shops\Details.cshtml" />
+    <Content Include="Views\Shops\Edit.cshtml" />
+    <Content Include="Views\Shops\Index.cshtml" />
+    <Content Include="Views\Banners\Create.cshtml" />
+    <Content Include="Views\Banners\Delete.cshtml" />
+    <Content Include="Views\Banners\Details.cshtml" />
+    <Content Include="Views\Banners\Edit.cshtml" />
+    <Content Include="Views\Banners\Index.cshtml" />
+    <Content Include="Views\Devices\Create.cshtml" />
+    <Content Include="Views\Devices\Delete.cshtml" />
+    <Content Include="Views\Devices\Details.cshtml" />
+    <Content Include="Views\Devices\Edit.cshtml" />
+    <Content Include="Views\Devices\Index.cshtml" />
+    <Content Include="Views\Brands\Create.cshtml" />
+    <Content Include="Views\Brands\Delete.cshtml" />
+    <Content Include="Views\Brands\Details.cshtml" />
+    <Content Include="Views\Brands\Edit.cshtml" />
+    <Content Include="Views\Brands\Index.cshtml" />
+    <Content Include="Views\Categories\Create.cshtml" />
+    <Content Include="Views\Categories\Delete.cshtml" />
+    <Content Include="Views\Categories\Details.cshtml" />
+    <Content Include="Views\Categories\Edit.cshtml" />
+    <Content Include="Views\Categories\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -362,8 +402,20 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201701031743380_ProductModel.resx">
-      <DependentUpon>201701031743380_ProductModel.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201701101249150_initialmodel.resx">
+      <DependentUpon>201701101249150_initialmodel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701102221515_ShopModel.resx">
+      <DependentUpon>201701102221515_ShopModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701102254274_BannerModel.resx">
+      <DependentUpon>201701102254274_BannerModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701111231350_CodeOnCateogryModel.resx">
+      <DependentUpon>201701111231350_CodeOnCateogryModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701111233359_CodeOnBrandModel.resx">
+      <DependentUpon>201701111233359_CodeOnBrandModel.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -39,5 +39,11 @@ namespace OpenshopBackend.Models
         public System.Data.Entity.DbSet<OpenshopBackend.Models.Color> Colors { get; set; }
 
         public System.Data.Entity.DbSet<OpenshopBackend.Models.Size> Sizes { get; set; }
+
+        public System.Data.Entity.DbSet<OpenshopBackend.Models.Shop> Shops { get; set; }
+
+        public System.Data.Entity.DbSet<OpenshopBackend.Models.Banner> Banners { get; set; }
+
+        public System.Data.Entity.DbSet<OpenshopBackend.Models.Device> Devices { get; set; }
     }
 }

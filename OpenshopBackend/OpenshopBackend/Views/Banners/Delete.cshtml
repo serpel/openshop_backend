@@ -1,4 +1,4 @@
-﻿@model OpenshopBackend.Models.Brand
+﻿@model OpenshopBackend.Models.Banner
 
 @{
     ViewBag.Title = "Delete";
@@ -8,7 +8,7 @@
 
 <h3>Are you sure you want to delete this?</h3>
 <div>
-    <h4>Brand</h4>
+    <h4>Banner</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
@@ -20,27 +20,19 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Code)
+            @Html.DisplayNameFor(model => model.Target)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Code)
+            @Html.DisplayFor(model => model.Target)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.BrandImg)
+            @Html.DisplayNameFor(model => model.ImageUrl)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.BrandImg)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.IsPremium)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.IsPremium)
+            @Html.DisplayFor(model => model.ImageUrl)
         </dd>
 
     </dl>

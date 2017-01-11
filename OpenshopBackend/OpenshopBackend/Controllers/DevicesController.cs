@@ -10,107 +10,107 @@ using OpenshopBackend.Models;
 
 namespace OpenshopBackend.Controllers
 {
-    public class BrandsController : Controller
+    public class DevicesController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        // GET: Brands
+        // GET: Devices
         public ActionResult Index()
         {
-            return View(db.Brands.ToList());
+            return View(db.Devices.ToList());
         }
 
-        // GET: Brands/Details/5
+        // GET: Devices/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Brand brand = db.Brands.Find(id);
-            if (brand == null)
+            Device device = db.Devices.Find(id);
+            if (device == null)
             {
                 return HttpNotFound();
             }
-            return View(brand);
+            return View(device);
         }
 
-        // GET: Brands/Create
+        // GET: Devices/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Brands/Create
+        // POST: Devices/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "BrandId,Name,Code,BrandImg,IsPremium")] Brand brand)
+        public ActionResult Create([Bind(Include = "DeviceId,DeviceToken,Platform")] Device device)
         {
             if (ModelState.IsValid)
             {
-                db.Brands.Add(brand);
+                db.Devices.Add(device);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(brand);
+            return View(device);
         }
 
-        // GET: Brands/Edit/5
+        // GET: Devices/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Brand brand = db.Brands.Find(id);
-            if (brand == null)
+            Device device = db.Devices.Find(id);
+            if (device == null)
             {
                 return HttpNotFound();
             }
-            return View(brand);
+            return View(device);
         }
 
-        // POST: Brands/Edit/5
+        // POST: Devices/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "BrandId,Name,Code,BrandImg,IsPremium")] Brand brand)
+        public ActionResult Edit([Bind(Include = "DeviceId,DeviceToken,Platform")] Device device)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(brand).State = EntityState.Modified;
+                db.Entry(device).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(brand);
+            return View(device);
         }
 
-        // GET: Brands/Delete/5
+        // GET: Devices/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Brand brand = db.Brands.Find(id);
-            if (brand == null)
+            Device device = db.Devices.Find(id);
+            if (device == null)
             {
                 return HttpNotFound();
             }
-            return View(brand);
+            return View(device);
         }
 
-        // POST: Brands/Delete/5
+        // POST: Devices/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Brand brand = db.Brands.Find(id);
-            db.Brands.Remove(brand);
+            Device device = db.Devices.Find(id);
+            db.Devices.Remove(device);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

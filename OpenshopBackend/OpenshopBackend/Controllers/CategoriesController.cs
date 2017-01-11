@@ -46,7 +46,7 @@ namespace OpenshopBackend.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "CategoryId,RemoteId,PartentId,Name,Type")] Category category)
+        public ActionResult Create([Bind(Include = "CategoryId,RemoteId,Code,PartentId,Name,Type")] Category category)
         {
             if (ModelState.IsValid)
             {
@@ -78,7 +78,7 @@ namespace OpenshopBackend.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "CategoryId,RemoteId,PartentId,Name,Type")] Category category)
+        public ActionResult Edit([Bind(Include = "CategoryId,RemoteId,Code,PartentId,Name,Type")] Category category)
         {
             if (ModelState.IsValid)
             {

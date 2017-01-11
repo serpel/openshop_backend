@@ -19,9 +19,7 @@ namespace OpenshopBackend.Models
         public String PriceFormated { get; set; }
         public Double DisountedPrice { get; set; }
         public String DisountedPriceFormated { get; set; }
-        [Required]
         public Int32 CategoryId { get; set; }
-        [Required]
         public Int32 BrandId { get; set; }
         [Required]
         public String Currency { get; set; }

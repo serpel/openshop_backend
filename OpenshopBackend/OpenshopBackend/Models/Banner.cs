@@ -6,14 +6,12 @@ using System.Web;
 
 namespace OpenshopBackend.Models
 {
-    public class Brand
+    public class Banner
     {
         [Key]
-        public Int32 BrandId { get; set; }
-        [Required]
+        public Int32 BannerId { get; set; }
         public String Name { get; set; }
-        public String Code { get; set; }
-        public String BrandImg { get; set; }
-        public bool IsPremium { get; set; }
+        public String Target { get; set; }
+        public String ImageUrl { get; set; }
     }
 }

@@ -7,18 +7,18 @@ namespace OpenshopBackend.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class ProductModel : IMigrationMetadata
+    public sealed partial class CodeOnCateogryModel : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(ProductModel));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(CodeOnCateogryModel));
         
         string IMigrationMetadata.Id
         {
-            get { return "201701031743380_ProductModel"; }
+            get { return "201701111231350_CodeOnCateogryModel"; }
         }
         
         string IMigrationMetadata.Source
         {
-            get { return null; }
+            get { return Resources.GetString("Source"); }
         }
         
         string IMigrationMetadata.Target

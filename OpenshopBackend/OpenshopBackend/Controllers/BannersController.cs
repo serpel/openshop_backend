@@ -10,107 +10,107 @@ using OpenshopBackend.Models;
 
 namespace OpenshopBackend.Controllers
 {
-    public class BrandsController : Controller
+    public class BannersController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        // GET: Brands
+        // GET: Banners
         public ActionResult Index()
         {
-            return View(db.Brands.ToList());
+            return View(db.Banners.ToList());
         }
 
-        // GET: Brands/Details/5
+        // GET: Banners/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Brand brand = db.Brands.Find(id);
-            if (brand == null)
+            Banner banner = db.Banners.Find(id);
+            if (banner == null)
             {
                 return HttpNotFound();
             }
-            return View(brand);
+            return View(banner);
         }
 
-        // GET: Brands/Create
+        // GET: Banners/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Brands/Create
+        // POST: Banners/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "BrandId,Name,Code,BrandImg,IsPremium")] Brand brand)
+        public ActionResult Create([Bind(Include = "BannerId,Name,Target,ImageUrl")] Banner banner)
         {
             if (ModelState.IsValid)
             {
-                db.Brands.Add(brand);
+                db.Banners.Add(banner);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(brand);
+            return View(banner);
         }
 
-        // GET: Brands/Edit/5
+        // GET: Banners/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Brand brand = db.Brands.Find(id);
-            if (brand == null)
+            Banner banner = db.Banners.Find(id);
+            if (banner == null)
             {
                 return HttpNotFound();
             }
-            return View(brand);
+            return View(banner);
         }
 
-        // POST: Brands/Edit/5
+        // POST: Banners/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "BrandId,Name,Code,BrandImg,IsPremium")] Brand brand)
+        public ActionResult Edit([Bind(Include = "BannerId,Name,Target,ImageUrl")] Banner banner)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(brand).State = EntityState.Modified;
+                db.Entry(banner).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(brand);
+            return View(banner);
         }
 
-        // GET: Brands/Delete/5
+        // GET: Banners/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Brand brand = db.Brands.Find(id);
-            if (brand == null)
+            Banner banner = db.Banners.Find(id);
+            if (banner == null)
             {
                 return HttpNotFound();
             }
-            return View(brand);
+            return View(banner);
         }
 
-        // POST: Brands/Delete/5
+        // POST: Banners/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Brand brand = db.Brands.Find(id);
-            db.Brands.Remove(brand);
+            Banner banner = db.Banners.Find(id);
+            db.Banners.Remove(banner);
             db.SaveChanges();
             return RedirectToAction("Index");
         }
