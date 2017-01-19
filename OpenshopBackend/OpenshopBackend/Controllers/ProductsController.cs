@@ -49,7 +49,7 @@ namespace OpenshopBackend.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ProductId,RemoteId,Name,Code,Price,PriceFormated,Quantity,IsCommitted,DisountedPrice,DisountedPriceFormated,CategoryId,BrandId,Currency,Description,MainImage,MainImageHighRes")] Product product)
+        public ActionResult Create([Bind(Include = "ProductId,RemoteId,Name,Code,CategoryId,BrandId,Season,Description,MainImage,MainImageHighRes")] Product product)
         {
             if (ModelState.IsValid)
             {
@@ -85,7 +85,7 @@ namespace OpenshopBackend.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ProductId,RemoteId,Name,Code,Price,PriceFormated,Quantity,IsCommitted,DisountedPrice,DisountedPriceFormated,CategoryId,BrandId,Currency,Description,MainImage,MainImageHighRes")] Product product)
+        public ActionResult Edit([Bind(Include = "ProductId,RemoteId,Name,Code,CategoryId,BrandId,Season,Description,MainImage,MainImageHighRes")] Product product)
         {
             if (ModelState.IsValid)
             {

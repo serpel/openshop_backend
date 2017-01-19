@@ -104,26 +104,46 @@ namespace OpenshopBackend.Api
             var product = db.Products
                 .Where(w => w.ProductId == id)
                 .ToList()
-                .Select(s => new
+                .Select(s =>new
                 {
                     id = s.ProductId,
                     remote_id = s.RemoteId,
                     url = @"http:\/\/img.bfashion.com\/products\/presentation\/0d5b86cca1cd7f09172526e2ffe3022408c4f727.jpg",
                     name = s.Name,
-                    price = s.Price,
-                    price_formated = s.PriceFormated,
                     category = s.CategoryId,
                     brand = s.Brand.Name,
                     season = s.Season,
-                    discounted_price = s.DisountedPrice,
-                    discounted_price_formated = s.DisountedPriceFormated,
-                    currency = s.Currency,
                     code = s.Code,
                     description = s.Description,
                     main_image = s.MainImage,
                     main_image_high_res = s.MainImageHighRes,
                     images = new String[] { },
-                    variants = new List<ProductVariant>()
+                    variants = s.Variants
+                                .ToList()
+                                .Select(v => new
+                                {
+                                    id = v.ProductId,
+                                    color = new {          
+                                                id = v.Color.ColorId,
+                                                remote_id = v.Color.RemoteId,
+                                                value = v.Color.Value,
+                                                code = v.Color.Code,
+                                                img = v.Color.Image,
+                                                description = v.Color.Description
+                                    },
+                                    size = new {
+                                        id = v.Size.SizeId,
+                                        remote_id = v.Size.RemoteId,
+                                        value = v.Size.Value,
+                                        description = v.Size.Description
+                                    },
+                                    images = v.Images,
+                                    code = v.Code,
+                                    quantity = v.Quantity,
+                                    is_committed = v.IsCommitted,
+                                    price = v.Price,
+                                    currency = v.Currency
+                                })
                 }).FirstOrDefault();
 
             if (include.Trim() == "related")
@@ -144,16 +164,11 @@ namespace OpenshopBackend.Api
                     remote_id = s.RemoteId,
                     url = @"http:\/\/img.bfashion.com\/products\/presentation\/0d5b86cca1cd7f09172526e2ffe3022408c4f727.jpg",
                     name = s.Name,
-                    price = s.Price,
-                    price_formatted = s.PriceFormated,
                     category = s.Category.RemoteId,
                     categoryCode = s.Category.Code,
                     brand = s.Brand.Name,
                     brandCode = s.Brand.Code,
                     season = s.Season,
-                    discounted_price = s.DisountedPrice,
-                    discounted_price_formated = s.DisountedPriceFormated,
-                    currency = s.Currency,
                     code = s.Code,
                     description = s.Description,
                     main_image = s.MainImage,
@@ -189,10 +204,10 @@ namespace OpenshopBackend.Api
                         //products = products.OrderByDescending(o => o.rank);
                         break;
                    case "price_desc": 
-                        products = products.OrderByDescending(o => o.price);
+                        //products = products.OrderByDescending(o => o.price);
                         break;
                    case "price_asc":
-                        products = products.OrderBy(o => o.price);
+                        //products = products.OrderBy(o => o.price);
                         break;
                     default:
                         break;

@@ -237,6 +237,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ProductsController.cs" />
+    <Compile Include="Controllers\ProductVariantsController.cs" />
     <Compile Include="Controllers\ShopsController.cs" />
     <Compile Include="Controllers\SizesController.cs" />
     <Compile Include="ErrorHandler\AiHandleErrorAttribute.cs" />
@@ -290,6 +291,14 @@
     <Compile Include="Migrations\201701190455475_ProducReferenceOnProducVariantModel.cs" />
     <Compile Include="Migrations\201701190455475_ProducReferenceOnProducVariantModel.Designer.cs">
       <DependentUpon>201701190455475_ProducReferenceOnProducVariantModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701190512397_AddedRequiredFieldsOnProductVariant.cs" />
+    <Compile Include="Migrations\201701190512397_AddedRequiredFieldsOnProductVariant.Designer.cs">
+      <DependentUpon>201701190512397_AddedRequiredFieldsOnProductVariant.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701190533357_MovedFieldToProductVariant.cs" />
+    <Compile Include="Migrations\201701190533357_MovedFieldToProductVariant.Designer.cs">
+      <DependentUpon>201701190533357_MovedFieldToProductVariant.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -375,11 +384,6 @@
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Service References\Application Insights\ConnectedService.json" />
-    <Content Include="Views\Products\Create.cshtml" />
-    <Content Include="Views\Products\Delete.cshtml" />
-    <Content Include="Views\Products\Details.cshtml" />
-    <Content Include="Views\Products\Edit.cshtml" />
-    <Content Include="Views\Products\Index.cshtml" />
     <Content Include="Views\Shops\Create.cshtml" />
     <Content Include="Views\Shops\Delete.cshtml" />
     <Content Include="Views\Shops\Details.cshtml" />
@@ -415,10 +419,19 @@
     <Content Include="Views\Colors\Details.cshtml" />
     <Content Include="Views\Colors\Edit.cshtml" />
     <Content Include="Views\Colors\Index.cshtml" />
+    <Content Include="Views\Products\Create.cshtml" />
+    <Content Include="Views\Products\Delete.cshtml" />
+    <Content Include="Views\Products\Details.cshtml" />
+    <Content Include="Views\Products\Edit.cshtml" />
+    <Content Include="Views\Products\Index.cshtml" />
+    <Content Include="Views\ProductVariants\Create.cshtml" />
+    <Content Include="Views\ProductVariants\Delete.cshtml" />
+    <Content Include="Views\ProductVariants\Details.cshtml" />
+    <Content Include="Views\ProductVariants\Edit.cshtml" />
+    <Content Include="Views\ProductVariants\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\NavigationDrawer\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -467,6 +480,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201701190455475_ProducReferenceOnProducVariantModel.resx">
       <DependentUpon>201701190455475_ProducReferenceOnProducVariantModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701190512397_AddedRequiredFieldsOnProductVariant.resx">
+      <DependentUpon>201701190512397_AddedRequiredFieldsOnProductVariant.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701190533357_MovedFieldToProductVariant.resx">
+      <DependentUpon>201701190533357_MovedFieldToProductVariant.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
