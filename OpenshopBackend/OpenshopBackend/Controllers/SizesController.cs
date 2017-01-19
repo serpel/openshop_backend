@@ -46,7 +46,7 @@ namespace OpenshopBackend.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "SizeId,Name,Code")] Size size)
+        public ActionResult Create([Bind(Include = "SizeId,RemoteId,Value,Description")] Size size)
         {
             if (ModelState.IsValid)
             {
@@ -78,7 +78,7 @@ namespace OpenshopBackend.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "SizeId,Name,Code")] Size size)
+        public ActionResult Edit([Bind(Include = "SizeId,RemoteId,Value,Description")] Size size)
         {
             if (ModelState.IsValid)
             {

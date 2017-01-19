@@ -46,7 +46,7 @@ namespace OpenshopBackend.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ColorId,RemoteId,Value,Code,Image")] Color color)
+        public ActionResult Create([Bind(Include = "ColorId,RemoteId,Value,Code,Image,Description")] Color color)
         {
             if (ModelState.IsValid)
             {
@@ -78,7 +78,7 @@ namespace OpenshopBackend.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ColorId,RemoteId,Value,Code,Image")] Color color)
+        public ActionResult Edit([Bind(Include = "ColorId,RemoteId,Value,Code,Image,Description")] Color color)
         {
             if (ModelState.IsValid)
             {

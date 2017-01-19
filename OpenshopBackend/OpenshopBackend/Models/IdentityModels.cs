@@ -34,6 +34,8 @@ namespace OpenshopBackend.Models
 
         public System.Data.Entity.DbSet<OpenshopBackend.Models.Product> Products { get; set; }
 
+        public System.Data.Entity.DbSet<OpenshopBackend.Models.ProductVariant> ProductVariants { get; set; }
+
         public System.Data.Entity.DbSet<OpenshopBackend.Models.Brand> Brands { get; set; }
 
         public System.Data.Entity.DbSet<OpenshopBackend.Models.Color> Colors { get; set; }

@@ -17,10 +17,13 @@ namespace OpenshopBackend.Models
         [Required]
         public Double Price { get; set; }
         public String PriceFormated { get; set; }
+        public Int32 Quantity { get; set; }
+        public Int32 IsCommitted { get; set; }
         public Double DisountedPrice { get; set; }
         public String DisountedPriceFormated { get; set; }
         public Int32 CategoryId { get; set; }
         public Int32 BrandId { get; set; }
+        public String Season { get; set; }
         [Required]
         public String Currency { get; set; }
         public String Description { get; set; }
@@ -29,6 +32,5 @@ namespace OpenshopBackend.Models
         public virtual Brand Brand { get; set; }
         public virtual Category Category { get; set; }
         public virtual ICollection<ProductVariant> Variants { get; set; }
-        public virtual ICollection<Product> Related { get; set; }
     }
 }

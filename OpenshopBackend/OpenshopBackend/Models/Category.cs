@@ -15,7 +15,5 @@ namespace OpenshopBackend.Models
         public Int32 PartentId { get; set; }
         public String Name { get; set; }
         public String Type { get; set; }
-        public ICollection<Category> Childrens { get; set; }
-        public ICollection<Product> Products { get; set; }
     }
 }

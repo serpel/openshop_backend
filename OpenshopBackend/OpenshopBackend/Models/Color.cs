@@ -14,5 +14,6 @@ namespace OpenshopBackend.Models
         public String Value { get; set; }
         public String Code { get; set; }
         public String Image { get; set; }
+        public String Description { get; set; }
     }
 }

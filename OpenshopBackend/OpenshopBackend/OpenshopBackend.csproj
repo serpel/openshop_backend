@@ -26,6 +26,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <ApplicationInsightsResourceId>/subscriptions/bb492127-2a81-42f3-8b41-485560229270/resourcegroups/Default-ApplicationInsights-EastUS/providers/microsoft.insights/components/OpenshopBackend</ApplicationInsightsResourceId>
+    <ApplicationInsightsAnnotationResourceId>/subscriptions/bb492127-2a81-42f3-8b41-485560229270/resourcegroups/Default-ApplicationInsights-EastUS/providers/microsoft.insights/components/OpenshopBackend</ApplicationInsightsAnnotationResourceId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -262,6 +263,34 @@
     <Compile Include="Migrations\201701111233359_CodeOnBrandModel.Designer.cs">
       <DependentUpon>201701111233359_CodeOnBrandModel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201701111844496_CategoryModelFix.cs" />
+    <Compile Include="Migrations\201701111844496_CategoryModelFix.Designer.cs">
+      <DependentUpon>201701111844496_CategoryModelFix.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701161042302_ProductModelRemoveCollections.cs" />
+    <Compile Include="Migrations\201701161042302_ProductModelRemoveCollections.Designer.cs">
+      <DependentUpon>201701161042302_ProductModelRemoveCollections.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701161053416_ProductModelFieldsQuantity.cs" />
+    <Compile Include="Migrations\201701161053416_ProductModelFieldsQuantity.Designer.cs">
+      <DependentUpon>201701161053416_ProductModelFieldsQuantity.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701182001291_ExtraFieldsProductsModel.cs" />
+    <Compile Include="Migrations\201701182001291_ExtraFieldsProductsModel.Designer.cs">
+      <DependentUpon>201701182001291_ExtraFieldsProductsModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701190100346_FixSizeModel.cs" />
+    <Compile Include="Migrations\201701190100346_FixSizeModel.Designer.cs">
+      <DependentUpon>201701190100346_FixSizeModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701190110596_AddDescriptionFieldOnColoModel.cs" />
+    <Compile Include="Migrations\201701190110596_AddDescriptionFieldOnColoModel.Designer.cs">
+      <DependentUpon>201701190110596_AddDescriptionFieldOnColoModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701190455475_ProducReferenceOnProducVariantModel.cs" />
+    <Compile Include="Migrations\201701190455475_ProducReferenceOnProducVariantModel.Designer.cs">
+      <DependentUpon>201701190455475_ProducReferenceOnProducVariantModel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Banner.cs" />
@@ -295,6 +324,7 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Properties\PublishProfiles\INH Server.pubxml" />
     <None Include="Properties\PublishProfiles\OpenshopBackend - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\OpenshopBackend - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\VH Server.pubxml" />
@@ -350,16 +380,6 @@
     <Content Include="Views\Products\Details.cshtml" />
     <Content Include="Views\Products\Edit.cshtml" />
     <Content Include="Views\Products\Index.cshtml" />
-    <Content Include="Views\Colors\Create.cshtml" />
-    <Content Include="Views\Colors\Delete.cshtml" />
-    <Content Include="Views\Colors\Details.cshtml" />
-    <Content Include="Views\Colors\Edit.cshtml" />
-    <Content Include="Views\Colors\Index.cshtml" />
-    <Content Include="Views\Sizes\Create.cshtml" />
-    <Content Include="Views\Sizes\Delete.cshtml" />
-    <Content Include="Views\Sizes\Details.cshtml" />
-    <Content Include="Views\Sizes\Edit.cshtml" />
-    <Content Include="Views\Sizes\Index.cshtml" />
     <Content Include="Views\Shops\Create.cshtml" />
     <Content Include="Views\Shops\Delete.cshtml" />
     <Content Include="Views\Shops\Details.cshtml" />
@@ -385,6 +405,16 @@
     <Content Include="Views\Categories\Details.cshtml" />
     <Content Include="Views\Categories\Edit.cshtml" />
     <Content Include="Views\Categories\Index.cshtml" />
+    <Content Include="Views\Sizes\Create.cshtml" />
+    <Content Include="Views\Sizes\Delete.cshtml" />
+    <Content Include="Views\Sizes\Details.cshtml" />
+    <Content Include="Views\Sizes\Edit.cshtml" />
+    <Content Include="Views\Sizes\Index.cshtml" />
+    <Content Include="Views\Colors\Create.cshtml" />
+    <Content Include="Views\Colors\Delete.cshtml" />
+    <Content Include="Views\Colors\Details.cshtml" />
+    <Content Include="Views\Colors\Edit.cshtml" />
+    <Content Include="Views\Colors\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -416,6 +446,27 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201701111233359_CodeOnBrandModel.resx">
       <DependentUpon>201701111233359_CodeOnBrandModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701111844496_CategoryModelFix.resx">
+      <DependentUpon>201701111844496_CategoryModelFix.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701161042302_ProductModelRemoveCollections.resx">
+      <DependentUpon>201701161042302_ProductModelRemoveCollections.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701161053416_ProductModelFieldsQuantity.resx">
+      <DependentUpon>201701161053416_ProductModelFieldsQuantity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701182001291_ExtraFieldsProductsModel.resx">
+      <DependentUpon>201701182001291_ExtraFieldsProductsModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701190100346_FixSizeModel.resx">
+      <DependentUpon>201701190100346_FixSizeModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701190110596_AddDescriptionFieldOnColoModel.resx">
+      <DependentUpon>201701190110596_AddDescriptionFieldOnColoModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701190455475_ProducReferenceOnProducVariantModel.resx">
+      <DependentUpon>201701190455475_ProducReferenceOnProducVariantModel.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

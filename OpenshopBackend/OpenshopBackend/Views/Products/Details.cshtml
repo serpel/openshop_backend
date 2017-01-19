@@ -19,11 +19,11 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Category.Name)
+            @Html.DisplayNameFor(model => model.Category.Code)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Category.Name)
+            @Html.DisplayFor(model => model.Category.Code)
         </dd>
 
         <dt>
@@ -64,6 +64,22 @@
 
         <dd>
             @Html.DisplayFor(model => model.PriceFormated)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Quantity)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Quantity)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IsCommitted)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IsCommitted)
         </dd>
 
         <dt>

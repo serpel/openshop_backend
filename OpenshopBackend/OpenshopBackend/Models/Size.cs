@@ -10,8 +10,9 @@ namespace OpenshopBackend.Models
     {
         [Key]
         public Int32 SizeId { get; set; }
+        public Int32 RemoteId { get; set; }
         [Required]
-        public String Name { get; set; }
-        public String Code { get; set; }
+        public String Value { get; set; }
+        public String Description { get; set; }
     }
 }

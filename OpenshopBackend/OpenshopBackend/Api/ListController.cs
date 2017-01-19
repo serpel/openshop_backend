@@ -45,7 +45,10 @@ namespace OpenshopBackend.Api
         {
             var categories = db.Categories
                 .ToList()
-                .Select(s => new { id = s.CategoryId, original_id = s.RemoteId, name = s.Name, children = new String[] { }, type = s.Type });
+                .Where(w => w.PartentId == 0)
+                .Select(s => new { id = s.CategoryId, original_id = s.RemoteId, name = s.Name,
+                    children = db.Categories.Where(w => w.PartentId == s.RemoteId).ToList().Select(sc => new { id = sc.CategoryId, original_id = sc.RemoteId, name = sc.Name, children = new String[] { }, type = sc.Type }),
+                    type = s.Type });
 
             var result = new { navigation = categories };
 
@@ -111,6 +114,7 @@ namespace OpenshopBackend.Api
                     price_formated = s.PriceFormated,
                     category = s.CategoryId,
                     brand = s.Brand.Name,
+                    season = s.Season,
                     discounted_price = s.DisountedPrice,
                     discounted_price_formated = s.DisountedPriceFormated,
                     currency = s.Currency,
@@ -130,7 +134,7 @@ namespace OpenshopBackend.Api
             return Request.CreateResponse(HttpStatusCode.OK, product, Configuration.Formatters.JsonFormatter);
         }
 
-        public HttpResponseMessage GetProducts(int category = -1, string sort = "")
+        public HttpResponseMessage GetProducts(int category = -1, string sort = "", string search = "")
         {
             var products = db.Products
                 .ToList()
@@ -141,9 +145,12 @@ namespace OpenshopBackend.Api
                     url = @"http:\/\/img.bfashion.com\/products\/presentation\/0d5b86cca1cd7f09172526e2ffe3022408c4f727.jpg",
                     name = s.Name,
                     price = s.Price,
-                    price_formated = s.PriceFormated,
+                    price_formatted = s.PriceFormated,
                     category = s.Category.RemoteId,
+                    categoryCode = s.Category.Code,
                     brand = s.Brand.Name,
+                    brandCode = s.Brand.Code,
+                    season = s.Season,
                     discounted_price = s.DisountedPrice,
                     discounted_price_formated = s.DisountedPriceFormated,
                     currency = s.Currency,
@@ -152,12 +159,22 @@ namespace OpenshopBackend.Api
                     main_image = s.MainImage,
                     main_image_high_res = s.MainImageHighRes,
                     images = new String[] { },
-                    variants = new List<ProductVariant>()
+                    variants = new List<ProductVariant>(),
+                    related = new String[] { }
                 });
 
             if(category >= 0)
             {
                 products = products.Where(w => w.category == category);
+            }
+
+            if(search.Count() > 0)
+            {
+                products = products.Where(w => w.code.Contains(search.ToUpper())
+                || w.brand.Contains(search.ToUpper())
+                || w.categoryCode == search.ToUpper()
+                || w.description.ToUpper().Contains(search.ToUpper())
+                );
             }
 
             //TODO: fix sort polarity by rank field
