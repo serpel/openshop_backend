@@ -17,7 +17,21 @@ namespace OpenshopBackend.Api
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
+        [HttpGet]
+        [HttpPost]
+        public HttpResponseMessage LoginByEmail(string jo = "")
+        {
+            var user = db.DeviceUser
+                .ToList()
+                .Select(s => new { id = s.DeviceUserId,
+                                   accessToken = s.AccessToken,
+                                   name = s.Name
+                }).FirstOrDefault();
 
+            return Request.CreateResponse(HttpStatusCode.OK, user, Configuration.Formatters.JsonFormatter);
+        }
+
+        [HttpGet]
         public HttpResponseMessage GetShops(int shop = -1)
         {
             var shops = db.Shops
@@ -55,6 +69,7 @@ namespace OpenshopBackend.Api
             return Request.CreateResponse(HttpStatusCode.OK, result, Configuration.Formatters.JsonFormatter);
         }
 
+        [HttpGet]
         public HttpResponseMessage GetBanners()
         {
             var banners = db.Banners
@@ -98,6 +113,7 @@ namespace OpenshopBackend.Api
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 
+        [HttpGet]
         //TODO: fix search related products
         public HttpResponseMessage GetProduct(int id, string include = "")
         {
@@ -154,6 +170,7 @@ namespace OpenshopBackend.Api
             return Request.CreateResponse(HttpStatusCode.OK, product, Configuration.Formatters.JsonFormatter);
         }
 
+        [HttpGet]
         public HttpResponseMessage GetProducts(int category = -1, string sort = "", string search = "")
         {
             var products = db.Products

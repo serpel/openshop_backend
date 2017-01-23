@@ -234,6 +234,7 @@
     <Compile Include="Controllers\CategoriesController.cs" />
     <Compile Include="Controllers\ColorsController.cs" />
     <Compile Include="Controllers\DevicesController.cs" />
+    <Compile Include="Controllers\DeviceUsersController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ProductsController.cs" />
@@ -300,8 +301,21 @@
     <Compile Include="Migrations\201701190533357_MovedFieldToProductVariant.Designer.cs">
       <DependentUpon>201701190533357_MovedFieldToProductVariant.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201701232137269_UserModel.cs" />
+    <Compile Include="Migrations\201701232137269_UserModel.Designer.cs">
+      <DependentUpon>201701232137269_UserModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701232141021_FixUserModel.cs" />
+    <Compile Include="Migrations\201701232141021_FixUserModel.Designer.cs">
+      <DependentUpon>201701232141021_FixUserModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701232210411_DeviceUserModel.cs" />
+    <Compile Include="Migrations\201701232210411_DeviceUserModel.Designer.cs">
+      <DependentUpon>201701232210411_DeviceUserModel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\AppUser.cs" />
     <Compile Include="Models\Banner.cs" />
     <Compile Include="Models\Brand.cs" />
     <Compile Include="Models\Category.cs" />
@@ -318,6 +332,7 @@
     <Compile Include="Models\Product.cs" />
     <Compile Include="Models\ProductVariant.cs" />
     <Compile Include="Models\Size.cs" />
+    <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -429,6 +444,11 @@
     <Content Include="Views\ProductVariants\Details.cshtml" />
     <Content Include="Views\ProductVariants\Edit.cshtml" />
     <Content Include="Views\ProductVariants\Index.cshtml" />
+    <Content Include="Views\DeviceUsers\Create.cshtml" />
+    <Content Include="Views\DeviceUsers\Delete.cshtml" />
+    <Content Include="Views\DeviceUsers\Details.cshtml" />
+    <Content Include="Views\DeviceUsers\Edit.cshtml" />
+    <Content Include="Views\DeviceUsers\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -486,6 +506,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201701190533357_MovedFieldToProductVariant.resx">
       <DependentUpon>201701190533357_MovedFieldToProductVariant.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701232137269_UserModel.resx">
+      <DependentUpon>201701232137269_UserModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701232141021_FixUserModel.resx">
+      <DependentUpon>201701232141021_FixUserModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701232210411_DeviceUserModel.resx">
+      <DependentUpon>201701232210411_DeviceUserModel.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
