@@ -313,15 +313,35 @@
     <Compile Include="Migrations\201701232210411_DeviceUserModel.Designer.cs">
       <DependentUpon>201701232210411_DeviceUserModel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201701241645313_CartModel.cs" />
+    <Compile Include="Migrations\201701241645313_CartModel.Designer.cs">
+      <DependentUpon>201701241645313_CartModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701241707471_UserToCartModel.cs" />
+    <Compile Include="Migrations\201701241707471_UserToCartModel.Designer.cs">
+      <DependentUpon>201701241707471_UserToCartModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701241711093_UsernameAndPasswordUserModel.cs" />
+    <Compile Include="Migrations\201701241711093_UsernameAndPasswordUserModel.Designer.cs">
+      <DependentUpon>201701241711093_UsernameAndPasswordUserModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701241842124_FixMigration.cs" />
+    <Compile Include="Migrations\201701241842124_FixMigration.Designer.cs">
+      <DependentUpon>201701241842124_FixMigration.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AppUser.cs" />
     <Compile Include="Models\Banner.cs" />
     <Compile Include="Models\Brand.cs" />
+    <Compile Include="Models\Cart.cs" />
+    <Compile Include="Models\CartProductVariant.cs" />
     <Compile Include="Models\Category.cs" />
     <Compile Include="Models\Collection.cs" />
     <Compile Include="Models\Color.cs" />
     <Compile Include="Models\Device.cs" />
+    <Compile Include="Models\CartProductItem.cs" />
+    <Compile Include="Models\Order.cs" />
     <Compile Include="Models\Shop.cs" />
     <Compile Include="Models\Helper\Link.cs" />
     <Compile Include="Models\Helper\Metadata.cs" />
@@ -515,6 +535,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201701232210411_DeviceUserModel.resx">
       <DependentUpon>201701232210411_DeviceUserModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701241645313_CartModel.resx">
+      <DependentUpon>201701241645313_CartModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701241707471_UserToCartModel.resx">
+      <DependentUpon>201701241707471_UserToCartModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701241711093_UsernameAndPasswordUserModel.resx">
+      <DependentUpon>201701241711093_UsernameAndPasswordUserModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701241842124_FixMigration.resx">
+      <DependentUpon>201701241842124_FixMigration.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -17,18 +17,26 @@ namespace OpenshopBackend.Api
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
+
         [HttpGet]
         [HttpPost]
-        public HttpResponseMessage LoginByEmail(string jo = "")
+        public HttpResponseMessage LoginByEmail(string username = "", string password = "")
         {
-            var user = db.DeviceUser
-                .ToList()
-                .Select(s => new { id = s.DeviceUserId,
-                                   accessToken = s.AccessToken,
-                                   name = s.Name
-                }).FirstOrDefault();
+            if(username.Count() > 0 && password.Count() > 0)
+            {
+                var user = db.DeviceUser
+                  .Where(w => w.Username == username.Trim() && w.Password == password.Trim())
+                  .ToList()
+                  .Select(s => new {
+                      id = s.DeviceUserId,
+                      accessToken = s.AccessToken,
+                      name = s.Name
+                  }).FirstOrDefault();
 
-            return Request.CreateResponse(HttpStatusCode.OK, user, Configuration.Formatters.JsonFormatter);
+                return Request.CreateResponse(HttpStatusCode.OK, user, Configuration.Formatters.JsonFormatter);
+            }     
+
+            return Request.CreateResponse(HttpStatusCode.NotFound, new { error = "User not found" }, Configuration.Formatters.JsonFormatter);
         }
 
         [HttpGet]
@@ -252,6 +260,46 @@ namespace OpenshopBackend.Api
             };
 
             return Request.CreateResponse(HttpStatusCode.OK, result, Configuration.Formatters.JsonFormatter);
+        }
+
+        [HttpGet]
+        public HttpResponseMessage Cart(int userId = -1)
+        {
+            var cart = db.Carts
+                .Where(w => w.DeviceUserId == userId)
+                .ToList()
+                .Select(s => new
+                {
+                    total_count = s.GetProductCount(),
+                    total_price = s.GetProductTotalPrice(),
+                    currency =  s.Currency,
+                    discounts =  new String[] {},
+                    products = s.CartProductItems.ToList()
+                    .Select(p => new {
+                        id = p.CartProductItemId,
+                        quantity = p.Quantity,
+                        product =  new
+                        {
+                            //p.CartProductVariant
+                        }
+                    })
+                }).FirstOrDefault();
+
+            if(cart == null)
+            {
+                var empy_cart = new
+                {
+                    total_count = 0,
+                    total_price = 0,
+                    currency = "L",
+                    discounts = new String[] { },
+                    products = new String[] { }
+                };
+
+                return Request.CreateResponse(HttpStatusCode.OK, empy_cart, Configuration.Formatters.JsonFormatter);
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, cart, Configuration.Formatters.JsonFormatter);
         }
 
         protected override void Dispose(bool disposing)

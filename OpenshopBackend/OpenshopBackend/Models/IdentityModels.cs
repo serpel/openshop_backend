@@ -49,5 +49,13 @@ namespace OpenshopBackend.Models
         public System.Data.Entity.DbSet<OpenshopBackend.Models.Device> Devices { get; set; }
 
         public System.Data.Entity.DbSet<OpenshopBackend.Models.DeviceUser> DeviceUser { get; set; }
+
+        public System.Data.Entity.DbSet<OpenshopBackend.Models.Cart> Carts { get; set; }
+
+        public System.Data.Entity.DbSet<OpenshopBackend.Models.CartProductItem> CartProductItems { get; set; }
+
+        public System.Data.Entity.DbSet<OpenshopBackend.Models.CartProductVariant> CartProductVariants { get; set; }
+
+        public System.Data.Entity.DbSet<OpenshopBackend.Models.Order> Orders { get; set; }
     }
 }
