@@ -46,7 +46,7 @@ namespace OpenshopBackend.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "DeviceUserId,Name,AccessToken")] DeviceUser deviceUser)
+        public ActionResult Create([Bind(Include = "DeviceUserId,Name,Username,Password,AccessToken")] DeviceUser deviceUser)
         {
             if (ModelState.IsValid)
             {
@@ -78,7 +78,7 @@ namespace OpenshopBackend.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "DeviceUserId,Name,AccessToken")] DeviceUser deviceUser)
+        public ActionResult Edit([Bind(Include = "DeviceUserId,Name,Username,Password,AccessToken")] DeviceUser deviceUser)
         {
             if (ModelState.IsValid)
             {

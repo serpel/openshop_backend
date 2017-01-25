@@ -329,6 +329,18 @@
     <Compile Include="Migrations\201701241842124_FixMigration.Designer.cs">
       <DependentUpon>201701241842124_FixMigration.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201701242317566_FixOrderFieldOnCartProductItem.cs" />
+    <Compile Include="Migrations\201701242317566_FixOrderFieldOnCartProductItem.Designer.cs">
+      <DependentUpon>201701242317566_FixOrderFieldOnCartProductItem.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701250007086_ProductReferencesOnCartProductVariant.cs" />
+    <Compile Include="Migrations\201701250007086_ProductReferencesOnCartProductVariant.Designer.cs">
+      <DependentUpon>201701250007086_ProductReferencesOnCartProductVariant.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701250015057_ProductVariantReferenceOnCartProductVariant.cs" />
+    <Compile Include="Migrations\201701250015057_ProductVariantReferenceOnCartProductVariant.Designer.cs">
+      <DependentUpon>201701250015057_ProductVariantReferenceOnCartProductVariant.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AppUser.cs" />
@@ -547,6 +559,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201701241842124_FixMigration.resx">
       <DependentUpon>201701241842124_FixMigration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701242317566_FixOrderFieldOnCartProductItem.resx">
+      <DependentUpon>201701242317566_FixOrderFieldOnCartProductItem.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701250007086_ProductReferencesOnCartProductVariant.resx">
+      <DependentUpon>201701250007086_ProductReferencesOnCartProductVariant.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701250015057_ProductVariantReferenceOnCartProductVariant.resx">
+      <DependentUpon>201701250015057_ProductVariantReferenceOnCartProductVariant.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -24,5 +24,6 @@ namespace OpenshopBackend.Models
         public virtual Brand Brand { get; set; }
         public virtual Category Category { get; set; }
         public virtual ICollection<ProductVariant> Variants { get; set; }
+
     }
 }

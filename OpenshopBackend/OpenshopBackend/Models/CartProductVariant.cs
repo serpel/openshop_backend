@@ -10,7 +10,7 @@ namespace OpenshopBackend.Models
     {
         [Key]
         public Int32 CartProductVariantId { get; set; }
-        public Int32 ProductId { get; set; }
+        public Int32? ProductVariantId { get; set; }
         public String Url { get; set; }
         public String Name { get; set; }
         public Double Price { get; set; }
@@ -22,5 +22,6 @@ namespace OpenshopBackend.Models
         public virtual Category Category { get; set; }
         public virtual Color Color { get; set; }
         public virtual Size Size { get; set; }
+        public virtual ProductVariant ProductVariant { get; set; }
     }
 }

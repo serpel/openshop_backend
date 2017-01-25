@@ -29,8 +29,9 @@ namespace OpenshopBackend.Api
                   .ToList()
                   .Select(s => new {
                       id = s.DeviceUserId,
-                      accessToken = s.AccessToken,
-                      name = s.Name
+                      access_token = s.AccessToken,
+                      name = s.Name,
+                      username = s.Username
                   }).FirstOrDefault();
 
                 return Request.CreateResponse(HttpStatusCode.OK, user, Configuration.Formatters.JsonFormatter);
@@ -132,7 +133,7 @@ namespace OpenshopBackend.Api
                 {
                     id = s.ProductId,
                     remote_id = s.RemoteId,
-                    url = @"http:\/\/img.bfashion.com\/products\/presentation\/0d5b86cca1cd7f09172526e2ffe3022408c4f727.jpg",
+                    url = "",
                     name = s.Name,
                     category = s.CategoryId,
                     brand = s.Brand.Name,
@@ -146,7 +147,7 @@ namespace OpenshopBackend.Api
                                 .ToList()
                                 .Select(v => new
                                 {
-                                    id = v.ProductId,
+                                    id = v.ProductVariantId,
                                     color = new {          
                                                 id = v.Color.ColorId,
                                                 remote_id = v.Color.RemoteId,
@@ -263,6 +264,153 @@ namespace OpenshopBackend.Api
         }
 
         [HttpGet]
+        [HttpDelete]
+        public HttpResponseMessage DeleteToCart(int userId, int id)
+        {
+            bool success = true;
+            String message = "";
+
+            var cart_item = db.CartProductItems
+                .ToList()
+                .Where(w => w.Cart.DeviceUserId == userId && w.CartProductItemId == id)
+                .FirstOrDefault();
+
+            try
+            {
+                db.CartProductVariants.Remove(cart_item.CartProductVariant);
+                db.CartProductItems.Remove(cart_item);
+                db.SaveChanges();
+            }
+            catch(Exception e)
+            {
+                success = false;
+                message = e.Message;
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = success, message = message }, Configuration.Formatters.JsonFormatter);
+        }
+
+        [HttpGet]
+        [HttpPost]
+        public HttpResponseMessage AddToCart(int userId = -1, int product_variant_id = -1, int quantity = 0)
+        {
+            bool success = false;
+
+            if(userId > 0 && product_variant_id > 0)
+            {
+                var product_variant = db.ProductVariants
+                    .ToList()
+                    .Where(w => w.ProductVariantId == product_variant_id)
+                    .FirstOrDefault();
+
+                //load a user profile is not needed at all
+                //var user = db.DeviceUser
+                //    .Where(w => w.DeviceUserId == userId)
+                //    .FirstOrDefault();
+
+                var cart = db.Carts
+                    .ToList()
+                    .Where(w => w.DeviceUserId == userId)
+                    .FirstOrDefault();
+
+                //create a new cart if not exist
+                if(cart == null && product_variant != null)
+                {
+                    var new_cart = new Cart()
+                    {
+                        DeviceUserId = userId,
+                        Currency = product_variant.Currency,
+                        TotalPrice = 0,
+                        TotalPriceFormatted = product_variant.Currency + ' ' + 0
+                    };
+
+                    db.Carts.Add(new_cart);
+                    db.SaveChanges();
+                    cart = new_cart;
+                }
+
+                if(cart != null && product_variant != null)
+                {
+                    var cart_item_variant = new CartProductVariant()
+                    {
+                        CategoryId = product_variant.Product.CategoryId,
+                        ColorId = product_variant.ColorId,
+                        SizeId = product_variant.SizeId,
+                        MainImage = product_variant.Product.MainImage,
+                        Name = product_variant.Code,
+                        ProductVariantId = product_variant.ProductVariantId,
+                        Url = "",
+                        Price = product_variant.Price,
+                        PriceFormatted = product_variant.GetPriceTotalFormated()
+                    };
+
+                    db.CartProductVariants.Add(cart_item_variant);
+                    db.SaveChanges();
+
+                    var cart_item = new CartProductItem()
+                    {
+                        CartProductVariantId = cart_item_variant.CartProductVariantId,
+                        CartId = cart.CartId,
+                        Expiration = 0,
+                        Quantity = quantity,
+                        RemoteId = product_variant.Product.RemoteId,
+                        TotalItemPrice = (quantity * product_variant.Price),
+                        TotalItemPriceFormatted = product_variant.Currency + ' ' + (quantity * product_variant.Price)
+                    };
+
+                    db.CartProductItems.Add(cart_item);
+                    db.SaveChanges();
+
+                    success = true;
+                }
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = success }, Configuration.Formatters.JsonFormatter);
+        }
+
+        [HttpGet]
+        public HttpResponseMessage CartInfo(int userId = -1)
+        {
+            var cart = db.Carts
+               .Where(w => w.DeviceUserId == userId)
+               .ToList()
+               .Select(s => new
+               {
+                   product_count = s.GetProductCount(),
+                   total_price = s.GetProductTotalPrice(),
+                   total_price_formatted = (s.Currency + s.GetProductTotalPrice().ToString()),
+                   currency = s.Currency,
+                   discounts = new String[] { },
+                   products = s.CartProductItems.ToList()
+                   .Select(p => new {
+                       id = p.CartProductItemId,
+                       quantity = p.Quantity,
+                       product = new
+                       {
+                            //p.CartProductVariant
+                        }
+                   })
+               }).FirstOrDefault();
+
+            if (cart == null)
+            {
+                var empy_cart = new
+                {
+                    product_count = 0,
+                    total_price = 0,
+                    currency = "L",
+                    total_price_formatted = "L 0.0",
+                    discounts = new String[] { },
+                    products = new String[] { }
+                };
+
+                return Request.CreateResponse(HttpStatusCode.OK, empy_cart, Configuration.Formatters.JsonFormatter);
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, cart, Configuration.Formatters.JsonFormatter);
+        }
+
+        [HttpGet]
         public HttpResponseMessage Cart(int userId = -1)
         {
             var cart = db.Carts
@@ -270,17 +418,46 @@ namespace OpenshopBackend.Api
                 .ToList()
                 .Select(s => new
                 {
-                    total_count = s.GetProductCount(),
+                    product_count = s.GetProductCount(),
                     total_price = s.GetProductTotalPrice(),
                     currency =  s.Currency,
                     discounts =  new String[] {},
-                    products = s.CartProductItems.ToList()
+                    items = s.CartProductItems.ToList()
                     .Select(p => new {
                         id = p.CartProductItemId,
                         quantity = p.Quantity,
-                        product =  new
+                        totalItemPrice = p.TotalItemPrice,
+                        total_item_price_formatted = p.TotalItemPriceFormatted,
+                        variant =  new
                         {
-                            //p.CartProductVariant
+                            //TODO: fix remoteId it should be the original remoteId from product variant
+                            id = p.CartProductVariant.CartProductVariantId,
+                            remoteId = p.CartProductVariant.CartProductVariantId,
+                            product_variant_id = p.CartProductVariant.ProductVariantId,
+                            url = "",
+                            name = p.CartProductVariant.Name,
+                            price = p.CartProductVariant.Price,
+                            price_formatted = p.CartProductVariant.Price,
+                            category = p.CartProductVariant.CategoryId,
+                            currency = "",
+                            code = p.CartProductVariant.ProductVariant.Code,
+                            description = p.CartProductVariant.Name,
+                            main_image = p.CartProductVariant.ProductVariant.Product.MainImage,
+                            color = new
+                            {
+                                id = p.CartProductVariant.ProductVariant.Color.ColorId,
+                                remote_id = p.CartProductVariant.Color.RemoteId,
+                                value = p.CartProductVariant.ProductVariant.Color.Value,
+                                code = p.CartProductVariant.ProductVariant.Color.Code,
+                                img = p.CartProductVariant.ProductVariant.Color.Image
+                            },
+                            size = new
+                            {
+                                id = p.CartProductVariant.ProductVariant.Size.SizeId,
+                                remote_id = p.CartProductVariant.ProductVariant.Size.RemoteId,
+                                value = p.CartProductVariant.ProductVariant.Size.Value,
+                                description = p.CartProductVariant.ProductVariant.Size.Description
+                            }
                         }
                     })
                 }).FirstOrDefault();
@@ -289,7 +466,7 @@ namespace OpenshopBackend.Api
             {
                 var empy_cart = new
                 {
-                    total_count = 0,
+                    product_count = 0,
                     total_price = 0,
                     currency = "L",
                     discounts = new String[] { },

@@ -22,5 +22,10 @@ namespace OpenshopBackend.Models
         public virtual Size Size { get; set; }
         public virtual Product Product { get; set; }
 
+        public String GetPriceTotalFormated()
+        {
+            return this.Currency + ' ' + this.Price;
+        }
+
     }
 }
