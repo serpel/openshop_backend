@@ -368,6 +368,57 @@ namespace OpenshopBackend.Api
             return Request.CreateResponse(HttpStatusCode.OK, new { success = success }, Configuration.Formatters.JsonFormatter);
         }
 
+
+        //userId=%d&productCartId=%d%newQuantity=%d&newVariantId=%d
+        [HttpGet]
+        [HttpPut]
+        public HttpResponseMessage UpdateToCart(int userId, int productCartItemId, int newQuantity, int newProductVariantId)
+        {
+            bool success = true;
+            String message = "";
+
+            if (userId > 0 && productCartItemId > 0 && newQuantity > 0 && newProductVariantId > 0)
+            {
+                var product_variant = db.ProductVariants
+                    .ToList()
+                    .Where(w => w.ProductVariantId == newProductVariantId)
+                    .FirstOrDefault();
+
+                var product_cart = db.CartProductItems
+                    .ToList()
+                    .Where(w => w.CartProductItemId == productCartItemId)
+                    .FirstOrDefault();
+
+                var cart_product_variant = product_cart.CartProductVariant;
+
+                //update the new variant
+                cart_product_variant.ProductVariantId = product_variant.ProductVariantId;
+                cart_product_variant.Price = product_variant.Price;
+                cart_product_variant.PriceFormatted = product_variant.GetPriceTotalFormated();
+                cart_product_variant.SizeId = product_variant.SizeId;
+                cart_product_variant.ColorId = product_variant.ColorId;
+
+                //Update the visual of Total Price
+                product_cart.Quantity = newQuantity;
+                product_cart.TotalItemPrice = newQuantity * cart_product_variant.Price;
+                product_cart.TotalItemPriceFormatted = product_variant.Currency + " " + product_cart.TotalItemPrice;
+
+                try
+                {
+                    db.Entry(product_cart).State = EntityState.Modified;
+                    db.Entry(cart_product_variant).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    success = false;
+                    message = e.Message;
+                }
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = success, message = message }, Configuration.Formatters.JsonFormatter);
+        }
+
         [HttpGet]
         public HttpResponseMessage CartInfo(int userId = -1)
         {
@@ -433,6 +484,7 @@ namespace OpenshopBackend.Api
                             //TODO: fix remoteId it should be the original remoteId from product variant
                             id = p.CartProductVariant.CartProductVariantId,
                             remoteId = p.CartProductVariant.CartProductVariantId,
+                            product_id = p.CartProductVariant.ProductVariant.ProductId,
                             product_variant_id = p.CartProductVariant.ProductVariantId,
                             url = "",
                             name = p.CartProductVariant.Name,
