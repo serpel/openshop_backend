@@ -10,6 +10,9 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using OpenshopBackend.Models;
 using OpenshopBackend.Models.Helper;
+using Newtonsoft.Json;
+using Hangfire;
+using OpenshopBackend.BussinessLogic;
 
 namespace OpenshopBackend.Api
 {
@@ -30,6 +33,7 @@ namespace OpenshopBackend.Api
                   .Select(s => new {
                       id = s.DeviceUserId,
                       access_token = s.AccessToken,
+                      sales_person_id = s.SalesPersonId,
                       name = s.Name,
                       username = s.Username
                   }).FirstOrDefault();
@@ -368,6 +372,91 @@ namespace OpenshopBackend.Api
             return Request.CreateResponse(HttpStatusCode.OK, new { success = success }, Configuration.Formatters.JsonFormatter);
         }
 
+        public HttpResponseMessage Order(int id)
+        {
+            var order = db.Orders
+                .ToList()
+                .Where(w => w.OrderId == id)
+                .FirstOrDefault();
+
+            if(order != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, order, Configuration.Formatters.JsonFormatter);
+            }else
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, order, Configuration.Formatters.JsonFormatter);
+            }
+        }
+
+        [HttpGet]
+        [HttpPost]
+        public HttpResponseMessage CreateOrder(int userId, int cartId, String jo)
+        {
+            bool success = true;
+            string message = "";
+
+            try
+            {
+                Order order = JsonConvert.DeserializeObject<Order>(jo);
+
+                var user = db.DeviceUser
+                    .ToList()
+                    .Where(w => w.DeviceUserId == userId)
+                    .FirstOrDefault();
+
+                var cart = db.Carts
+                    .ToList()
+                    .Where(w => w.CartId == cartId)
+                    .FirstOrDefault();
+
+                var cartItems = cart.CartProductItems;
+
+                order.Status = OrderStatus.Created.ToString();
+                order.DateCreated = DateTime.Now.ToString();
+                order.Total = cartItems.Count();
+
+                db.Orders.Add(order);
+                db.SaveChanges();
+
+                foreach(var item in cartItems)
+                {
+                    var orderItem = new OrderItem()
+                    {
+                        OrderId = order.OrderId,
+                        Quantity = item.Quantity,
+                        SKU = item.CartProductVariant.Name,
+                        TaxCode = "IVA",
+                        WarehouseCode = "01"
+                    };
+
+                    db.OrderItems.Add(orderItem);
+                }
+
+                //db.SaveChanges();
+                db.Carts.Remove(cart);
+                db.SaveChanges();
+
+                //Here create the job for create the order in SAP
+                if(cartItems.Count > 0)
+                {
+                    BackgroundJob.Enqueue(() => new SalesOrder().AddSalesOrder(order));
+                }
+
+                var orderSerialized = JsonConvert.SerializeObject(order,
+                    Formatting.None,
+                    new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+
+                return Request.CreateResponse(HttpStatusCode.OK, orderSerialized, Configuration.Formatters.JsonFormatter);
+            }
+            catch(Exception e)
+            {
+                success = false;
+                message = e.Message;
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = success, message = message }, Configuration.Formatters.JsonFormatter);
+    }
+
 
         //userId=%d&productCartId=%d%newQuantity=%d&newVariantId=%d
         [HttpGet]
@@ -469,6 +558,7 @@ namespace OpenshopBackend.Api
                 .ToList()
                 .Select(s => new
                 {
+                    id = s.CartId,
                     product_count = s.GetProductCount(),
                     total_price = s.GetProductTotalPrice(),
                     currency =  s.Currency,

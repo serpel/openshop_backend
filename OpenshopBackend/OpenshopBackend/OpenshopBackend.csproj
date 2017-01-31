@@ -46,6 +46,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Hangfire.Core, Version=1.6.8.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Hangfire.Core.1.6.8\lib\net45\Hangfire.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Hangfire.SqlServer, Version=1.6.8.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Hangfire.SqlServer.1.6.8\lib\net45\Hangfire.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.AI.Agent.Intercept, Version=2.0.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.ApplicationInsights.Agent.Intercept.2.0.6\lib\net45\Microsoft.AI.Agent.Intercept.dll</HintPath>
       <Private>True</Private>
@@ -228,6 +236,8 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="BussinessLogic\SalesOrder.cs" />
+    <Compile Include="BussinessLogic\ServerConnection.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BannersController.cs" />
     <Compile Include="Controllers\BrandsController.cs" />
@@ -341,6 +351,14 @@
     <Compile Include="Migrations\201701250015057_ProductVariantReferenceOnCartProductVariant.Designer.cs">
       <DependentUpon>201701250015057_ProductVariantReferenceOnCartProductVariant.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201701310131268_OrderItemModel.cs" />
+    <Compile Include="Migrations\201701310131268_OrderItemModel.Designer.cs">
+      <DependentUpon>201701310131268_OrderItemModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701310215244_SalesPersonNumberOnDeviceUser.cs" />
+    <Compile Include="Migrations\201701310215244_SalesPersonNumberOnDeviceUser.Designer.cs">
+      <DependentUpon>201701310215244_SalesPersonNumberOnDeviceUser.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AppUser.cs" />
@@ -353,6 +371,7 @@
     <Compile Include="Models\Color.cs" />
     <Compile Include="Models\Device.cs" />
     <Compile Include="Models\CartProductItem.cs" />
+    <Compile Include="Models\OrderItem.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\Shop.cs" />
     <Compile Include="Models\Helper\Link.cs" />
@@ -569,6 +588,23 @@
     <EmbeddedResource Include="Migrations\201701250015057_ProductVariantReferenceOnCartProductVariant.resx">
       <DependentUpon>201701250015057_ProductVariantReferenceOnCartProductVariant.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701310131268_OrderItemModel.resx">
+      <DependentUpon>201701310131268_OrderItemModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701310215244_SalesPersonNumberOnDeviceUser.resx">
+      <DependentUpon>201701310215244_SalesPersonNumberOnDeviceUser.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="SAPbobsCOM">
+      <Guid>{FC8030BE-F5D2-4B8E-8F92-44228FE30090}</Guid>
+      <VersionMajor>9</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

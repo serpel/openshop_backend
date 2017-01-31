@@ -57,5 +57,6 @@ namespace OpenshopBackend.Models
         public System.Data.Entity.DbSet<OpenshopBackend.Models.CartProductVariant> CartProductVariants { get; set; }
 
         public System.Data.Entity.DbSet<OpenshopBackend.Models.Order> Orders { get; set; }
+        public System.Data.Entity.DbSet<OpenshopBackend.Models.OrderItem> OrderItems { get; set; }
     }
 }

@@ -11,6 +11,7 @@ namespace OpenshopBackend.Models
         [Key]
         public Int32 DeviceUserId { get; set; }
         public String Name { get; set; }
+        public Int32 SalesPersonId { get; set; }
         public String Username { get; set; }
         public String Password { get; set; }
         public String AccessToken { get; set; }
