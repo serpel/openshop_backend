@@ -166,6 +166,7 @@ namespace OpenshopBackend.Api
                                         value = v.Size.Value,
                                         description = v.Size.Description
                                     },
+                                    warehouse_code = v.WareHouseCode,
                                     images = v.Images,
                                     code = v.Code,
                                     quantity = v.Quantity,
@@ -343,6 +344,7 @@ namespace OpenshopBackend.Api
                         MainImage = product_variant.Product.MainImage,
                         Name = product_variant.Code,
                         ProductVariantId = product_variant.ProductVariantId,
+                        WareHouseCode = product_variant.WareHouseCode,
                         Url = "",
                         Price = product_variant.Price,
                         PriceFormatted = product_variant.GetPriceTotalFormated()
@@ -426,7 +428,7 @@ namespace OpenshopBackend.Api
                         Quantity = item.Quantity,
                         SKU = item.CartProductVariant.Name,
                         TaxCode = "IVA",
-                        WarehouseCode = "01"
+                        WarehouseCode = item.CartProductVariant.WareHouseCode
                     };
 
                     db.OrderItems.Add(orderItem);
@@ -437,7 +439,7 @@ namespace OpenshopBackend.Api
                 db.SaveChanges();
 
                 //Here create the job for create the order in SAP
-                if(cartItems.Count > 0)
+                if(cartItems.Count > 0 && order.CardCode.Count() > 0 && order.SalesPersonCode > 0)
                 {
                     BackgroundJob.Enqueue(() => new SalesOrder().AddSalesOrder(order));
                 }
@@ -486,6 +488,7 @@ namespace OpenshopBackend.Api
                 cart_product_variant.PriceFormatted = product_variant.GetPriceTotalFormated();
                 cart_product_variant.SizeId = product_variant.SizeId;
                 cart_product_variant.ColorId = product_variant.ColorId;
+                cart_product_variant.WareHouseCode = product_variant.WareHouseCode;
 
                 //Update the visual of Total Price
                 product_cart.Quantity = newQuantity;
@@ -585,6 +588,7 @@ namespace OpenshopBackend.Api
                             code = p.CartProductVariant.ProductVariant.Code,
                             description = p.CartProductVariant.Name,
                             main_image = p.CartProductVariant.ProductVariant.Product.MainImage,
+                            warehouse_code = p.CartProductVariant.WareHouseCode,
                             color = new
                             {
                                 id = p.CartProductVariant.ProductVariant.Color.ColorId,

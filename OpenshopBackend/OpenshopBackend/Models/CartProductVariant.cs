@@ -17,6 +17,7 @@ namespace OpenshopBackend.Models
         public String PriceFormatted { get; set; }
         public Int32 CategoryId { get; set; }
         public String MainImage { get; set; }
+        public String WareHouseCode { get; set; }
         public Int32 ColorId { get; set; }
         public Int32 SizeId { get; set; }
         public virtual Category Category { get; set; }

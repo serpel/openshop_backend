@@ -359,6 +359,10 @@
     <Compile Include="Migrations\201701310215244_SalesPersonNumberOnDeviceUser.Designer.cs">
       <DependentUpon>201701310215244_SalesPersonNumberOnDeviceUser.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201702021627252_WareHouseFieldOnProductVariantModel.cs" />
+    <Compile Include="Migrations\201702021627252_WareHouseFieldOnProductVariantModel.Designer.cs">
+      <DependentUpon>201702021627252_WareHouseFieldOnProductVariantModel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AppUser.cs" />
@@ -593,6 +597,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201701310215244_SalesPersonNumberOnDeviceUser.resx">
       <DependentUpon>201701310215244_SalesPersonNumberOnDeviceUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702021627252_WareHouseFieldOnProductVariantModel.resx">
+      <DependentUpon>201702021627252_WareHouseFieldOnProductVariantModel.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

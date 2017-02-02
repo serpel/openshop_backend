@@ -17,6 +17,7 @@ namespace OpenshopBackend.Models
         public Int32 IsCommitted { get; set; }
         public Double Price { get; set; }
         public String Currency { get; set; }
+        public String WareHouseCode { get; set; }
         public IList<String> Images { get; set; }
         public virtual Color Color { get; set; }
         public virtual Size Size { get; set; }

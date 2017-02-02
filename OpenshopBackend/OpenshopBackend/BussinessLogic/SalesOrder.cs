@@ -32,6 +32,7 @@ namespace OpenshopBackend.BussinessLogic
         public SalesOrder(ServerConnection serverConnection)
         {
             this._connection = serverConnection;
+            this._connection.Connect();
         }
 
         private ICompany company { get; set; }
@@ -86,6 +87,7 @@ namespace OpenshopBackend.BussinessLogic
                 //recomended from http://www.appseconnect.com/di-api-memory-leak-in-sap-business-one-9-0/
                 System.Runtime.InteropServices.Marshal.ReleaseComObject(salesOrder);
                 salesOrder = null;
+                this._connection.Disconnect();
             }
             catch (Exception e)
             {
