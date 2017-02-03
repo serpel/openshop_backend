@@ -75,7 +75,8 @@ namespace OpenshopBackend.Api
                 .Where(w => w.PartentId == 0)
                 .Select(s => new { id = s.CategoryId, original_id = s.RemoteId, name = s.Name,
                     children = db.Categories.Where(w => w.PartentId == s.RemoteId).ToList().Select(sc => new { id = sc.CategoryId, original_id = sc.RemoteId, name = sc.Name, children = new String[] { }, type = sc.Type }),
-                    type = s.Type });
+                    type = s.Type })
+                 .OrderBy(o => o.original_id);
 
             var result = new { navigation = categories };
 
@@ -269,6 +270,55 @@ namespace OpenshopBackend.Api
         }
 
         [HttpGet]
+        public HttpResponseMessage GetClients()
+        {
+            //var orderSerialized = JsonConvert.SerializeObject(db.Clients,
+            //    Formatting.None,
+            //    new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+
+            var clients = db.Clients
+                .ToList()
+                .Select(s => new
+                {
+                    id = s.ClientId,
+                    card_code = s.CardCode,
+                    phone = s.PhoneNumber,
+                    address = s.Address,
+                    name = s.Name
+                });
+
+            var result = new { records = clients };
+
+            return Request.CreateResponse(HttpStatusCode.OK, result, Configuration.Formatters.JsonFormatter);
+        }
+
+        [HttpGet]
+        public HttpResponseMessage GetDocuments(string card_code = "")
+        {
+            var documents = db.Documents
+                .ToList()
+                .Select(s => new
+                {
+                    id = s.DocumentId,
+                    document_code = s.DocumentCode,
+                    created_date = s.CreatedDate,
+                    due_date = s.DueDate,
+                    total_amount = s.TotalAmount,
+                    payed_amount = s.PayedAmount,
+                    card_code = s.Client.CardCode
+                });
+
+            if(card_code.Count() > 0)
+            {
+                documents = documents.Where(w => w.card_code.Equals(card_code));
+            }
+
+            var result = new { records = documents };
+
+            return Request.CreateResponse(HttpStatusCode.OK, result, Configuration.Formatters.JsonFormatter);
+        }
+
+        [HttpGet]
         [HttpDelete]
         public HttpResponseMessage DeleteToCart(int userId, int id)
         {
@@ -428,27 +478,45 @@ namespace OpenshopBackend.Api
                         Quantity = item.Quantity,
                         SKU = item.CartProductVariant.Name,
                         TaxCode = "IVA",
-                        WarehouseCode = item.CartProductVariant.WareHouseCode
+                        WarehouseCode = "01"
                     };
 
                     db.OrderItems.Add(orderItem);
                 }
 
+                db.SaveChanges();
+                //db.Carts.Remove(cart);
                 //db.SaveChanges();
+
+                int id = order.OrderId;
+
+                //Here create the job for create the order in SAP
+                if(order.CardCode.Count() > 0 && order.SalesPersonCode > 0)
+                {
+                    BackgroundJob.Enqueue(() => CreateOrderOnSap(id));
+                }
+
+                //var orderSerialized = JsonConvert.SerializeObject(order,
+                //    Formatting.Indented,
+                //    new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+
+                var result = new
+                {
+                    id = id,
+                    remote_id = order.RemoteId,
+                    series = order.Series,
+                    card_code = order.CardCode,
+                    comment = order.Comment,
+                    sales_person_code = order.SalesPersonCode,
+                    status = order.Status,
+                    total = order.Total,
+                    date_created = order.DateCreated
+                };
+
                 db.Carts.Remove(cart);
                 db.SaveChanges();
 
-                //Here create the job for create the order in SAP
-                if(cartItems.Count > 0 && order.CardCode.Count() > 0 && order.SalesPersonCode > 0)
-                {
-                    BackgroundJob.Enqueue(() => new SalesOrder().AddSalesOrder(order));
-                }
-
-                var orderSerialized = JsonConvert.SerializeObject(order,
-                    Formatting.None,
-                    new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
-
-                return Request.CreateResponse(HttpStatusCode.OK, orderSerialized, Configuration.Formatters.JsonFormatter);
+                return Request.CreateResponse(HttpStatusCode.OK, result, Configuration.Formatters.JsonFormatter);
             }
             catch(Exception e)
             {
@@ -458,6 +526,31 @@ namespace OpenshopBackend.Api
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = success, message = message }, Configuration.Formatters.JsonFormatter);
     }
+
+        public void CreateOrderOnSap(int orderId)
+        {
+            var order = db.Orders
+                .Where(w => w.OrderId == orderId)
+                .ToList()
+                .FirstOrDefault();
+
+            String message = "";
+
+            SalesOrder salesorder = new SalesOrder();
+            if (salesorder.ServerConnection.Connect() == 0)
+            {
+                message = salesorder.AddSalesOrder(order, order.OrderItems.ToList());
+                salesorder.ServerConnection.Disconnect();
+            }
+
+            if (message != "")
+            {
+                order.RemoteId = message;
+                order.Status = OrderStatus.Procesed.ToString();
+                db.Entry(order).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+        }
 
 
         //userId=%d&productCartId=%d%newQuantity=%d&newVariantId=%d
@@ -531,7 +624,7 @@ namespace OpenshopBackend.Api
                        product = new
                        {
                             //p.CartProductVariant
-                        }
+                       }
                    })
                }).FirstOrDefault();
 

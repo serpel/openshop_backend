@@ -31,8 +31,6 @@ namespace OpenshopBackend.BussinessLogic
 
         public SalesOrder(ServerConnection serverConnection)
         {
-            this._connection = serverConnection;
-            this._connection.Connect();
         }
 
         private ICompany company { get; set; }
@@ -47,7 +45,7 @@ namespace OpenshopBackend.BussinessLogic
             get { return this.lastMessage; }
         }
 
-        public String AddSalesOrder(Order order)
+        public String AddSalesOrder(Order order, List<OrderItem> items)
         {
             String key = "";
 
@@ -62,7 +60,7 @@ namespace OpenshopBackend.BussinessLogic
                 salesOrder.SalesPersonCode = order.SalesPersonCode;
                 salesOrder.DocDueDate = DateTime.Now;
 
-                foreach(var item in order.OrderItems)
+                foreach(var item in items)
                 {
                     salesOrder.Lines.ItemCode = item.SKU;
                     salesOrder.Lines.Quantity = item.Quantity;
