@@ -2,9 +2,6 @@
 using SAPbobsCOM;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OpenshopBackend.BussinessLogic
 {
@@ -72,6 +69,7 @@ namespace OpenshopBackend.BussinessLogic
                 if (salesOrder.Add() == 0)
                 {
                     lastMessage = String.Format("Successfully added Sales Order DocEntry: {0}", company.GetNewObjectKey());
+                    MyLogger.GetInstance.Debug(lastMessage);
                     key = company.GetNewObjectKey();      
                 }
                 else
@@ -85,10 +83,10 @@ namespace OpenshopBackend.BussinessLogic
                 //recomended from http://www.appseconnect.com/di-api-memory-leak-in-sap-business-one-9-0/
                 System.Runtime.InteropServices.Marshal.ReleaseComObject(salesOrder);
                 salesOrder = null;
-                this._connection.Disconnect();
             }
             catch (Exception e)
             {
+                MyLogger.GetInstance.Error(e.Message, e);
                 lastMessage += e.Message;
             }
 

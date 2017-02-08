@@ -38,6 +38,8 @@ namespace OpenshopBackend.Api
                       username = s.Username
                   }).FirstOrDefault();
 
+                MyLogger.GetInstance.Debug(String.Format("LoginByEmail - username: {0}, pass: {1}", user.username, user.name));
+
                 return Request.CreateResponse(HttpStatusCode.OK, user, Configuration.Formatters.JsonFormatter);
             }     
 
@@ -295,8 +297,14 @@ namespace OpenshopBackend.Api
         [HttpGet]
         public HttpResponseMessage GetDocuments(string card_code = "")
         {
+            var client = db.Clients
+                .ToList()
+                .Where(w => w.CardCode == card_code)
+                .FirstOrDefault();
+
             var documents = db.Documents
                 .ToList()
+                .Where(w => w.Client.CardCode == card_code)
                 .Select(s => new
                 {
                     id = s.DocumentId,
@@ -304,16 +312,17 @@ namespace OpenshopBackend.Api
                     created_date = s.CreatedDate,
                     due_date = s.DueDate,
                     total_amount = s.TotalAmount,
-                    payed_amount = s.PayedAmount,
-                    card_code = s.Client.CardCode
+                    payed_amount = s.PayedAmount
                 });
 
-            if(card_code.Count() > 0)
-            {
-                documents = documents.Where(w => w.card_code.Equals(card_code));
-            }
-
-            var result = new { records = documents };
+            var result = new { records = documents,
+                client_card_code = client.CardCode,
+                client_name = client.Name,
+                credit_limit = client.CreditLimit,
+                balance = client.Balance,
+                in_orders = client.InOrders,
+                pay_condition = client.PayCondition
+            };
 
             return Request.CreateResponse(HttpStatusCode.OK, result, Configuration.Formatters.JsonFormatter);
         }
@@ -335,11 +344,14 @@ namespace OpenshopBackend.Api
                 db.CartProductVariants.Remove(cart_item.CartProductVariant);
                 db.CartProductItems.Remove(cart_item);
                 db.SaveChanges();
+
+                MyLogger.GetInstance.Debug(String.Format("DeleteToCart - userId: {0}, cartProductItem: {1}", userId, id));
             }
             catch(Exception e)
             {
                 success = false;
                 message = e.Message;
+                MyLogger.GetInstance.Error(e.Message, e);
             }
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = success, message = message }, Configuration.Formatters.JsonFormatter);
@@ -416,6 +428,8 @@ namespace OpenshopBackend.Api
 
                     db.CartProductItems.Add(cart_item);
                     db.SaveChanges();
+
+                    MyLogger.GetInstance.Debug(String.Format("AddToCart - userId: {0}, product_variant_id: {1}, quantity: {2}", userId, product_variant_id, quantity));
 
                     success = true;
                 }
@@ -522,6 +536,7 @@ namespace OpenshopBackend.Api
             {
                 success = false;
                 message = e.Message;
+                MyLogger.GetInstance.Error(e.Message, e);
             }
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = success, message = message }, Configuration.Formatters.JsonFormatter);
@@ -536,19 +551,26 @@ namespace OpenshopBackend.Api
 
             String message = "";
 
-            SalesOrder salesorder = new SalesOrder();
-            if (salesorder.ServerConnection.Connect() == 0)
+            try
             {
-                message = salesorder.AddSalesOrder(order, order.OrderItems.ToList());
-                salesorder.ServerConnection.Disconnect();
-            }
+                SalesOrder salesorder = new SalesOrder();
+                if (salesorder.ServerConnection.Connect() == 0)
+                {
+                    message = salesorder.AddSalesOrder(order, order.OrderItems.ToList());
+                    salesorder.ServerConnection.Disconnect();
+                }
 
-            if (message != "")
+                if (message != "")
+                {
+                    order.RemoteId = message;
+                    order.Status = OrderStatus.Procesed.ToString();
+                    db.Entry(order).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+            catch (Exception e)
             {
-                order.RemoteId = message;
-                order.Status = OrderStatus.Procesed.ToString();
-                db.Entry(order).State = EntityState.Modified;
-                db.SaveChanges();
+                MyLogger.GetInstance.Error(e.Message, e);
             }
         }
 
@@ -593,9 +615,12 @@ namespace OpenshopBackend.Api
                     db.Entry(product_cart).State = EntityState.Modified;
                     db.Entry(cart_product_variant).State = EntityState.Modified;
                     db.SaveChanges();
+
+                    MyLogger.GetInstance.Debug(String.Format("UpdateToCart - username: {0}, cart: {1}, cart_product_variant_id: {1}", userId, product_cart.CartId, cart_product_variant.CartProductVariantId));
                 }
                 catch (Exception e)
                 {
+                    MyLogger.GetInstance.Error(e.Message, e);
                     success = false;
                     message = e.Message;
                 }

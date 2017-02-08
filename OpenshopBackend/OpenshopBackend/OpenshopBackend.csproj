@@ -99,6 +99,14 @@
       <HintPath>..\packages\Microsoft.Data.OData.5.6.0\lib\net40\Microsoft.Data.OData.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.4.2\lib\net45\NLog.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NLog.Web, Version=0.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.Web.4.3.0\lib\net35\NLog.Web.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -236,6 +244,8 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="BussinessLogic\ILogger.cs" />
+    <Compile Include="BussinessLogic\MyLogger.cs" />
     <Compile Include="BussinessLogic\SalesOrder.cs" />
     <Compile Include="BussinessLogic\ServerConnection.cs" />
     <Compile Include="Controllers\AccountController.cs" />
@@ -247,6 +257,7 @@
     <Compile Include="Controllers\DevicesController.cs" />
     <Compile Include="Controllers\DeviceUsersController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LogsController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\OrdersController.cs" />
     <Compile Include="Controllers\ProductsController.cs" />
@@ -373,6 +384,14 @@
     <Compile Include="Migrations\201702032027357_ClientDocumentsModel.Designer.cs">
       <DependentUpon>201702032027357_ClientDocumentsModel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201702071922180_ClientExtraFieldOnClienModel.cs" />
+    <Compile Include="Migrations\201702071922180_ClientExtraFieldOnClienModel.Designer.cs">
+      <DependentUpon>201702071922180_ClientExtraFieldOnClienModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201702072310437_LoggerModel.cs" />
+    <Compile Include="Migrations\201702072310437_LoggerModel.Designer.cs">
+      <DependentUpon>201702072310437_LoggerModel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AppUser.cs" />
@@ -387,6 +406,7 @@
     <Compile Include="Models\Device.cs" />
     <Compile Include="Models\CartProductItem.cs" />
     <Compile Include="Models\Document.cs" />
+    <Compile Include="Models\LogEntry.cs" />
     <Compile Include="Models\OrderItem.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\Shop.cs" />
@@ -415,6 +435,10 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="NLog.config" />
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Properties\PublishProfiles\172.20.11.13.pubxml" />
     <None Include="Properties\PublishProfiles\172.20.11.16.pubxml" />
     <None Include="Properties\PublishProfiles\INH Server.pubxml" />
@@ -528,6 +552,11 @@
     <Content Include="Views\Clients\Details.cshtml" />
     <Content Include="Views\Clients\Edit.cshtml" />
     <Content Include="Views\Clients\Index.cshtml" />
+    <Content Include="Views\Logs\Create.cshtml" />
+    <Content Include="Views\Logs\Delete.cshtml" />
+    <Content Include="Views\Logs\Details.cshtml" />
+    <Content Include="Views\Logs\Edit.cshtml" />
+    <Content Include="Views\Logs\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -630,6 +659,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201702032027357_ClientDocumentsModel.resx">
       <DependentUpon>201702032027357_ClientDocumentsModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702071922180_ClientExtraFieldOnClienModel.resx">
+      <DependentUpon>201702071922180_ClientExtraFieldOnClienModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702072310437_LoggerModel.resx">
+      <DependentUpon>201702072310437_LoggerModel.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

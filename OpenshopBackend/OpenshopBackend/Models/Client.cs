@@ -19,6 +19,14 @@ namespace OpenshopBackend.Models
         [JsonProperty(PropertyName = "phone")]
         public String PhoneNumber { get; set; }
         [JsonProperty(PropertyName = "address")]
+        public Double CreditLimit { get; set; }
+        [JsonProperty(PropertyName = "credit_limit")]
+        public Double Balance { get; set; }
+        [JsonProperty(PropertyName = "balance")]
+        public Double InOrders { get; set; }
+        [JsonProperty(PropertyName = "in_oders")]
+        public String PayCondition { get; set; }
+        [JsonProperty(PropertyName = "pay_condition")]
         public String Address { get; set; }
     }
 }
