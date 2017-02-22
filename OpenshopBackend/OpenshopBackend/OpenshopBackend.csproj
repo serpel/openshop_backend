@@ -392,6 +392,10 @@
     <Compile Include="Migrations\201702072310437_LoggerModel.Designer.cs">
       <DependentUpon>201702072310437_LoggerModel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201702221122347_PriceFieldOnOrderItem.cs" />
+    <Compile Include="Migrations\201702221122347_PriceFieldOnOrderItem.Designer.cs">
+      <DependentUpon>201702221122347_PriceFieldOnOrderItem.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AppUser.cs" />
@@ -665,6 +669,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201702072310437_LoggerModel.resx">
       <DependentUpon>201702072310437_LoggerModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702221122347_PriceFieldOnOrderItem.resx">
+      <DependentUpon>201702221122347_PriceFieldOnOrderItem.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -38,5 +38,13 @@ namespace OpenshopBackend.Models
         public Int32 Series { get; set; }
         [JsonIgnore]
         public virtual ICollection<OrderItem> OrderItems { get; set; }
+
+        public Double GetTotal()
+        {
+            if (this.OrderItems.Count > 0)
+                return this.OrderItems.Sum(s => (s.Quantity * s.Price) + ((s.Quantity * s.Price) * 0.15) + 0);
+
+            return 0;
+        }
     }
 }

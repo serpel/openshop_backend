@@ -19,7 +19,25 @@ namespace OpenshopBackend.Api
     public class ListController : ApiController
     {
         private ApplicationDbContext db = new ApplicationDbContext();
+        private String default_currency = "L";
+        private Double default_tax = 0.15;
 
+        [HttpGet]
+        public HttpResponseMessage GetUser(int id)
+        {
+            var user = db.DeviceUser
+                  .Where(w => w.DeviceUserId == id)
+                  .ToList()
+                  .Select(s => new {
+                      id = s.DeviceUserId,
+                      access_token = s.AccessToken,
+                      sales_person_id = s.SalesPersonId,
+                      name = s.Name,
+                      email = s.Username
+                  }).FirstOrDefault();
+
+            return Request.CreateResponse(HttpStatusCode.OK, user, Configuration.Formatters.JsonFormatter);
+        }
 
         [HttpGet]
         [HttpPost]
@@ -152,6 +170,7 @@ namespace OpenshopBackend.Api
                     images = new String[] { },
                     variants = s.Variants
                                 .ToList()
+                                .OrderBy(o => o.Code)
                                 .Select(v => new
                                 {
                                     id = v.ProductVariantId,
@@ -169,7 +188,7 @@ namespace OpenshopBackend.Api
                                         value = v.Size.Value,
                                         description = v.Size.Description
                                     },
-                                    warehouse_code = v.WareHouseCode,
+                                    warehouse = v.WareHouseCode,
                                     images = v.Images,
                                     code = v.Code,
                                     quantity = v.Quantity,
@@ -438,6 +457,47 @@ namespace OpenshopBackend.Api
             return Request.CreateResponse(HttpStatusCode.OK, new { success = success }, Configuration.Formatters.JsonFormatter);
         }
 
+        public HttpResponseMessage GetOrders(int userId)
+        {
+            bool success = false;
+
+            var user = db.DeviceUser
+                .ToList()
+                .Where(w => w.DeviceUserId == userId)
+                .FirstOrDefault();
+
+            if (user != null)
+            {
+                var orders = db.Orders
+                    .ToList()
+                    .Where(w => w.SalesPersonCode == user.SalesPersonId)
+                    .Select(s => new
+                    {
+                        id = s.OrderId,
+                        remote_id = s.RemoteId,
+                        series = s.Series,
+                        card_code = s.CardCode,
+                        comment = s.Comment,
+                        sales_person_code = s.SalesPersonCode,
+                        status = s.Status,
+                        total = s.GetTotal(),
+                        date_created = s.DateCreated,
+                        total_formatted = default_currency + " " +s.GetTotal()
+                    });
+
+                var result = new
+                {
+                    metadata = new Object(),
+                    records = orders
+                };
+
+                return Request.CreateResponse(HttpStatusCode.OK, result, Configuration.Formatters.JsonFormatter);
+            }
+
+            return Request.CreateResponse(HttpStatusCode.InternalServerError, new { success = success }, Configuration.Formatters.JsonFormatter);
+        }
+
+        [HttpGet]
         public HttpResponseMessage Order(int id)
         {
             var order = db.Orders
@@ -445,9 +505,23 @@ namespace OpenshopBackend.Api
                 .Where(w => w.OrderId == id)
                 .FirstOrDefault();
 
+            var result = new
+            {
+                id = order.OrderId,
+                remote_id = order.RemoteId,
+                series = order.Series,
+                card_code = order.CardCode,
+                comment = order.Comment,
+                sales_person_code = order.SalesPersonCode,
+                status = order.Status,
+                total = order.GetTotal(),
+                date_created = order.DateCreated,
+                total_formatted = default_currency + " " + order.GetTotal()
+            };
+
             if(order != null)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, order, Configuration.Formatters.JsonFormatter);
+                return Request.CreateResponse(HttpStatusCode.OK, result, Configuration.Formatters.JsonFormatter);
             }else
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, order, Configuration.Formatters.JsonFormatter);
@@ -491,6 +565,7 @@ namespace OpenshopBackend.Api
                         OrderId = order.OrderId,
                         Quantity = item.Quantity,
                         SKU = item.CartProductVariant.Name,
+                        Price = item.CartProductVariant.Price,
                         TaxCode = "IVA",
                         WarehouseCode = "01"
                     };
@@ -523,7 +598,8 @@ namespace OpenshopBackend.Api
                     comment = order.Comment,
                     sales_person_code = order.SalesPersonCode,
                     status = order.Status,
-                    total = order.Total,
+                    total = order.GetTotal(),
+                    total_formatted = default_currency + " " + order.GetTotal(), 
                     date_created = order.DateCreated
                 };
 
@@ -741,6 +817,29 @@ namespace OpenshopBackend.Api
             }
 
             return Request.CreateResponse(HttpStatusCode.OK, cart, Configuration.Formatters.JsonFormatter);
+        }
+
+        [HttpGet]
+        public HttpResponseMessage GetMenuBadgeCount()
+        {
+            var products_count = db.Products
+                .ToList()
+                .Count;
+
+            var clients_count = db.Clients
+                .ToList()
+                .Count;
+
+            int reports_count = 0;
+
+            var result = new
+            {
+                products_count = products_count,
+                clients_count = clients_count,
+                reports_count = reports_count
+            };
+
+            return Request.CreateResponse(HttpStatusCode.OK, result, Configuration.Formatters.JsonFormatter);
         }
 
         protected override void Dispose(bool disposing)

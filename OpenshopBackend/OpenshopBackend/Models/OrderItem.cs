@@ -14,6 +14,7 @@ namespace OpenshopBackend.Models
         public String SKU { get; set; }
         public Int32 Quantity { get; set; }
         public String WarehouseCode { get; set; }
+        public Double Price { get; set; }
         public String TaxCode { get; set; }
         public virtual Order Order { get; set; }
     }
