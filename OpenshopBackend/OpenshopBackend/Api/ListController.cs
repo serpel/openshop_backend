@@ -22,6 +22,30 @@ namespace OpenshopBackend.Api
         private String default_currency = "L";
         private Double default_tax = 0.15;
 
+
+        [HttpGet]
+        public HttpResponseMessage Users()
+        {
+            var users = db.DeviceUser
+                .ToList()
+                .Select(s => new
+                {
+                    id = s.DeviceUserId,
+                    access_token = s.AccessToken,
+                    sales_person_id = s.SalesPersonId,
+                    name = s.Name,
+                    email = s.Username
+                });
+
+            var result = new
+            {
+                records = users
+            };
+
+            return Request.CreateResponse(HttpStatusCode.OK, result, Configuration.Formatters.JsonFormatter);
+        }
+
+
         [HttpGet]
         public HttpResponseMessage GetUser(int id)
         {
