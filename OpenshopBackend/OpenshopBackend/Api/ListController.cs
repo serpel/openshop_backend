@@ -315,7 +315,7 @@ namespace OpenshopBackend.Api
         }
 
         [HttpGet]
-        public HttpResponseMessage GetClients()
+        public HttpResponseMessage GetClients(String search = "")
         {
             //var orderSerialized = JsonConvert.SerializeObject(db.Clients,
             //    Formatting.None,
@@ -331,6 +331,11 @@ namespace OpenshopBackend.Api
                     address = s.Address,
                     name = s.Name
                 });
+
+            if(search.Count() > 0)
+            {
+                clients = clients.Where(w => w.name.ToLower().Contains(search.ToLower()) || w.card_code.ToLower().Contains(search.ToLower()));
+            }
 
             var result = new { records = clients };
 
@@ -641,7 +646,7 @@ namespace OpenshopBackend.Api
 
         public void ReduceFromInventory(int cartId)
         {
-            var car = db.Carts.
+            //var car = db.Carts.
         }
 
 
