@@ -10,9 +10,9 @@ namespace OpenshopBackend.Models
 
     enum OrderStatus
     {
-        Created = 0,
-        Procesed = 1,
-        Fail = 2
+        CreadoEnAplicacion = 0,
+        PreAutorizado = 1,
+        Autorizado = 2
     }
 
     public class Order

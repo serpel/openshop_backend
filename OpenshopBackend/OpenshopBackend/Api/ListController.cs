@@ -495,6 +495,7 @@ namespace OpenshopBackend.Api
                 var orders = db.Orders
                     .ToList()
                     .Where(w => w.SalesPersonCode == user.SalesPersonId)
+                    .OrderByDescending(o => o.DateCreated)
                     .Select(s => new
                     {
                         id = s.OrderId,
@@ -504,9 +505,10 @@ namespace OpenshopBackend.Api
                         comment = s.Comment,
                         sales_person_code = s.SalesPersonCode,
                         status = s.Status,
-                        total = s.GetTotal(),
+                        total = s.Total,
+                        total_order = s.GetTotal(),
                         date_created = s.DateCreated,
-                        total_formatted = default_currency + " " +s.GetTotal()
+                        total_formatted = default_currency + s.GetTotal()
                     });
 
                 var result = new
@@ -538,7 +540,8 @@ namespace OpenshopBackend.Api
                 comment = order.Comment,
                 sales_person_code = order.SalesPersonCode,
                 status = order.Status,
-                total = order.GetTotal(),
+                total = order.Total,
+                total_order = order.GetTotal(),
                 date_created = order.DateCreated,
                 total_formatted = default_currency + " " + order.GetTotal()
             };
@@ -575,7 +578,7 @@ namespace OpenshopBackend.Api
 
                 var cartItems = cart.CartProductItems;
 
-                order.Status = OrderStatus.Created.ToString();
+                order.Status = OrderStatus.CreadoEnAplicacion.ToString();
                 order.DateCreated = DateTime.Now.ToString();
                 order.Total = cartItems.Count();
 
@@ -596,10 +599,7 @@ namespace OpenshopBackend.Api
 
                     db.OrderItems.Add(orderItem);
                 }
-
                 db.SaveChanges();
-                //db.Carts.Remove(cart);
-                //db.SaveChanges();
 
                 int id = order.OrderId;
 
@@ -608,10 +608,6 @@ namespace OpenshopBackend.Api
                 {
                     BackgroundJob.Enqueue(() => CreateOrderOnSap(id));
                 }
-
-                //var orderSerialized = JsonConvert.SerializeObject(order,
-                //    Formatting.Indented,
-                //    new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
 
                 var result = new
                 {
@@ -622,7 +618,8 @@ namespace OpenshopBackend.Api
                     comment = order.Comment,
                     sales_person_code = order.SalesPersonCode,
                     status = order.Status,
-                    total = order.GetTotal(),
+                    total = order.Total,
+                    total_order = order.GetTotal(),
                     total_formatted = default_currency + " " + order.GetTotal(), 
                     date_created = order.DateCreated
                 };
@@ -641,6 +638,12 @@ namespace OpenshopBackend.Api
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = success, message = message }, Configuration.Formatters.JsonFormatter);
     }
+
+        public void ReduceFromInventory(int cartId)
+        {
+            var car = db.Carts.
+        }
+
 
         public void CreateOrderOnSap(int orderId)
         {
@@ -663,7 +666,7 @@ namespace OpenshopBackend.Api
                 if (message != "")
                 {
                     order.RemoteId = message;
-                    order.Status = OrderStatus.Procesed.ToString();
+                    order.Status = OrderStatus.PreAutorizado.ToString();
                     db.Entry(order).State = EntityState.Modified;
                     db.SaveChanges();
                 }
