@@ -246,6 +246,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="BussinessLogic\ILogger.cs" />
     <Compile Include="BussinessLogic\MyLogger.cs" />
+    <Compile Include="BussinessLogic\Quotation.cs" />
     <Compile Include="BussinessLogic\SalesOrder.cs" />
     <Compile Include="BussinessLogic\ServerConnection.cs" />
     <Compile Include="Controllers\AccountController.cs" />

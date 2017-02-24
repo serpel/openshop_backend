@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace OpenshopBackend.BussinessLogic
 {
-    class SalesOrder
+    class Quotation
     {
         private ServerConnection _connection;
         public ServerConnection ServerConnection {
@@ -24,9 +24,9 @@ namespace OpenshopBackend.BussinessLogic
             }
         }
 
-        public SalesOrder(){}
+        public Quotation(){}
 
-        public SalesOrder(ServerConnection serverConnection)
+        public Quotation(ServerConnection serverConnection)
         {
             this._connection = serverConnection;
         }
@@ -43,13 +43,13 @@ namespace OpenshopBackend.BussinessLogic
             get { return this.lastMessage; }
         }
 
-        public String AddSalesOrder(Order order, List<OrderItem> items)
+        public String AddQuotation(Order order, List<OrderItem> items)
         {
             String key = "";
             try
             {
                 company = _connection.GetCompany();
-                salesOrder = company.GetBusinessObject(BoObjectTypes.oOrders);
+                salesOrder = company.GetBusinessObject(BoObjectTypes.oQuotations);
                 salesOrder.CardCode = order.CardCode;
                 salesOrder.Comments = order.Comment;
                 //71 Mayorista

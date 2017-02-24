@@ -52,7 +52,8 @@ namespace OpenshopBackend.Api
             var user = db.DeviceUser
                   .Where(w => w.DeviceUserId == id)
                   .ToList()
-                  .Select(s => new {
+                  .Select(s => new
+                  {
                       id = s.DeviceUserId,
                       access_token = s.AccessToken,
                       sales_person_id = s.SalesPersonId,
@@ -67,12 +68,13 @@ namespace OpenshopBackend.Api
         [HttpPost]
         public HttpResponseMessage LoginByEmail(string username = "", string password = "")
         {
-            if(username.Count() > 0 && password.Count() > 0)
+            if (username.Count() > 0 && password.Count() > 0)
             {
                 var user = db.DeviceUser
                   .Where(w => w.Username == username.Trim() && w.Password == password.Trim())
                   .ToList()
-                  .Select(s => new {
+                  .Select(s => new
+                  {
                       id = s.DeviceUserId,
                       access_token = s.AccessToken,
                       sales_person_id = s.SalesPersonId,
@@ -83,7 +85,7 @@ namespace OpenshopBackend.Api
                 MyLogger.GetInstance.Debug(String.Format("LoginByEmail - username: {0}, pass: {1}", user.username, user.name));
 
                 return Request.CreateResponse(HttpStatusCode.OK, user, Configuration.Formatters.JsonFormatter);
-            }     
+            }
 
             return Request.CreateResponse(HttpStatusCode.NotFound, new { error = "User not found" }, Configuration.Formatters.JsonFormatter);
         }
@@ -117,9 +119,14 @@ namespace OpenshopBackend.Api
             var categories = db.Categories
                 .ToList()
                 .Where(w => w.PartentId == 0)
-                .Select(s => new { id = s.CategoryId, original_id = s.RemoteId, name = s.Name,
+                .Select(s => new
+                {
+                    id = s.CategoryId,
+                    original_id = s.RemoteId,
+                    name = s.Name,
                     children = db.Categories.Where(w => w.PartentId == s.RemoteId).ToList().Select(sc => new { id = sc.CategoryId, original_id = sc.RemoteId, name = sc.Name, children = new String[] { }, type = sc.Type }),
-                    type = s.Type })
+                    type = s.Type
+                })
                  .OrderBy(o => o.original_id);
 
             var result = new { navigation = categories };
@@ -178,7 +185,7 @@ namespace OpenshopBackend.Api
             var product = db.Products
                 .Where(w => w.ProductId == id)
                 .ToList()
-                .Select(s =>new
+                .Select(s => new
                 {
                     id = s.ProductId,
                     remote_id = s.RemoteId,
@@ -198,15 +205,17 @@ namespace OpenshopBackend.Api
                                 .Select(v => new
                                 {
                                     id = v.ProductVariantId,
-                                    color = new {          
-                                                id = v.Color.ColorId,
-                                                remote_id = v.Color.RemoteId,
-                                                value = v.Color.Value,
-                                                code = v.Color.Code,
-                                                img = v.Color.Image,
-                                                description = v.Color.Description
+                                    color = new
+                                    {
+                                        id = v.Color.ColorId,
+                                        remote_id = v.Color.RemoteId,
+                                        value = v.Color.Value,
+                                        code = v.Color.Code,
+                                        img = v.Color.Image,
+                                        description = v.Color.Description
                                     },
-                                    size = new {
+                                    size = new
+                                    {
                                         id = v.Size.SizeId,
                                         remote_id = v.Size.RemoteId,
                                         value = v.Size.Value,
@@ -255,12 +264,12 @@ namespace OpenshopBackend.Api
                     related = new String[] { }
                 });
 
-            if(category >= 0)
+            if (category >= 0)
             {
                 products = products.Where(w => w.category == category);
             }
 
-            if(search.Count() > 0)
+            if (search.Count() > 0)
             {
                 products = products.Where(w => w.code.Contains(search.ToUpper())
                 || w.brand.Contains(search.ToUpper())
@@ -274,16 +283,16 @@ namespace OpenshopBackend.Api
             {
                 switch (sort.ToLower())
                 {
-                   case "newest":
+                    case "newest":
                         products = products.OrderByDescending(o => o.id);
                         break;
-                   case "popularity":
+                    case "popularity":
                         //products = products.OrderByDescending(o => o.rank);
                         break;
-                   case "price_desc": 
+                    case "price_desc":
                         //products = products.OrderByDescending(o => o.price);
                         break;
-                   case "price_asc":
+                    case "price_asc":
                         //products = products.OrderBy(o => o.price);
                         break;
                     default:
@@ -332,7 +341,7 @@ namespace OpenshopBackend.Api
                     name = s.Name
                 });
 
-            if(search.Count() > 0)
+            if (search.Count() > 0)
             {
                 clients = clients.Where(w => w.name.ToLower().Contains(search.ToLower()) || w.card_code.ToLower().Contains(search.ToLower()));
             }
@@ -363,7 +372,9 @@ namespace OpenshopBackend.Api
                     payed_amount = s.PayedAmount
                 });
 
-            var result = new { records = documents,
+            var result = new
+            {
+                records = documents,
                 client_card_code = client.CardCode,
                 client_name = client.Name,
                 credit_limit = client.CreditLimit,
@@ -395,7 +406,7 @@ namespace OpenshopBackend.Api
 
                 MyLogger.GetInstance.Debug(String.Format("DeleteToCart - userId: {0}, cartProductItem: {1}", userId, id));
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 success = false;
                 message = e.Message;
@@ -411,7 +422,7 @@ namespace OpenshopBackend.Api
         {
             bool success = false;
 
-            if(userId > 0 && product_variant_id > 0)
+            if (userId > 0 && product_variant_id > 0)
             {
                 var product_variant = db.ProductVariants
                     .ToList()
@@ -424,7 +435,7 @@ namespace OpenshopBackend.Api
                     .FirstOrDefault();
 
                 //create a new cart if not exist
-                if(cart == null && product_variant != null)
+                if (cart == null && product_variant != null)
                 {
                     var new_cart = new Cart()
                     {
@@ -439,7 +450,7 @@ namespace OpenshopBackend.Api
                     cart = new_cart;
                 }
 
-                if(cart != null && product_variant != null)
+                if (cart != null && product_variant != null)
                 {
                     var cart_item_variant = new CartProductVariant()
                     {
@@ -546,10 +557,11 @@ namespace OpenshopBackend.Api
                 total_formatted = default_currency + " " + order.GetTotal()
             };
 
-            if(order != null)
+            if (order != null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, result, Configuration.Formatters.JsonFormatter);
-            }else
+            }
+            else
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, order, Configuration.Formatters.JsonFormatter);
             }
@@ -585,7 +597,7 @@ namespace OpenshopBackend.Api
                 db.Orders.Add(order);
                 db.SaveChanges();
 
-                foreach(var item in cartItems)
+                foreach (var item in cartItems)
                 {
                     var orderItem = new OrderItem()
                     {
@@ -605,13 +617,6 @@ namespace OpenshopBackend.Api
                 db.SaveChanges();
 
                 int id = order.OrderId;
-
-                //Here create the job for create the order in SAP
-                if(order.CardCode.Count() > 0 && order.SalesPersonCode > 0)
-                {
-                    BackgroundJob.Enqueue(() => CreateOrderOnSap(id));
-                }
-
                 var result = new
                 {
                     id = id,
@@ -623,16 +628,18 @@ namespace OpenshopBackend.Api
                     status = order.Status,
                     total = order.Total,
                     total_order = order.GetTotal(),
-                    total_formatted = default_currency + " " + order.GetTotal(), 
+                    total_formatted = default_currency + " " + order.GetTotal(),
                     date_created = order.DateCreated
                 };
 
                 db.Carts.Remove(cart);
                 db.SaveChanges();
 
+                BackgroundJob.Enqueue(() => CreateQuotationOrderOnSap(id));
+
                 return Request.CreateResponse(HttpStatusCode.OK, result, Configuration.Formatters.JsonFormatter);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 success = false;
                 message = e.Message;
@@ -640,11 +647,39 @@ namespace OpenshopBackend.Api
             }
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = success, message = message }, Configuration.Formatters.JsonFormatter);
-    }
+        }
 
-        public void ReduceFromInventory(int cartId)
+
+        public void CreateQuotationOrderOnSap(int orderId)
         {
-            //var car = db.Carts.
+            var order = db.Orders
+                .Where(w => w.OrderId == orderId)
+                .ToList()
+                .FirstOrDefault();
+
+            String message = "";
+
+            try
+            {
+                Quotation salesorder = new Quotation();
+                if (salesorder.ServerConnection.Connect() == 0)
+                {
+                    message = salesorder.AddQuotation(order, order.OrderItems.ToList());
+                    salesorder.ServerConnection.Disconnect();
+                }
+
+                if (message != "")
+                {
+                    order.RemoteId = message;
+                    order.Status = OrderStatus.PreAutorizado.ToString();
+                    db.Entry(order).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+            catch (Exception e)
+            {
+                MyLogger.GetInstance.Error(e.Message, e);
+            }
         }
 
 
@@ -749,12 +784,13 @@ namespace OpenshopBackend.Api
                    currency = s.Currency,
                    discounts = new String[] { },
                    products = s.CartProductItems.ToList()
-                   .Select(p => new {
+                   .Select(p => new
+                   {
                        id = p.CartProductItemId,
                        quantity = p.Quantity,
                        product = new
                        {
-                            //p.CartProductVariant
+                           //p.CartProductVariant
                        }
                    })
                }).FirstOrDefault();
@@ -788,15 +824,16 @@ namespace OpenshopBackend.Api
                     id = s.CartId,
                     product_count = s.GetProductCount(),
                     total_price = s.GetProductTotalPrice(),
-                    currency =  s.Currency,
-                    discounts =  new String[] {},
+                    currency = s.Currency,
+                    discounts = new String[] { },
                     items = s.CartProductItems.ToList()
-                    .Select(p => new {
+                    .Select(p => new
+                    {
                         id = p.CartProductItemId,
                         quantity = p.Quantity,
                         totalItemPrice = p.TotalItemPrice,
                         total_item_price_formatted = p.TotalItemPriceFormatted,
-                        variant =  new
+                        variant = new
                         {
                             //TODO: fix remoteId it should be the original remoteId from product variant
                             id = p.CartProductVariant.CartProductVariantId,
@@ -832,7 +869,7 @@ namespace OpenshopBackend.Api
                     })
                 }).FirstOrDefault();
 
-            if(cart == null)
+            if (cart == null)
             {
                 var empy_cart = new
                 {
