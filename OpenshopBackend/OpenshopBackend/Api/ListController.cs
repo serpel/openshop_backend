@@ -418,11 +418,6 @@ namespace OpenshopBackend.Api
                     .Where(w => w.ProductVariantId == product_variant_id)
                     .FirstOrDefault();
 
-                //load a user profile is not needed at all
-                //var user = db.DeviceUser
-                //    .Where(w => w.DeviceUserId == userId)
-                //    .FirstOrDefault();
-
                 var cart = db.Carts
                     .ToList()
                     .Where(w => w.DeviceUserId == userId)
@@ -602,6 +597,9 @@ namespace OpenshopBackend.Api
                         WarehouseCode = "01"
                     };
 
+                    //This line update the product iscommited
+                    item.CartProductVariant.ProductVariant.IsCommitted += item.Quantity;
+                    db.Entry(item).State = EntityState.Modified;
                     db.OrderItems.Add(orderItem);
                 }
                 db.SaveChanges();
