@@ -1,5 +1,8 @@
 namespace OpenshopBackend.Migrations
 {
+    using Microsoft.AspNet.Identity;
+    using Microsoft.AspNet.Identity.EntityFramework;
+    using Models;
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
@@ -15,18 +18,31 @@ namespace OpenshopBackend.Migrations
 
         protected override void Seed(OpenshopBackend.Models.ApplicationDbContext context)
         {
-            //  This method will be called after migrating to the latest version.
+            string email = "sergio.peralta@kattangroup.com";
 
-            //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
-            //  to avoid creating duplicate seed data. E.g.
-            //
-            //    context.People.AddOrUpdate(
-            //      p => p.FullName,
-            //      new Person { FullName = "Andrew Peters" },
-            //      new Person { FullName = "Brice Lambson" },
-            //      new Person { FullName = "Rowan Miller" }
-            //    );
-            //
+            //create the first user
+            if (!(context.Users.Any(u => u.Email == email)))
+            {
+                var userStore = new UserStore<ApplicationUser>(context);
+                var userManager = new UserManager<ApplicationUser>(userStore);
+                var userToInsert = new ApplicationUser { UserName = email, Email = email };
+                var result = userManager.Create(userToInsert, "Admin.1234");
+
+                //create and asign roles
+                if (result.Succeeded)
+                {
+                    var roleStore = new RoleStore<IdentityRole>(context);
+                    var roleManager = new RoleManager<IdentityRole>(roleStore);
+                    var adminRole = new IdentityRole("Admin");
+                    result = roleManager.Create(adminRole);
+
+                    if (result.Succeeded)
+                    {
+                        userManager.AddToRoles(userToInsert.Id, adminRole.Name);
+                    }
+                }
+            }
+
         }
     }
 }

@@ -9,11 +9,12 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using OpenshopBackend.Models;
+using OpenshopBackend.BussinessLogic;
 
 namespace OpenshopBackend.Controllers
 {
     [Authorize]
-    public class AccountController : Controller
+    public class AccountController : BaseController
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
@@ -393,6 +394,14 @@ namespace OpenshopBackend.Controllers
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public ActionResult LogOut()
+        {
+            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            MyLogger.GetInstance.Info("User logoff successfull: " + AuthenticationManager.User.Identity.Name);
+            return RedirectToAction("Login", "Account");
         }
 
         //

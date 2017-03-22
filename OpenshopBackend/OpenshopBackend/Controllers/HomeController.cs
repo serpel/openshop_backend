@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using OpenshopBackend.BussinessLogic;
 using System.Web.Mvc;
 
 namespace OpenshopBackend.Controllers
 {
-    public class HomeController : Controller
+    [AccessAuthorizeAttribute(Roles = "Admin, SalesAdmin")]
+    public class HomeController : BaseController
     {
         public ActionResult Index()
         {
@@ -26,5 +24,14 @@ namespace OpenshopBackend.Controllers
 
             return View();
         }
+
+        //protected override void Dispose(bool disposing)
+        //{
+        //    if (disposing)
+        //    {
+        //        db.Dispose();
+        //    }
+        //    base.Dispose(disposing);
+        //}
     }
 }

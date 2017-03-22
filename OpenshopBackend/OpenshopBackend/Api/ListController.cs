@@ -506,7 +506,7 @@ namespace OpenshopBackend.Api
                 var orders = db.Orders
                     .ToList()
                     .Where(w => w.SalesPersonCode == user.SalesPersonId)
-                    .OrderByDescending(o => o.DateCreated)
+                    .OrderByDescending(o => o.OrderId)
                     .Select(s => new
                     {
                         id = s.OrderId,
@@ -565,6 +565,20 @@ namespace OpenshopBackend.Api
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, order, Configuration.Formatters.JsonFormatter);
             }
+        }
+
+        [HttpGet]
+        [HttpPost]
+        public HttpResponseMessage ReCreateOrder(int orderId)
+        {
+            bool success = true;
+
+            if (orderId > 0)
+            {
+                BackgroundJob.Enqueue(() => CreateQuotationOrderOnSap(orderId));
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, success, Configuration.Formatters.JsonFormatter);
         }
 
         [HttpGet]
@@ -649,13 +663,16 @@ namespace OpenshopBackend.Api
             return Request.CreateResponse(HttpStatusCode.OK, new { success = success, message = message }, Configuration.Formatters.JsonFormatter);
         }
 
-
         public void CreateQuotationOrderOnSap(int orderId)
         {
             var order = db.Orders
                 .Where(w => w.OrderId == orderId)
                 .ToList()
                 .FirstOrDefault();
+
+            //Don't resend a new order on SAP if exist
+            if (order.RemoteId.Count() > 0)
+                return;
 
             String message = "";
 

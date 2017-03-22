@@ -28,5 +28,7 @@ namespace OpenshopBackend.Models
         public String PayCondition { get; set; }
         [JsonProperty(PropertyName = "pay_condition")]
         public String Address { get; set; }
+        [JsonProperty(PropertyName = "discount_percent")]
+        public Double DiscountPercent { get; set; }
     }
 }

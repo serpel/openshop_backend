@@ -7,10 +7,12 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using OpenshopBackend.Models;
+using OpenshopBackend.BussinessLogic;
 
 namespace OpenshopBackend.Controllers
 {
-    public class SizesController : Controller
+    [AccessAuthorizeAttribute(Roles = "Admin, SalesAdmin")]
+    public class SizesController : BaseController
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 

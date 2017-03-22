@@ -7,10 +7,13 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using OpenshopBackend.Models;
+using System.Web.Security;
+using OpenshopBackend.BussinessLogic;
 
 namespace OpenshopBackend.Controllers
 {
-    public class DevicesController : Controller
+    [AccessAuthorizeAttribute(Roles = "Admin, SalesAdmin")]
+    public class DevicesController : BaseController
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 

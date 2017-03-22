@@ -1,63 +1,62 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
+    <title>Van Heusen Admin</title>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta content="" name="description" />
+    <meta content="Intellisys Technology" name="author" />
+    @RenderSection("StylesOnTop", required: false)
     @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
-
-    <script type = 'text/javascript' >
-        var appInsights=window.appInsights||function(config)
-        {
-            function r(config){ t[config] = function(){ var i = arguments; t.queue.push(function(){ t[config].apply(t, i)})} }
-            var t = { config:config},u=document,e=window,o='script',s=u.createElement(o),i,f;for(s.src=config.url||'//az416426.vo.msecnd.net/scripts/a/ai.0.js',u.getElementsByTagName(o)[0].parentNode.appendChild(s),t.cookie=u.cookie,t.queue=[],i=['Event','Exception','Metric','PageView','Trace','Ajax'];i.length;)r('track'+i.pop());return r('setAuthenticatedUserContext'),r('clearAuthenticatedUserContext'),config.disableExceptionTracking||(i='onerror',r('_'+i),f=e[i],e[i]=function(config, r, u, e, o) { var s = f && f(config, r, u, e, o); return s !== !0 && t['_' + i](config, r, u, e, o),s}),t
-        }({
-            instrumentationKey:'10be4b3e-618d-4e89-bce6-bb5b1cfac2d5'
-        });
-        
-        window.appInsights=appInsights;
-        appInsights.trackPageView();
-    </script>
+    @RenderSection("Styles", required: false)
 </head>
-<body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+<body class="">
+    <!-- BEGIN HEADER -->
+    @Html.Action("TopNavBar")
+    <!-- END HEADER -->
+    <!-- BEGIN CONTENT -->
+    <div class="page-container row-fluid">
+        <!-- BEGIN SIDEBAR -->
+        <!-- BEGIN MENU -->
+        @Html.Action("LeftNavBar")
+        <!-- BEGIN SCROLL UP HOVER -->
+        <a href="#" class="scrollup">Scroll</a>
+        <!-- END SCROLL UP HOVER -->
+        <!-- END MENU -->
+        <!-- BEGIN SIDEBAR FOOTER WIDGET -->
+        <div class="footer-widget">
+            <div class="progress transparent progress-small no-radius no-margin">
+                <div data-percentage="79%" class="progress-bar progress-bar-success animate-progress-bar"></div>
             </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li>@Html.ActionLink("Categories", "Index", "Categories")</li>
-                    <li>@Html.ActionLink("Brands", "Index", "Brands")</li>
-                    <li>@Html.ActionLink("Products", "Index", "Products")</li>
-                    <li>@Html.ActionLink("ProductVariants", "Index", "ProductVariants")</li>
-                    <li>@Html.ActionLink("Colors", "Index", "Colors")</li>
-                    <li>@Html.ActionLink("Sizes", "Index", "Sizes")</li>
-                    <li>@Html.ActionLink("DeviceUsers", "Index", "DeviceUsers")</li>
-                    <li>@Html.ActionLink("Orders", "Index", "Orders")</li>
-                    <li>@Html.ActionLink("Clients", "Index", "Clients")</li>
-                </ul>
-                @Html.Partial("_LoginPartial")
+            <div class="pull-right">
+                <div class="details-status">
+                    <span data-animation-duration="560" data-value="80" class="animate-number"></span>%
+                </div>
+                <a href="@Url.Action("LogOut", "Account")"><i class="fa fa-power-off"></i></a>
             </div>
         </div>
-    </div>
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-        </footer>
+        <!-- END SIDEBAR FOOTER WIDGET -->
+        <!-- END SIDEBAR -->
+        <!-- BEGIN PAGE CONTAINER-->
+        <div class="page-content">
+            <div class="content">
+
+                <div id='myModal' class='modal fade in'>
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div id='myModalContent'></div>
+                        </div>
+                    </div>
+                </div>
+
+                @RenderBody()
+            </div>
+        </div>
+        <!-- END PAGE CONTAINER -->
     </div>
 
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/javascripts")
     @RenderSection("scripts", required: false)
-</body>
+   </body>
 </html>

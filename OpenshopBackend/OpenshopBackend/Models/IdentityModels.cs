@@ -16,6 +16,8 @@ namespace OpenshopBackend.Models
             // Add custom user claims here
             return userIdentity;
         }
+        public string ProfileUrl { get; set; }
+        public string Culture { get; set; }
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>

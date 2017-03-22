@@ -1,0 +1,71 @@
+﻿@model OpenshopBackend.Models.UserViewModel
+@using Resources
+
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title" id="myModalLabel">@Resources.Edit</h4>
+</div>
+
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "EditForm" }))
+{
+    <div class="modal-body">
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary("", new { @class = "text-danger" })
+        @Html.HiddenFor(m => m.Id)
+
+        <div class="row form-row">
+            <div class="col-md-4">
+                <div class="text-center">
+                    @if (@Model.ProfileUrl == null || @Model.ProfileUrl.Count() < 4)
+                    {
+                        <img src='@Url.Content("~/Content/assets/img/profiles/default-100.png")' class="avatar img-circle" alt="avatar">
+                    }
+                    else
+                    {
+                        <img src="@Url.Content(@Model.ProfileUrl)" class="avatar img-circle" alt="avatar" style="width:100px;height:100px">
+                    }
+
+                    <h6>@Resources.Profile</h6>
+                    <input type="file" name="file" id="file" style="width:100%">
+                    @Html.HiddenFor(model => model.ProfileUrl)
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="row form-row">
+                    <div class="col-md-6">
+                        <label class="form-label">@Resources.Email</label>
+                        @Html.EditorFor(m => m.Email, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                        @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">@Resources.Password</label>
+                        @Html.EditorFor(m => m.Password, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="row form-row">
+                    <div class="col-md-12">
+                        <label class="form-label">@Resources.Roles</label>
+                        @Html.DropDownList("Roles", null, htmlAttributes: new { @class = "select-drop", multiple = "multiple", style = "width:100%" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" type="button" data-dismiss="modal">@Resources.Cancel</button>
+        <input class="btn btn-primary" type="submit" value="@Resources.Save" />
+    </div>
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.select-drop').select2();
+
+        $('#EditForm').submit(function () {
+            $('input[type=submit]', this).attr('disabled', 'disabled');
+        });
+    });
+</script>

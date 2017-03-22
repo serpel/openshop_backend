@@ -11,6 +11,8 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using OpenshopBackend.Models;
+using SendGrid.Helpers.Mail;
+using System.Configuration;
 
 namespace OpenshopBackend
 {
