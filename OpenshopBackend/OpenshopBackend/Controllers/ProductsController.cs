@@ -8,6 +8,8 @@ using System.Web;
 using System.Web.Mvc;
 using OpenshopBackend.Models;
 using OpenshopBackend.BussinessLogic;
+using System.IO;
+using System.Configuration;
 
 namespace OpenshopBackend.Controllers
 {
@@ -87,10 +89,17 @@ namespace OpenshopBackend.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ProductId,RemoteId,Name,Code,CategoryId,BrandId,Season,Description,MainImage,MainImageHighRes")] Product product)
+        public ActionResult Edit(Product product, HttpPostedFileBase file)
         {
             if (ModelState.IsValid)
             {
+                if (file != null && file.ContentLength > 0)
+                {
+                    string baseUrl = Url.Content(Path.Combine(@ConfigurationManager.AppSettings["ImageStoragePath"], product.Code));
+                    string path = Uploader.GetInstance.GenerateUrlPath(Server.MapPath(baseUrl), baseUrl, file);
+                    product.MainImage = Url.Content(path);
+                }
+
                 db.Entry(product).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");

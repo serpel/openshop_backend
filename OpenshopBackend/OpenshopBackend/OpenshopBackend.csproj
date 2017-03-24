@@ -416,6 +416,10 @@
     <Compile Include="Migrations\201703071633078_AddDiscountToClients.Designer.cs">
       <DependentUpon>201703071633078_AddDiscountToClients.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201703231356310_ClientDiscountModel.cs" />
+    <Compile Include="Migrations\201703231356310_ClientDiscountModel.Designer.cs">
+      <DependentUpon>201703231356310_ClientDiscountModel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AppUser.cs" />
@@ -425,6 +429,7 @@
     <Compile Include="Models\CartProductVariant.cs" />
     <Compile Include="Models\Category.cs" />
     <Compile Include="Models\Client.cs" />
+    <Compile Include="Models\ClientDiscount.cs" />
     <Compile Include="Models\Collection.cs" />
     <Compile Include="Models\Color.cs" />
     <Compile Include="Models\Device.cs" />
@@ -1766,6 +1771,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201703071633078_AddDiscountToClients.resx">
       <DependentUpon>201703071633078_AddDiscountToClients.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703231356310_ClientDiscountModel.resx">
+      <DependentUpon>201703231356310_ClientDiscountModel.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

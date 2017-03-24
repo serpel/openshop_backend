@@ -671,7 +671,7 @@ namespace OpenshopBackend.Api
                 .FirstOrDefault();
 
             //Don't resend a new order on SAP if exist
-            if (order.RemoteId.Count() > 0)
+            if (order.RemoteId == null)
                 return;
 
             String message = "";
@@ -843,7 +843,9 @@ namespace OpenshopBackend.Api
                     total_price = s.GetProductTotalPrice(),
                     currency = s.Currency,
                     discounts = new String[] { },
-                    items = s.CartProductItems.ToList()
+                    items = s.CartProductItems
+                    .ToList()
+                    .OrderBy(o => o.CartProductVariant.Name)
                     .Select(p => new
                     {
                         id = p.CartProductItemId,
