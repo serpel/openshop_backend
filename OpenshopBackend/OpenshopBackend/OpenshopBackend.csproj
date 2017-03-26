@@ -264,6 +264,11 @@
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\BrandsController.cs" />
     <Compile Include="Controllers\CategoriesController.cs" />
+    <Compile Include="Migrations\201703260252269_FixCategoryModel1.cs" />
+    <Compile Include="Migrations\201703260252269_FixCategoryModel1.Designer.cs">
+      <DependentUpon>201703260252269_FixCategoryModel1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CategoryViewModel.cs" />
     <Compile Include="Controllers\ClientsController.cs" />
     <Compile Include="Controllers\ColorsController.cs" />
     <Compile Include="Controllers\DevicesController.cs" />
@@ -419,6 +424,26 @@
     <Compile Include="Migrations\201703231356310_ClientDiscountModel.cs" />
     <Compile Include="Migrations\201703231356310_ClientDiscountModel.Designer.cs">
       <DependentUpon>201703231356310_ClientDiscountModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201703240349048_FixOnNavigation.cs" />
+    <Compile Include="Migrations\201703240349048_FixOnNavigation.Designer.cs">
+      <DependentUpon>201703240349048_FixOnNavigation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201703240724298_PrintBluetoothAddressFieldOnUserModel.cs" />
+    <Compile Include="Migrations\201703240724298_PrintBluetoothAddressFieldOnUserModel.Designer.cs">
+      <DependentUpon>201703240724298_PrintBluetoothAddressFieldOnUserModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201703241825568_CategoryFixModel.cs" />
+    <Compile Include="Migrations\201703241825568_CategoryFixModel.Designer.cs">
+      <DependentUpon>201703241825568_CategoryFixModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201703241833359_AddIdFieldToCategoryModel.cs" />
+    <Compile Include="Migrations\201703241833359_AddIdFieldToCategoryModel.Designer.cs">
+      <DependentUpon>201703241833359_AddIdFieldToCategoryModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201703241853486_FixCategoryModel.cs" />
+    <Compile Include="Migrations\201703241853486_FixCategoryModel.Designer.cs">
+      <DependentUpon>201703241853486_FixCategoryModel.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -1774,6 +1799,24 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201703231356310_ClientDiscountModel.resx">
       <DependentUpon>201703231356310_ClientDiscountModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703240349048_FixOnNavigation.resx">
+      <DependentUpon>201703240349048_FixOnNavigation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703240724298_PrintBluetoothAddressFieldOnUserModel.resx">
+      <DependentUpon>201703240724298_PrintBluetoothAddressFieldOnUserModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703241825568_CategoryFixModel.resx">
+      <DependentUpon>201703241825568_CategoryFixModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703241833359_AddIdFieldToCategoryModel.resx">
+      <DependentUpon>201703241833359_AddIdFieldToCategoryModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703241853486_FixCategoryModel.resx">
+      <DependentUpon>201703241853486_FixCategoryModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703260252269_FixCategoryModel1.resx">
+      <DependentUpon>201703260252269_FixCategoryModel1.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

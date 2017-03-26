@@ -7,11 +7,9 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using OpenshopBackend.Models;
-using OpenshopBackend.BussinessLogic;
 
 namespace OpenshopBackend.Controllers
 {
-    [AccessAuthorizeAttribute(Roles = "Admin, SalesAdmin")]
     public class CategoriesController : BaseController
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -48,7 +46,7 @@ namespace OpenshopBackend.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "CategoryId,RemoteId,Code,PartentId,Name,Type")] Category category)
+        public ActionResult Create([Bind(Include = "CategoryId,Id,PartentId,RemoteId,Name,Type")] Category category)
         {
             if (ModelState.IsValid)
             {
@@ -80,7 +78,7 @@ namespace OpenshopBackend.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "CategoryId,RemoteId,Code,PartentId,Name,Type")] Category category)
+        public ActionResult Edit([Bind(Include = "CategoryId,Id,PartentId,RemoteId,Name,Type")] Category category)
         {
             if (ModelState.IsValid)
             {

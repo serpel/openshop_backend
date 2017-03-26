@@ -13,6 +13,9 @@ using OpenshopBackend.Models.Helper;
 using Newtonsoft.Json;
 using Hangfire;
 using OpenshopBackend.BussinessLogic;
+using System.Web.Script.Serialization;
+using System.Text;
+using OpenshopBackend.Controllers;
 
 namespace OpenshopBackend.Api
 {
@@ -43,6 +46,34 @@ namespace OpenshopBackend.Api
             };
 
             return Request.CreateResponse(HttpStatusCode.OK, result, Configuration.Formatters.JsonFormatter);
+        }
+
+
+        [HttpGet]
+        [HttpPost]
+        public HttpResponseMessage UpdateUser(int userId, String bluetooth)
+        {
+            bool success = true;
+            string message = "";
+
+            try
+            {
+                DeviceUser myUser = db.DeviceUser
+                    .ToList()
+                    .Where(w => w.DeviceUserId == userId)
+                    .FirstOrDefault();
+
+                myUser.PrintBluetoothAddress = bluetooth;
+
+                db.Entry(myUser).State = EntityState.Modified;
+                db.SaveChanges();
+
+                return Request.CreateResponse(HttpStatusCode.OK, myUser, Configuration.Formatters.JsonFormatter);
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, Configuration.Formatters.JsonFormatter);
+            }
         }
 
 
@@ -116,23 +147,51 @@ namespace OpenshopBackend.Api
         // GET: api/List
         public HttpResponseMessage GetNavigations(int shop = -1)
         {
-            var categories = db.Categories
+
+            var categoryModels = db.Categories
                 .ToList()
-                .Where(w => w.PartentId == 0)
-                .Select(s => new
+                .Select(v => new CategoryViewModel()
                 {
-                    id = s.CategoryId,
-                    original_id = s.RemoteId,
+                    CategoryId = v.CategoryId,
+                    Id = v.Id,
+                    Name = v.Name,
+                    PartentId = v.PartentId,
+                    Type = v.Type,
+                    RemoteId = v.RemoteId
+                 }
+                )
+                .ToList();
+
+            var categories = categoryModels
+                .Where(w => w.PartentId == 0)
+                .Select(s => new {
+                    id = s.Id,
                     name = s.Name,
-                    children = db.Categories.Where(w => w.PartentId == s.RemoteId).ToList().Select(sc => new { id = sc.CategoryId, original_id = sc.RemoteId, name = sc.Name, children = new String[] { }, type = sc.Type }),
-                    type = s.Type
-                })
-                 .OrderBy(o => o.original_id);
+                    original_id = s.RemoteId,
+                    type = s.Type,
+                    children = GetChildrens(categoryModels, s.Id)
+                }).OrderBy(o => o.id);
 
             var result = new { navigation = categories };
 
             return Request.CreateResponse(HttpStatusCode.OK, result, Configuration.Formatters.JsonFormatter);
         }
+
+        private Object GetChildrens(List<CategoryViewModel> categories, int parentId)
+        {
+            return categories
+                .Where(w => w.PartentId == parentId)
+                .Select(s => new
+                {
+                    id = s.Id,
+                    original_id = s.RemoteId,
+                    type = s.Type,
+                    name = s.Name,
+                    children = GetChildrens(categories, s.Id)
+                })
+                .ToList();
+        }
+
 
         [HttpGet]
         public HttpResponseMessage GetBanners()
@@ -251,7 +310,7 @@ namespace OpenshopBackend.Api
                     url = @"http:\/\/img.bfashion.com\/products\/presentation\/0d5b86cca1cd7f09172526e2ffe3022408c4f727.jpg",
                     name = s.Name,
                     category = s.Category.RemoteId,
-                    categoryCode = s.Category.Code,
+                    //categoryCode = s.Category.Code,
                     brand = s.Brand.Name,
                     brandCode = s.Brand.Code,
                     season = s.Season,
@@ -273,8 +332,7 @@ namespace OpenshopBackend.Api
             {
                 products = products.Where(w => w.code.Contains(search.ToUpper())
                 || w.brand.Contains(search.ToUpper())
-                || w.categoryCode == search.ToUpper()
-                || w.description.ToUpper().Contains(search.ToUpper())
+                || w.name.ToUpper().Contains(search.ToUpper())
                 );
             }
 

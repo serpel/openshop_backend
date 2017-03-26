@@ -15,5 +15,6 @@ namespace OpenshopBackend.Models
         public String Username { get; set; }
         public String Password { get; set; }
         public String AccessToken { get; set; }
+        public String PrintBluetoothAddress { get; set; }
     }
 }
