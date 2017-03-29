@@ -43,6 +43,27 @@ namespace OpenshopBackend.Migrations
                 }
             }
 
+            //var categoy = new Category()
+            //{
+            //    Id = -1,
+            //    Name = "Menu",
+            //    PartentId = 0,
+            //    RemoteId = -1,
+            //    Type = "category"
+            //};
+
+            //var category2 = new Category()
+            //{
+            //    Id = -2,
+            //    Name = "Clientes",
+            //    PartentId = 0,
+            //    RemoteId = -2,
+            //    Type = "category"
+            //};
+
+            //context.Categories.Add(categoy);
+            //context.Categories.Add(category2);
+            //context.SaveChanges();
         }
     }
 }

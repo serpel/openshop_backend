@@ -8,6 +8,7 @@ namespace OpenshopBackend.Models
     {
         [Key]
         public Int32 ProductVariantId { get; set; }
+        public Int32 ItemGroup { get; set; }
         public Int32 ProductId { get; set; }
         public Int32 ColorId { get; set; }
         public Int32 SizeId { get; set; }
@@ -27,6 +28,5 @@ namespace OpenshopBackend.Models
         {
             return this.Currency + ' ' + this.Price;
         }
-
     }
 }

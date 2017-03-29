@@ -65,9 +65,14 @@ namespace OpenshopBackend.Models
         public DbSet<OpenshopBackend.Models.Client> Clients { get; set; }
 
         public DbSet<Document> Documents { get; set; }
-    
+  
         public DbSet<LogEntry> Logs { get; set; }
-
         public DbSet<ClientDiscount> ClientDiscounts { get; set; }
+        public DbSet<Payment> Payments { get; set; }
+        public DbSet<Cash> Cash { get; set; }
+        public DbSet<Transfer> Transfers { get; set; }
+        public DbSet<Check> Checks { get; set; }
+
+        public DbSet<Setting> Settings { get; set; }
     }
 }

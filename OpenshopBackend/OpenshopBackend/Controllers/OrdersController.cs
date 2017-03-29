@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using OpenshopBackend.Models;
 using OpenshopBackend.BussinessLogic;
+using Hangfire;
 
 namespace OpenshopBackend.Controllers
 {
@@ -19,7 +20,7 @@ namespace OpenshopBackend.Controllers
         // GET: Orders
         public ActionResult Index()
         {
-            return View(db.Orders.ToList());
+            return View(db.Orders.ToList().OrderByDescending(o => o.DateCreated));
         }
 
         // GET: Orders/Details/5
@@ -41,6 +42,30 @@ namespace OpenshopBackend.Controllers
         public ActionResult Create()
         {
             return View();
+        }
+
+        [AutomaticRetry(Attempts = 0)]
+        public void CreateQuotationOrderOnSap(int orderId)
+        {
+
+            String message = "";
+
+            try
+            {
+                Quotation salesorder = new Quotation();
+                message = salesorder.AddQuotation(orderId);
+            }
+            catch (Exception e)
+            {
+                MyLogger.GetInstance.Error(e.Message, e);
+            }
+        }
+
+        public ActionResult Process(int id)
+        {
+            BackgroundJob.Enqueue(() => CreateQuotationOrderOnSap(id));
+
+            return RedirectToAction("Index");
         }
 
         // POST: Orders/Create

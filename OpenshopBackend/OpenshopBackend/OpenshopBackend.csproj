@@ -255,19 +255,31 @@
     <Compile Include="BussinessLogic\ILogger.cs" />
     <Compile Include="BussinessLogic\MyAuthorizeAttribute.cs" />
     <Compile Include="BussinessLogic\MyLogger.cs" />
-    <Compile Include="BussinessLogic\Quotation.cs" />
-    <Compile Include="BussinessLogic\SalesOrder.cs" />
-    <Compile Include="BussinessLogic\ServerConnection.cs" />
+    <Compile Include="BussinessLogic\SAP\IncomingPayment.cs" />
+    <Compile Include="BussinessLogic\SAP\Quotation.cs" />
+    <Compile Include="BussinessLogic\SAP\SalesOrder.cs" />
+    <Compile Include="BussinessLogic\SAP\ServerConnection.cs" />
     <Compile Include="BussinessLogic\Uploader.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BannersController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\BrandsController.cs" />
     <Compile Include="Controllers\CategoriesController.cs" />
-    <Compile Include="Migrations\201703260252269_FixCategoryModel1.cs" />
-    <Compile Include="Migrations\201703260252269_FixCategoryModel1.Designer.cs">
-      <DependentUpon>201703260252269_FixCategoryModel1.cs</DependentUpon>
+    <Compile Include="Controllers\PaymentsController.cs" />
+    <Compile Include="Migrations\201703261435172_InitialModels.cs" />
+    <Compile Include="Migrations\201703261435172_InitialModels.Designer.cs">
+      <DependentUpon>201703261435172_InitialModels.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201703261620205_SomeFieldsFixOnOrders.cs" />
+    <Compile Include="Migrations\201703261620205_SomeFieldsFixOnOrders.Designer.cs">
+      <DependentUpon>201703261620205_SomeFieldsFixOnOrders.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201703270459532_PaymentsModel.cs" />
+    <Compile Include="Migrations\201703270459532_PaymentsModel.Designer.cs">
+      <DependentUpon>201703270459532_PaymentsModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Bank.cs" />
+    <Compile Include="Models\Cash.cs" />
     <Compile Include="Models\CategoryViewModel.cs" />
     <Compile Include="Controllers\ClientsController.cs" />
     <Compile Include="Controllers\ColorsController.cs" />
@@ -289,162 +301,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201701101249150_initialmodel.cs" />
-    <Compile Include="Migrations\201701101249150_initialmodel.Designer.cs">
-      <DependentUpon>201701101249150_initialmodel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201701102221515_ShopModel.cs" />
-    <Compile Include="Migrations\201701102221515_ShopModel.Designer.cs">
-      <DependentUpon>201701102221515_ShopModel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201701102254274_BannerModel.cs" />
-    <Compile Include="Migrations\201701102254274_BannerModel.Designer.cs">
-      <DependentUpon>201701102254274_BannerModel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201701111231350_CodeOnCateogryModel.cs" />
-    <Compile Include="Migrations\201701111231350_CodeOnCateogryModel.Designer.cs">
-      <DependentUpon>201701111231350_CodeOnCateogryModel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201701111233359_CodeOnBrandModel.cs" />
-    <Compile Include="Migrations\201701111233359_CodeOnBrandModel.Designer.cs">
-      <DependentUpon>201701111233359_CodeOnBrandModel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201701111844496_CategoryModelFix.cs" />
-    <Compile Include="Migrations\201701111844496_CategoryModelFix.Designer.cs">
-      <DependentUpon>201701111844496_CategoryModelFix.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201701161042302_ProductModelRemoveCollections.cs" />
-    <Compile Include="Migrations\201701161042302_ProductModelRemoveCollections.Designer.cs">
-      <DependentUpon>201701161042302_ProductModelRemoveCollections.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201701161053416_ProductModelFieldsQuantity.cs" />
-    <Compile Include="Migrations\201701161053416_ProductModelFieldsQuantity.Designer.cs">
-      <DependentUpon>201701161053416_ProductModelFieldsQuantity.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201701182001291_ExtraFieldsProductsModel.cs" />
-    <Compile Include="Migrations\201701182001291_ExtraFieldsProductsModel.Designer.cs">
-      <DependentUpon>201701182001291_ExtraFieldsProductsModel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201701190100346_FixSizeModel.cs" />
-    <Compile Include="Migrations\201701190100346_FixSizeModel.Designer.cs">
-      <DependentUpon>201701190100346_FixSizeModel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201701190110596_AddDescriptionFieldOnColoModel.cs" />
-    <Compile Include="Migrations\201701190110596_AddDescriptionFieldOnColoModel.Designer.cs">
-      <DependentUpon>201701190110596_AddDescriptionFieldOnColoModel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201701190455475_ProducReferenceOnProducVariantModel.cs" />
-    <Compile Include="Migrations\201701190455475_ProducReferenceOnProducVariantModel.Designer.cs">
-      <DependentUpon>201701190455475_ProducReferenceOnProducVariantModel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201701190512397_AddedRequiredFieldsOnProductVariant.cs" />
-    <Compile Include="Migrations\201701190512397_AddedRequiredFieldsOnProductVariant.Designer.cs">
-      <DependentUpon>201701190512397_AddedRequiredFieldsOnProductVariant.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201701190533357_MovedFieldToProductVariant.cs" />
-    <Compile Include="Migrations\201701190533357_MovedFieldToProductVariant.Designer.cs">
-      <DependentUpon>201701190533357_MovedFieldToProductVariant.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201701232137269_UserModel.cs" />
-    <Compile Include="Migrations\201701232137269_UserModel.Designer.cs">
-      <DependentUpon>201701232137269_UserModel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201701232141021_FixUserModel.cs" />
-    <Compile Include="Migrations\201701232141021_FixUserModel.Designer.cs">
-      <DependentUpon>201701232141021_FixUserModel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201701232210411_DeviceUserModel.cs" />
-    <Compile Include="Migrations\201701232210411_DeviceUserModel.Designer.cs">
-      <DependentUpon>201701232210411_DeviceUserModel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201701241645313_CartModel.cs" />
-    <Compile Include="Migrations\201701241645313_CartModel.Designer.cs">
-      <DependentUpon>201701241645313_CartModel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201701241707471_UserToCartModel.cs" />
-    <Compile Include="Migrations\201701241707471_UserToCartModel.Designer.cs">
-      <DependentUpon>201701241707471_UserToCartModel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201701241711093_UsernameAndPasswordUserModel.cs" />
-    <Compile Include="Migrations\201701241711093_UsernameAndPasswordUserModel.Designer.cs">
-      <DependentUpon>201701241711093_UsernameAndPasswordUserModel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201701241842124_FixMigration.cs" />
-    <Compile Include="Migrations\201701241842124_FixMigration.Designer.cs">
-      <DependentUpon>201701241842124_FixMigration.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201701242317566_FixOrderFieldOnCartProductItem.cs" />
-    <Compile Include="Migrations\201701242317566_FixOrderFieldOnCartProductItem.Designer.cs">
-      <DependentUpon>201701242317566_FixOrderFieldOnCartProductItem.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201701250007086_ProductReferencesOnCartProductVariant.cs" />
-    <Compile Include="Migrations\201701250007086_ProductReferencesOnCartProductVariant.Designer.cs">
-      <DependentUpon>201701250007086_ProductReferencesOnCartProductVariant.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201701250015057_ProductVariantReferenceOnCartProductVariant.cs" />
-    <Compile Include="Migrations\201701250015057_ProductVariantReferenceOnCartProductVariant.Designer.cs">
-      <DependentUpon>201701250015057_ProductVariantReferenceOnCartProductVariant.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201701310131268_OrderItemModel.cs" />
-    <Compile Include="Migrations\201701310131268_OrderItemModel.Designer.cs">
-      <DependentUpon>201701310131268_OrderItemModel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201701310215244_SalesPersonNumberOnDeviceUser.cs" />
-    <Compile Include="Migrations\201701310215244_SalesPersonNumberOnDeviceUser.Designer.cs">
-      <DependentUpon>201701310215244_SalesPersonNumberOnDeviceUser.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201702021627252_WareHouseFieldOnProductVariantModel.cs" />
-    <Compile Include="Migrations\201702021627252_WareHouseFieldOnProductVariantModel.Designer.cs">
-      <DependentUpon>201702021627252_WareHouseFieldOnProductVariantModel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201702021738464_ClientModel.cs" />
-    <Compile Include="Migrations\201702021738464_ClientModel.Designer.cs">
-      <DependentUpon>201702021738464_ClientModel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201702032027357_ClientDocumentsModel.cs" />
-    <Compile Include="Migrations\201702032027357_ClientDocumentsModel.Designer.cs">
-      <DependentUpon>201702032027357_ClientDocumentsModel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201702071922180_ClientExtraFieldOnClienModel.cs" />
-    <Compile Include="Migrations\201702071922180_ClientExtraFieldOnClienModel.Designer.cs">
-      <DependentUpon>201702071922180_ClientExtraFieldOnClienModel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201702072310437_LoggerModel.cs" />
-    <Compile Include="Migrations\201702072310437_LoggerModel.Designer.cs">
-      <DependentUpon>201702072310437_LoggerModel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201702221122347_PriceFieldOnOrderItem.cs" />
-    <Compile Include="Migrations\201702221122347_PriceFieldOnOrderItem.Designer.cs">
-      <DependentUpon>201702221122347_PriceFieldOnOrderItem.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201703071633078_AddDiscountToClients.cs" />
-    <Compile Include="Migrations\201703071633078_AddDiscountToClients.Designer.cs">
-      <DependentUpon>201703071633078_AddDiscountToClients.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201703231356310_ClientDiscountModel.cs" />
-    <Compile Include="Migrations\201703231356310_ClientDiscountModel.Designer.cs">
-      <DependentUpon>201703231356310_ClientDiscountModel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201703240349048_FixOnNavigation.cs" />
-    <Compile Include="Migrations\201703240349048_FixOnNavigation.Designer.cs">
-      <DependentUpon>201703240349048_FixOnNavigation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201703240724298_PrintBluetoothAddressFieldOnUserModel.cs" />
-    <Compile Include="Migrations\201703240724298_PrintBluetoothAddressFieldOnUserModel.Designer.cs">
-      <DependentUpon>201703240724298_PrintBluetoothAddressFieldOnUserModel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201703241825568_CategoryFixModel.cs" />
-    <Compile Include="Migrations\201703241825568_CategoryFixModel.Designer.cs">
-      <DependentUpon>201703241825568_CategoryFixModel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201703241833359_AddIdFieldToCategoryModel.cs" />
-    <Compile Include="Migrations\201703241833359_AddIdFieldToCategoryModel.Designer.cs">
-      <DependentUpon>201703241833359_AddIdFieldToCategoryModel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201703241853486_FixCategoryModel.cs" />
-    <Compile Include="Migrations\201703241853486_FixCategoryModel.Designer.cs">
-      <DependentUpon>201703241853486_FixCategoryModel.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AppUser.cs" />
@@ -453,6 +309,7 @@
     <Compile Include="Models\Cart.cs" />
     <Compile Include="Models\CartProductVariant.cs" />
     <Compile Include="Models\Category.cs" />
+    <Compile Include="Models\Check.cs" />
     <Compile Include="Models\Client.cs" />
     <Compile Include="Models\ClientDiscount.cs" />
     <Compile Include="Models\Collection.cs" />
@@ -460,9 +317,14 @@
     <Compile Include="Models\Device.cs" />
     <Compile Include="Models\CartProductItem.cs" />
     <Compile Include="Models\Document.cs" />
+    <Compile Include="Models\Invoice.cs" />
     <Compile Include="Models\LogEntry.cs" />
     <Compile Include="Models\OrderItem.cs" />
     <Compile Include="Models\Order.cs" />
+    <Compile Include="Models\OrderViewModel.cs" />
+    <Compile Include="Models\Payment.cs" />
+    <Compile Include="Models\PaymentInvoice.cs" />
+    <Compile Include="Models\Setting.cs" />
     <Compile Include="Models\Shop.cs" />
     <Compile Include="Models\Helper\Link.cs" />
     <Compile Include="Models\Helper\Metadata.cs" />
@@ -473,6 +335,7 @@
     <Compile Include="Models\Product.cs" />
     <Compile Include="Models\ProductVariant.cs" />
     <Compile Include="Models\Size.cs" />
+    <Compile Include="Models\Transfer.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -1681,6 +1544,12 @@
     <Content Include="Views\Roles\Edit.cshtml" />
     <Content Include="Views\Roles\Index.cshtml" />
     <Content Include="Views\Profile\Index.cshtml" />
+    <Content Include="Views\Payments\Create.cshtml" />
+    <Content Include="Views\Payments\Delete.cshtml" />
+    <Content Include="Views\Payments\Details.cshtml" />
+    <Content Include="Views\Payments\Edit.cshtml" />
+    <Content Include="Views\Payments\Index.cshtml" />
+    <Content Include="Views\Payments\Process.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1698,128 +1567,6 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201701101249150_initialmodel.resx">
-      <DependentUpon>201701101249150_initialmodel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201701102221515_ShopModel.resx">
-      <DependentUpon>201701102221515_ShopModel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201701102254274_BannerModel.resx">
-      <DependentUpon>201701102254274_BannerModel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201701111231350_CodeOnCateogryModel.resx">
-      <DependentUpon>201701111231350_CodeOnCateogryModel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201701111233359_CodeOnBrandModel.resx">
-      <DependentUpon>201701111233359_CodeOnBrandModel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201701111844496_CategoryModelFix.resx">
-      <DependentUpon>201701111844496_CategoryModelFix.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201701161042302_ProductModelRemoveCollections.resx">
-      <DependentUpon>201701161042302_ProductModelRemoveCollections.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201701161053416_ProductModelFieldsQuantity.resx">
-      <DependentUpon>201701161053416_ProductModelFieldsQuantity.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201701182001291_ExtraFieldsProductsModel.resx">
-      <DependentUpon>201701182001291_ExtraFieldsProductsModel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201701190100346_FixSizeModel.resx">
-      <DependentUpon>201701190100346_FixSizeModel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201701190110596_AddDescriptionFieldOnColoModel.resx">
-      <DependentUpon>201701190110596_AddDescriptionFieldOnColoModel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201701190455475_ProducReferenceOnProducVariantModel.resx">
-      <DependentUpon>201701190455475_ProducReferenceOnProducVariantModel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201701190512397_AddedRequiredFieldsOnProductVariant.resx">
-      <DependentUpon>201701190512397_AddedRequiredFieldsOnProductVariant.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201701190533357_MovedFieldToProductVariant.resx">
-      <DependentUpon>201701190533357_MovedFieldToProductVariant.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201701232137269_UserModel.resx">
-      <DependentUpon>201701232137269_UserModel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201701232141021_FixUserModel.resx">
-      <DependentUpon>201701232141021_FixUserModel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201701232210411_DeviceUserModel.resx">
-      <DependentUpon>201701232210411_DeviceUserModel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201701241645313_CartModel.resx">
-      <DependentUpon>201701241645313_CartModel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201701241707471_UserToCartModel.resx">
-      <DependentUpon>201701241707471_UserToCartModel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201701241711093_UsernameAndPasswordUserModel.resx">
-      <DependentUpon>201701241711093_UsernameAndPasswordUserModel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201701241842124_FixMigration.resx">
-      <DependentUpon>201701241842124_FixMigration.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201701242317566_FixOrderFieldOnCartProductItem.resx">
-      <DependentUpon>201701242317566_FixOrderFieldOnCartProductItem.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201701250007086_ProductReferencesOnCartProductVariant.resx">
-      <DependentUpon>201701250007086_ProductReferencesOnCartProductVariant.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201701250015057_ProductVariantReferenceOnCartProductVariant.resx">
-      <DependentUpon>201701250015057_ProductVariantReferenceOnCartProductVariant.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201701310131268_OrderItemModel.resx">
-      <DependentUpon>201701310131268_OrderItemModel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201701310215244_SalesPersonNumberOnDeviceUser.resx">
-      <DependentUpon>201701310215244_SalesPersonNumberOnDeviceUser.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201702021627252_WareHouseFieldOnProductVariantModel.resx">
-      <DependentUpon>201702021627252_WareHouseFieldOnProductVariantModel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201702021738464_ClientModel.resx">
-      <DependentUpon>201702021738464_ClientModel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201702032027357_ClientDocumentsModel.resx">
-      <DependentUpon>201702032027357_ClientDocumentsModel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201702071922180_ClientExtraFieldOnClienModel.resx">
-      <DependentUpon>201702071922180_ClientExtraFieldOnClienModel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201702072310437_LoggerModel.resx">
-      <DependentUpon>201702072310437_LoggerModel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201702221122347_PriceFieldOnOrderItem.resx">
-      <DependentUpon>201702221122347_PriceFieldOnOrderItem.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201703071633078_AddDiscountToClients.resx">
-      <DependentUpon>201703071633078_AddDiscountToClients.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201703231356310_ClientDiscountModel.resx">
-      <DependentUpon>201703231356310_ClientDiscountModel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201703240349048_FixOnNavigation.resx">
-      <DependentUpon>201703240349048_FixOnNavigation.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201703240724298_PrintBluetoothAddressFieldOnUserModel.resx">
-      <DependentUpon>201703240724298_PrintBluetoothAddressFieldOnUserModel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201703241825568_CategoryFixModel.resx">
-      <DependentUpon>201703241825568_CategoryFixModel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201703241833359_AddIdFieldToCategoryModel.resx">
-      <DependentUpon>201703241833359_AddIdFieldToCategoryModel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201703241853486_FixCategoryModel.resx">
-      <DependentUpon>201703241853486_FixCategoryModel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201703260252269_FixCategoryModel1.resx">
-      <DependentUpon>201703260252269_FixCategoryModel1.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <COMReference Include="SAPbobsCOM">
       <Guid>{FC8030BE-F5D2-4B8E-8F92-44228FE30090}</Guid>
       <VersionMajor>9</VersionMajor>
@@ -1835,6 +1582,17 @@
       <Project>{daed8631-ad04-489b-96ed-8dc1715f2349}</Project>
       <Name>Resources</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201703261435172_InitialModels.resx">
+      <DependentUpon>201703261435172_InitialModels.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703261620205_SomeFieldsFixOnOrders.resx">
+      <DependentUpon>201703261620205_SomeFieldsFixOnOrders.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703270459532_PaymentsModel.resx">
+      <DependentUpon>201703270459532_PaymentsModel.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

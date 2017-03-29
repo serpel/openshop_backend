@@ -14,6 +14,7 @@ namespace OpenshopBackend.Models
         public String Url { get; set; }
         public String Name { get; set; }
         public Double Price { get; set; }
+        public Double Discount { get; set; }
         public String PriceFormatted { get; set; }
         public Int32 CategoryId { get; set; }
         public String MainImage { get; set; }

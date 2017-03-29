@@ -19,7 +19,21 @@ namespace OpenshopBackend.Models
 
         public Double GetProductTotalPrice()
         {
+            return (GetProductSubtotalPrice() - GetProductDiscountPrice()) + GetProductISVPrice();
+        }
+        public Double GetProductSubtotalPrice()
+        {
             return CartProductItems.Sum(s => s.TotalItemPrice);
+        }
+
+        public Double GetProductISVPrice()
+        {
+            return CartProductItems.Sum(s => s.ISV);
+        }
+
+        public Double GetProductDiscountPrice()
+        {
+            return CartProductItems.Sum(s => s.Discount);
         }
 
         public Double GetProductCount()

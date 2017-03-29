@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System; 
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -16,6 +16,8 @@ namespace OpenshopBackend.Models
         public Double TotalAmount { get; set; }
         public Double PayedAmount { get; set; }
         public Int32 ClientId { get; set; }
+        public Int32 DocEntry { get; set; }
         public virtual Client Client { get; set; }
+        public virtual List<PaymentInvoice> PaymentInvoices { get; set; }
     }
 }

@@ -21,19 +21,16 @@
             @Html.DisplayNameFor(model => model.Status)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Total)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.CardCode)
+            @Html.DisplayNameFor(model => model.Client.CardCode)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Comment)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.SalesPersonCode)
+            @Html.DisplayNameFor(model => model.DeviceUser.Name)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Series)
+            @Html.DisplayNameFor(model => model.LastErrorMessage)
         </th>
         <th></th>
     </tr>
@@ -50,21 +47,19 @@
             @Html.DisplayFor(modelItem => item.Status)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Total)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CardCode)
+            @Html.DisplayFor(modelItem => item.Client.CardCode)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Comment)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.SalesPersonCode)
+            @Html.DisplayFor(modelItem => item.DeviceUser.Name)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Series)
+            @Html.DisplayFor(modelItem => item.LastErrorMessage)
         </td>
         <td>
+            @Html.ActionLink("Process", "Process", new { id = item.OrderId }) |
             @Html.ActionLink("Edit", "Edit", new { id=item.OrderId }) |
             @Html.ActionLink("Details", "Details", new { id=item.OrderId }) |
             @Html.ActionLink("Delete", "Delete", new { id=item.OrderId })

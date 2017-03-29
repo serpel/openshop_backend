@@ -16,6 +16,7 @@ using OpenshopBackend.BussinessLogic;
 using System.Web.Script.Serialization;
 using System.Text;
 using OpenshopBackend.Controllers;
+using OpenshopBackend.BussinessLogic.SAP;
 
 namespace OpenshopBackend.Api
 {
@@ -25,6 +26,28 @@ namespace OpenshopBackend.Api
         private String default_currency = "L";
         private Double default_tax = 0.15;
 
+        [AutomaticRetry(Attempts = 0)]
+        public void CreatePaymentOnSAP(int paymentId)
+        {
+            IncomingPayment incomingPayment = new IncomingPayment();
+            incomingPayment.MakePayment(paymentId);
+        }
+
+        //[HttpGet]
+        //public HttpResponseMessage CreatePayment(String cash, String transfer)
+        //{
+
+        //}
+
+        [HttpGet]
+        public HttpResponseMessage ProcessPayment(int paymentId)
+        {
+            bool success = true;
+
+            BackgroundJob.Enqueue(() => CreatePaymentOnSAP(paymentId));
+
+            return Request.CreateResponse(HttpStatusCode.OK, success, Configuration.Formatters.JsonFormatter);
+        }
 
         [HttpGet]
         public HttpResponseMessage Users()
@@ -59,8 +82,8 @@ namespace OpenshopBackend.Api
             try
             {
                 DeviceUser myUser = db.DeviceUser
-                    .ToList()
                     .Where(w => w.DeviceUserId == userId)
+                    .ToList()
                     .FirstOrDefault();
 
                 myUser.PrintBluetoothAddress = bluetooth;
@@ -89,7 +112,8 @@ namespace OpenshopBackend.Api
                       access_token = s.AccessToken,
                       sales_person_id = s.SalesPersonId,
                       name = s.Name,
-                      email = s.Username
+                      email = s.Username,
+                      print_bluetooth_address = s.PrintBluetoothAddress
                   }).FirstOrDefault();
 
             return Request.CreateResponse(HttpStatusCode.OK, user, Configuration.Formatters.JsonFormatter);
@@ -110,7 +134,8 @@ namespace OpenshopBackend.Api
                       access_token = s.AccessToken,
                       sales_person_id = s.SalesPersonId,
                       name = s.Name,
-                      username = s.Username
+                      username = s.Username,
+                      print_bluetooth_address = s.PrintBluetoothAddress
                   }).FirstOrDefault();
 
                 MyLogger.GetInstance.Debug(String.Format("LoginByEmail - username: {0}, pass: {1}", user.username, user.name));
@@ -149,6 +174,7 @@ namespace OpenshopBackend.Api
         {
 
             var categoryModels = db.Categories
+                .Where(w => w.PartentId == 0)
                 .ToList()
                 .Select(v => new CategoryViewModel()
                 {
@@ -162,8 +188,7 @@ namespace OpenshopBackend.Api
                 )
                 .ToList();
 
-            var categories = categoryModels
-                .Where(w => w.PartentId == 0)
+            var categories = categoryModels               
                 .Select(s => new {
                     id = s.Id,
                     name = s.Name,
@@ -241,8 +266,10 @@ namespace OpenshopBackend.Api
         //TODO: fix search related products
         public HttpResponseMessage GetProduct(int id, string include = "")
         {
-            var product = db.Products
-                .Where(w => w.ProductId == id)
+            var product = db.Products.AsQueryable();
+            product = product.Where(w => w.ProductId == id);
+
+            var result = product
                 .ToList()
                 .Select(s => new
                 {
@@ -259,8 +286,8 @@ namespace OpenshopBackend.Api
                     main_image_high_res = s.MainImageHighRes,
                     images = new String[] { },
                     variants = s.Variants
-                                .ToList()
                                 .OrderBy(o => o.Code)
+                                .ToList()
                                 .Select(v => new
                                 {
                                     id = v.ProductVariantId,
@@ -290,16 +317,11 @@ namespace OpenshopBackend.Api
                                 })
                 }).FirstOrDefault();
 
-            if (include.Trim() == "related")
-            {
-
-            }
-
-            return Request.CreateResponse(HttpStatusCode.OK, product, Configuration.Formatters.JsonFormatter);
+            return Request.CreateResponse(HttpStatusCode.OK, result, Configuration.Formatters.JsonFormatter);
         }
 
         [HttpGet]
-        public HttpResponseMessage GetProducts(int category = -1, string sort = "", string search = "")
+        public HttpResponseMessage GetProducts2(int category = -1, string sort = "", string search = "")
         {
             var products = db.Products
                 .ToList()
@@ -372,7 +394,7 @@ namespace OpenshopBackend.Api
                 metadata = new Metadata()
                 {
                     links = links,
-                    records_count = products.ToList().Count,
+                    records_count = products.Count(),
                     sorting = "newest"
                 },
                 records = products
@@ -382,13 +404,90 @@ namespace OpenshopBackend.Api
         }
 
         [HttpGet]
+        public HttpResponseMessage GetProducts(int category = -1, string sort = "", string search = "")
+        {
+            var result = db.Products.AsQueryable();
+
+            if(category > 0)
+                result = result.Where(w => w.Category.RemoteId == category);
+            if (search.Count() > 0)
+                result = result.Where(w => w.Code.Contains(search.ToUpper())
+                        || w.Brand.Name.Contains(search.ToUpper())
+                        || w.Name.ToUpper().Contains(search.ToUpper())
+                );
+            if (sort.ToLower().Count() > 0)
+            {
+                switch (sort.ToLower())
+                {
+                    case "newest":
+                        result = result.OrderByDescending(o => o.ProductId);
+                        break;
+                    case "popularity":
+                        //products = products.OrderByDescending(o => o.rank);
+                        break;
+                    case "price_desc":
+                        result = result.OrderByDescending(o => o.Variants != null ? o.Variants.FirstOrDefault().Price : o.ProductId);
+                        break;
+                    case "price_asc":
+                        result = result.OrderBy(o => o.Variants != null ? o.Variants.FirstOrDefault().Price : o.ProductId);
+                        break;
+                }
+            }
+
+            var products = result
+                .ToList()
+                .Select(s => new
+                {
+                    id = s.ProductId,
+                    remote_id = s.RemoteId,
+                    url = "",
+                    name = s.Name,
+                    category = s.Category.RemoteId,
+                    brand = s.Brand.Name,
+                    brandCode = s.Brand.Code,
+                    season = s.Season,
+                    code = s.Code,
+                    description = s.Description,
+                    main_image = s.MainImage,
+                    main_image_high_res = s.MainImageHighRes,
+                    images = new String[] { },
+                    variants = new List<ProductVariant>(),
+                    related = new String[] { }
+                });
+
+            var links = new Link()
+            {
+                first = "",
+                next = "",
+                last = "",
+                prev = "",
+                self = ""
+            };
+
+            var respond = new Record()
+            {
+                metadata = new Metadata()
+                {
+                    links = links,
+                    records_count = products.Count(),
+                    sorting = "newest"
+                },
+                records = products
+            };
+
+            return Request.CreateResponse(HttpStatusCode.OK, respond, Configuration.Formatters.JsonFormatter);
+        }
+
+        [HttpGet]
         public HttpResponseMessage GetClients(String search = "")
         {
-            //var orderSerialized = JsonConvert.SerializeObject(db.Clients,
-            //    Formatting.None,
-            //    new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+            var clients = db.Clients.AsQueryable();
 
-            var clients = db.Clients
+            if (search.Count() > 0)
+                clients = clients.Where(w => w.Name.ToLower().Contains(search.ToLower())
+                || w.CardCode.ToLower().Contains(search.ToLower()));
+
+            var result = clients
                 .ToList()
                 .Select(s => new
                 {
@@ -399,27 +498,22 @@ namespace OpenshopBackend.Api
                     name = s.Name
                 });
 
-            if (search.Count() > 0)
-            {
-                clients = clients.Where(w => w.name.ToLower().Contains(search.ToLower()) || w.card_code.ToLower().Contains(search.ToLower()));
-            }
+            var records = new { records = result };
 
-            var result = new { records = clients };
-
-            return Request.CreateResponse(HttpStatusCode.OK, result, Configuration.Formatters.JsonFormatter);
+            return Request.CreateResponse(HttpStatusCode.OK, records, Configuration.Formatters.JsonFormatter);
         }
 
         [HttpGet]
         public HttpResponseMessage GetDocuments(string card_code = "")
         {
             var client = db.Clients
-                .ToList()
                 .Where(w => w.CardCode == card_code)
+                .ToList()
                 .FirstOrDefault();
 
             var documents = db.Documents
-                .ToList()
                 .Where(w => w.Client.CardCode == card_code)
+                .ToList()
                 .Select(s => new
                 {
                     id = s.DocumentId,
@@ -452,8 +546,8 @@ namespace OpenshopBackend.Api
             String message = "";
 
             var cart_item = db.CartProductItems
-                .ToList()
                 .Where(w => w.Cart.DeviceUserId == userId && w.CartProductItemId == id)
+                .ToList()
                 .FirstOrDefault();
 
             try
@@ -474,22 +568,100 @@ namespace OpenshopBackend.Api
             return Request.CreateResponse(HttpStatusCode.OK, new { success = success, message = message }, Configuration.Formatters.JsonFormatter);
         }
 
+        //[HttpGet]
+        //[HttpPost]
+        //public HttpResponseMessage AddToCart(int userId = -1, int product_variant_id = -1, int quantity = 0)
+        //{
+        //    bool success = false;
+
+        //    if (userId > 0 && product_variant_id > 0)
+        //    {
+        //        var product_variant = db.ProductVariants
+        //            .ToList()
+        //            .Where(w => w.ProductVariantId == product_variant_id)
+        //            .FirstOrDefault();
+
+        //        var cart = db.Carts
+        //            .ToList()
+        //            .Where(w => w.DeviceUserId == userId)
+        //            .FirstOrDefault();
+
+        //        //create a new cart if not exist
+        //        if (cart == null && product_variant != null)
+        //        {
+        //            var new_cart = new Cart()
+        //            {
+        //                DeviceUserId = userId,
+        //                Currency = product_variant.Currency,
+        //                TotalPrice = 0,
+        //                TotalPriceFormatted = product_variant.Currency + ' ' + 0
+        //            };
+
+        //            db.Carts.Add(new_cart);
+        //            db.SaveChanges();
+        //            cart = new_cart;
+        //        }
+
+        //        if (cart != null && product_variant != null)
+        //        {
+        //            var cart_item_variant = new CartProductVariant()
+        //            {
+        //                CategoryId = product_variant.Product.CategoryId,
+        //                ColorId = product_variant.ColorId,
+        //                SizeId = product_variant.SizeId,
+        //                MainImage = product_variant.Product.MainImage,
+        //                Name = product_variant.Code,
+        //                ProductVariantId = product_variant.ProductVariantId,
+        //                WareHouseCode = product_variant.WareHouseCode,
+        //                Url = "",
+        //                Price = product_variant.Price,
+        //                Discount = 0.0,
+        //                PriceFormatted = product_variant.GetPriceTotalFormated()
+        //            };
+
+        //            db.CartProductVariants.Add(cart_item_variant);
+        //            db.SaveChanges();
+
+        //            var cart_item = new CartProductItem()
+        //            {
+        //                CartProductVariantId = cart_item_variant.CartProductVariantId,
+        //                CartId = cart.CartId,
+        //                Expiration = 0,
+        //                Quantity = quantity,
+        //                Discount = 0.0,
+        //                RemoteId = product_variant.Product.RemoteId,
+        //                TotalItemPrice = (quantity * product_variant.Price),
+        //                TotalItemPriceFormatted = product_variant.Currency + ' ' + (quantity * product_variant.Price)
+        //            };
+
+        //            db.CartProductItems.Add(cart_item);
+        //            db.SaveChanges();
+
+        //            MyLogger.GetInstance.Debug(String.Format("AddToCart - userId: {0}, product_variant_id: {1}, quantity: {2}", userId, product_variant_id, quantity));
+
+        //            success = true;
+        //        }
+        //    }
+
+        //    return Request.CreateResponse(HttpStatusCode.OK, new { success = success }, Configuration.Formatters.JsonFormatter);
+        //}
+
         [HttpGet]
         [HttpPost]
-        public HttpResponseMessage AddToCart(int userId = -1, int product_variant_id = -1, int quantity = 0)
+        public HttpResponseMessage AddToCart(int userId = -1, int product_variant_id = -1, int quantity = 0, String cardcode = "")
         {
             bool success = false;
 
             if (userId > 0 && product_variant_id > 0)
             {
                 var product_variant = db.ProductVariants
+                     .Where(w => w.ProductVariantId == product_variant_id)
                     .ToList()
-                    .Where(w => w.ProductVariantId == product_variant_id)
                     .FirstOrDefault();
 
                 var cart = db.Carts
-                    .ToList()
                     .Where(w => w.DeviceUserId == userId)
+                    .ToList()
                     .FirstOrDefault();
 
                 //create a new cart if not exist
@@ -510,6 +682,11 @@ namespace OpenshopBackend.Api
 
                 if (cart != null && product_variant != null)
                 {
+                    var discount = db.ClientDiscounts
+                        .Where(w => w.CardCode == cardcode && w.ItemGroup == product_variant.ItemGroup)
+                        .ToList()
+                        .FirstOrDefault();
+
                     var cart_item_variant = new CartProductVariant()
                     {
                         CategoryId = product_variant.Product.CategoryId,
@@ -521,18 +698,25 @@ namespace OpenshopBackend.Api
                         WareHouseCode = product_variant.WareHouseCode,
                         Url = "",
                         Price = product_variant.Price,
+                        Discount = (discount != null ? (product_variant.Price * discount.Discount)/100 : 0.0),
                         PriceFormatted = product_variant.GetPriceTotalFormated()
                     };
 
                     db.CartProductVariants.Add(cart_item_variant);
                     db.SaveChanges();
 
+                    var setting = db.Settings.ToList().FirstOrDefault();
+                    var isv = setting != null ? setting.ISV : 0.0;
+
+                    var discountvalue = (discount != null ? ((product_variant.Price * discount.Discount) / 100) * quantity : 0.0);
                     var cart_item = new CartProductItem()
                     {
                         CartProductVariantId = cart_item_variant.CartProductVariantId,
                         CartId = cart.CartId,
                         Expiration = 0,
                         Quantity = quantity,
+                        ISV = ((quantity * product_variant.Price) - discountvalue) * isv,
+                        Discount = discountvalue,
                         RemoteId = product_variant.Product.RemoteId,
                         TotalItemPrice = (quantity * product_variant.Price),
                         TotalItemPriceFormatted = product_variant.Currency + ' ' + (quantity * product_variant.Price)
@@ -554,30 +738,45 @@ namespace OpenshopBackend.Api
         {
             bool success = false;
 
-            var user = db.DeviceUser
-                .ToList()
-                .Where(w => w.DeviceUserId == userId)
-                .FirstOrDefault();
-
-            if (user != null)
+            if (userId > 0)
             {
                 var orders = db.Orders
-                    .ToList()
-                    .Where(w => w.SalesPersonCode == user.SalesPersonId)
+                    .Where(w => w.DeviceUser.DeviceUserId == userId)
                     .OrderByDescending(o => o.OrderId)
+                    .ToList()
                     .Select(s => new
                     {
                         id = s.OrderId,
                         remote_id = s.RemoteId,
                         series = s.Series,
-                        card_code = s.CardCode,
                         comment = s.Comment,
-                        sales_person_code = s.SalesPersonCode,
                         status = s.Status,
-                        total = s.Total,
-                        total_order = s.GetTotal(),
                         date_created = s.DateCreated,
-                        total_formatted = default_currency + s.GetTotal()
+                        item_count = s.GetItemCount(),
+                        subtotal = s.GetSubtotal(),
+                        discount = s.GetDiscount(),
+                        IVA = s.GetIVA(),
+                        total = s.GetTotal(),
+                        total_formatted = default_currency + s.GetTotal(),
+                        items = s.OrderItems
+                                .ToList()
+                                .Select(i => new {
+                                    code = i.SKU,
+                                    quantity = i.Quantity,
+                                    price = i.Price,
+                                    discount = i.Discount,
+                                    tax = i.TaxValue,
+                                    warehouse_code = i.WarehouseCode
+                                }),
+                        client = new
+                        {
+                            name = s.Client.Name,
+                            card_code = s.Client.CardCode,
+                            phone = s.Client.PhoneNumber,
+                            address = s.Client.Address,
+                            RTN = s.Client.RTN
+                        },
+                        seller = s.DeviceUser.Name
                     });
 
                 var result = new
@@ -605,14 +804,34 @@ namespace OpenshopBackend.Api
                 id = order.OrderId,
                 remote_id = order.RemoteId,
                 series = order.Series,
-                card_code = order.CardCode,
                 comment = order.Comment,
-                sales_person_code = order.SalesPersonCode,
                 status = order.Status,
-                total = order.Total,
-                total_order = order.GetTotal(),
                 date_created = order.DateCreated,
-                total_formatted = default_currency + " " + order.GetTotal()
+                item_count = order.GetItemCount(),
+                subtotal = order.GetSubtotal(),
+                discount = order.GetDiscount(),
+                IVA = order.GetIVA(),
+                total = order.GetTotal(),
+                total_formatted = default_currency + order.GetTotal(),
+                items = order.OrderItems
+                                .ToList()
+                                .Select(i => new {
+                                    code = i.SKU,
+                                    quantity = i.Quantity,
+                                    price = i.Price,
+                                    discount = i.Discount,
+                                    tax = i.TaxValue,
+                                    warehouse_code = i.WarehouseCode
+                                }),
+                client = new
+                {
+                    name = order.Client.Name,
+                    card_code = order.Client.CardCode,
+                    phone = order.Client.PhoneNumber,
+                    address = order.Client.Address,
+                    RTN = order.Client.RTN
+                },
+                seller = order.DeviceUser.Name
             };
 
             if (order != null)
@@ -648,68 +867,108 @@ namespace OpenshopBackend.Api
 
             try
             {
-                Order order = JsonConvert.DeserializeObject<Order>(jo);
+                OrderViewModel myOrder = JsonConvert.DeserializeObject<OrderViewModel>(jo);
 
-                var user = db.DeviceUser
-                    .ToList()
+                var deviceuser = db.DeviceUser
                     .Where(w => w.DeviceUserId == userId)
+                    .ToList()
                     .FirstOrDefault();
 
                 var cart = db.Carts
-                    .ToList()
                     .Where(w => w.CartId == cartId)
+                    .ToList()
                     .FirstOrDefault();
 
                 var cartItems = cart.CartProductItems;
 
-                order.Status = OrderStatus.CreadoEnAplicacion.ToString();
-                order.DateCreated = DateTime.Now.ToString();
-                order.Total = cartItems.Count();
+                var client = db.Clients
+                    .Where(w => w.CardCode == myOrder.CardCode)
+                    .ToList()
+                    .FirstOrDefault();
 
-                db.Orders.Add(order);
-                db.SaveChanges();
-
-                foreach (var item in cartItems)
+                if (client != null && deviceuser != null)
                 {
-                    var orderItem = new OrderItem()
+                    var order = new Order()
                     {
-                        OrderId = order.OrderId,
-                        Quantity = item.Quantity,
-                        SKU = item.CartProductVariant.Name,
-                        Price = item.CartProductVariant.Price,
-                        TaxCode = "IVA",
-                        WarehouseCode = "01"
+                        DateCreated = DateTime.Now.ToString(),
+                        Series = myOrder.Series,
+                        //RemoteId = order.RemoteId,
+                        Comment = myOrder.Comment,
+                        Status = OrderStatus.CreadoEnAplicacion.ToString(),
+                        DeviceUserId = userId,
+                        ClientId = client.ClientId
                     };
 
-                    //This line update the product iscommited
-                    item.CartProductVariant.ProductVariant.IsCommitted += item.Quantity;
-                    db.Entry(item).State = EntityState.Modified;
-                    db.OrderItems.Add(orderItem);
+                    db.Orders.Add(order);
+                    db.SaveChanges();
+
+                    foreach (var item in cartItems)
+                    {
+                        var orderItem = new OrderItem()
+                        {
+                            OrderId = order.OrderId,
+                            Quantity = item.Quantity,
+                            SKU = item.CartProductVariant.Name,
+                            Price = item.CartProductVariant.Price,
+                            TaxValue = 0.15,
+                            TaxCode = "IVA",
+                            Discount = item.CartProductVariant.Discount,
+                            WarehouseCode = item.CartProductVariant.WareHouseCode                  
+                        };
+
+                        //This line update the product iscommited
+                        item.CartProductVariant.ProductVariant.IsCommitted += item.Quantity;
+                        db.Entry(item).State = EntityState.Modified;
+                        db.OrderItems.Add(orderItem);
+                    }
+                    db.SaveChanges();
+
+                    db.Carts.Remove(cart);
+                    db.SaveChanges();
+
+                    int id = order.OrderId;
+
+                    BackgroundJob.Enqueue(() => CreateQuotationOrderOnSap(id));
+
+                    var result = new
+                    {
+                        id = order.OrderId,
+                        remote_id = order.RemoteId,
+                        series = order.Series,
+                        comment = order.Comment,
+                        status = order.Status,
+                        date_created = order.DateCreated,
+                        item_count = order.GetItemCount(),
+                        subtotal = order.GetSubtotal(),
+                        discount = order.GetDiscount(),
+                        IVA = order.GetIVA(),
+                        total = order.GetTotal(),
+                        total_formatted = default_currency + order.GetTotal(),
+                        items = order.OrderItems
+                                .ToList()
+                                .Select(i => new {
+                                    code = i.SKU,
+                                    quantity = i.Quantity,
+                                    price = i.Price,
+                                    discount = i.Discount,
+                                    tax = i.TaxValue,
+                                    warehouse_code = i.WarehouseCode
+                                }),
+                        client = new
+                        {
+                            name = order.Client.Name,
+                            card_code = order.Client.CardCode,
+                            phone = order.Client.PhoneNumber,
+                            address = order.Client.Address,
+                            RTN = order.Client.RTN
+                        },
+                        seller = deviceuser.Name
+                    };
+
+                    return Request.CreateResponse(HttpStatusCode.OK, result, Configuration.Formatters.JsonFormatter);
                 }
-                db.SaveChanges();
 
-                int id = order.OrderId;
-                var result = new
-                {
-                    id = id,
-                    remote_id = order.RemoteId,
-                    series = order.Series,
-                    card_code = order.CardCode,
-                    comment = order.Comment,
-                    sales_person_code = order.SalesPersonCode,
-                    status = order.Status,
-                    total = order.Total,
-                    total_order = order.GetTotal(),
-                    total_formatted = default_currency + " " + order.GetTotal(),
-                    date_created = order.DateCreated
-                };
-
-                db.Carts.Remove(cart);
-                db.SaveChanges();
-
-                BackgroundJob.Enqueue(() => CreateQuotationOrderOnSap(id));
-
-                return Request.CreateResponse(HttpStatusCode.OK, result, Configuration.Formatters.JsonFormatter);
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { }, Configuration.Formatters.JsonFormatter);
             }
             catch (Exception e)
             {
@@ -721,35 +980,15 @@ namespace OpenshopBackend.Api
             return Request.CreateResponse(HttpStatusCode.OK, new { success = success, message = message }, Configuration.Formatters.JsonFormatter);
         }
 
+        [AutomaticRetry(Attempts = 0)]
         public void CreateQuotationOrderOnSap(int orderId)
         {
-            var order = db.Orders
-                .Where(w => w.OrderId == orderId)
-                .ToList()
-                .FirstOrDefault();
-
-            //Don't resend a new order on SAP if exist
-            if (order.RemoteId == null)
-                return;
-
             String message = "";
 
             try
             {
                 Quotation salesorder = new Quotation();
-                if (salesorder.ServerConnection.Connect() == 0)
-                {
-                    message = salesorder.AddQuotation(order, order.OrderItems.ToList());
-                    salesorder.ServerConnection.Disconnect();
-                }
-
-                if (message != "")
-                {
-                    order.RemoteId = message;
-                    order.Status = OrderStatus.PreAutorizado.ToString();
-                    db.Entry(order).State = EntityState.Modified;
-                    db.SaveChanges();
-                }
+                message = salesorder.AddQuotation(orderId);
             }
             catch (Exception e)
             {
@@ -758,6 +997,7 @@ namespace OpenshopBackend.Api
         }
 
 
+        [AutomaticRetry(Attempts = 0)]
         public void CreateOrderOnSap(int orderId)
         {
             var order = db.Orders
@@ -779,7 +1019,7 @@ namespace OpenshopBackend.Api
                 if (message != "")
                 {
                     order.RemoteId = message;
-                    order.Status = OrderStatus.PreAutorizado.ToString();
+                    order.Status = OrderStatus.PreliminarEnSAP.ToString();
                     db.Entry(order).State = EntityState.Modified;
                     db.SaveChanges();
                 }
@@ -802,13 +1042,13 @@ namespace OpenshopBackend.Api
             if (userId > 0 && productCartItemId > 0 && newQuantity > 0 && newProductVariantId > 0)
             {
                 var product_variant = db.ProductVariants
-                    .ToList()
                     .Where(w => w.ProductVariantId == newProductVariantId)
+                    .ToList()
                     .FirstOrDefault();
 
                 var product_cart = db.CartProductItems
-                    .ToList()
                     .Where(w => w.CartProductItemId == productCartItemId)
+                    .ToList()
                     .FirstOrDefault();
 
                 var cart_product_variant = product_cart.CartProductVariant;
@@ -899,15 +1139,19 @@ namespace OpenshopBackend.Api
                     id = s.CartId,
                     product_count = s.GetProductCount(),
                     total_price = s.GetProductTotalPrice(),
+                    discount = s.GetProductDiscountPrice(),
+                    ISV = s.GetProductISVPrice(),
+                    subtotal = s.GetProductSubtotalPrice(),
                     currency = s.Currency,
                     discounts = new String[] { },
                     items = s.CartProductItems
-                    .ToList()
                     .OrderBy(o => o.CartProductVariant.Name)
+                    .ToList()
                     .Select(p => new
                     {
                         id = p.CartProductItemId,
                         quantity = p.Quantity,
+                        discount = p.Discount,
                         totalItemPrice = p.TotalItemPrice,
                         total_item_price_formatted = p.TotalItemPriceFormatted,
                         variant = new
@@ -919,6 +1163,7 @@ namespace OpenshopBackend.Api
                             product_variant_id = p.CartProductVariant.ProductVariantId,
                             url = "",
                             name = p.CartProductVariant.Name,
+                            discount_price = p.Discount,
                             price = p.CartProductVariant.Price,
                             price_formatted = p.CartProductVariant.Price,
                             category = p.CartProductVariant.CategoryId,
@@ -966,13 +1211,9 @@ namespace OpenshopBackend.Api
         [HttpGet]
         public HttpResponseMessage GetMenuBadgeCount()
         {
-            var products_count = db.Products
-                .ToList()
-                .Count;
+            var products_count = db.Products.Count();
 
-            var clients_count = db.Clients
-                .ToList()
-                .Count;
+            var clients_count = db.Clients.Count();
 
             int reports_count = 0;
 

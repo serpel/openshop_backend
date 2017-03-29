@@ -11,6 +11,7 @@ namespace OpenshopBackend.Models
         [Key]
         public Int32 ClientDiscountId { get; set; }
         public String CardCode { get; set; }
+        public Int32 ItemGroup { get; set; }
         public double Discount { get; set; }
     }
 }
