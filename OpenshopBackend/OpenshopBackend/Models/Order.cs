@@ -12,7 +12,8 @@ namespace OpenshopBackend.Models
     {
         CreadoEnAplicacion = 0,
         PreliminarEnSAP = 1,
-        Autorizado = 2
+        Autorizado = 2,
+        ErrorAlCrearEnSAP = 3
     }
 
     public class Order

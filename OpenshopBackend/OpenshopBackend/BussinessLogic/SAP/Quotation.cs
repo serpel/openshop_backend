@@ -87,7 +87,7 @@ namespace OpenshopBackend.BussinessLogic
 
                         //recomended from http://www.appseconnect.com/di-api-memory-leak-in-sap-business-one-9-0/
                         //System.Runtime.InteropServices.Marshal.ReleaseComObject(salesOrder);
-                        //salesOrder = null;
+                        salesOrder = null;
                         company.Disconnect();
                     }
                 }
@@ -98,8 +98,8 @@ namespace OpenshopBackend.BussinessLogic
                 }
 
                 order.LastErrorMessage = lastMessage;
-                order.Status = OrderStatus.PreliminarEnSAP.ToString();
-                order.RemoteId = key != null ? key : "";
+                order.Status = key.Count() > 0 ? OrderStatus.PreliminarEnSAP.ToString() : OrderStatus.ErrorAlCrearEnSAP.ToString();
+                order.RemoteId = key.Count() > 0 ? key : "";
                 db.Entry(order).State = System.Data.Entity.EntityState.Modified;
                 db.SaveChanges();
             }

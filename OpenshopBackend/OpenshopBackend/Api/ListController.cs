@@ -57,10 +57,8 @@ namespace OpenshopBackend.Api
                 .Select(s => new
                 {
                     id = s.DeviceUserId,
-                    access_token = s.AccessToken,
                     sales_person_id = s.SalesPersonId,
                     name = s.Name,
-                    email = s.Username
                 });
 
             var result = new
@@ -174,7 +172,6 @@ namespace OpenshopBackend.Api
         {
 
             var categoryModels = db.Categories
-                .Where(w => w.PartentId == 0)
                 .ToList()
                 .Select(v => new CategoryViewModel()
                 {
@@ -188,7 +185,8 @@ namespace OpenshopBackend.Api
                 )
                 .ToList();
 
-            var categories = categoryModels               
+            var categories = categoryModels
+                .Where(w => w.PartentId == 0)
                 .Select(s => new {
                     id = s.Id,
                     name = s.Name,
