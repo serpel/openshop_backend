@@ -46,7 +46,7 @@ namespace OpenshopBackend.Models
 
         public Double GetIVA()
         {
-            return this.OrderItems.Sum(s => (s.Quantity * s.Price) * s.TaxValue);
+            return this.OrderItems.Sum(s => ((s.Quantity * s.Price) - s.Discount) * s.TaxValue);
         }
 
         public Double GetDiscount()

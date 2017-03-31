@@ -24,7 +24,104 @@ namespace OpenshopBackend.Api
     {
         private ApplicationDbContext db = new ApplicationDbContext();
         private String default_currency = "L";
-        private Double default_tax = 0.15;
+
+
+        [HttpGet]
+        public HttpResponseMessage GetPayments(int userId = -1, String begin = "", String end = "")
+        {
+            var payments = db.Payments.AsQueryable();
+
+            if (userId > 0)
+                payments = payments.Where(w => w.DeviceUserId == userId);
+            if(begin.Count() > 0 && end.Count() > 0)
+            {
+                DateTime beginDate = DateTime.Parse(begin);
+                DateTime endDate = DateTime.Parse(end);
+
+                payments = payments.Where(w => w.CreatedDate > beginDate && w.CreatedDate < endDate);
+            }
+                
+            var result = payments
+                .ToList()
+                .Select(s => new
+                {
+                    id = s.PaymentId,
+                    userId = s.DeviceUserId,
+                    doc_entry = s.DocEntry,
+                    last_error = s.LastErrorMessage,
+                    client = new
+                    {
+                        name = s.Client.Name,
+                        cardcode = s.Client.CardCode,
+                        balance = s.Client.Balance
+                    },
+                    total = s.TotalAmount,
+                    cash = new
+                    {
+                        amount = s.Cash.Amount,
+                        account = s.Cash.GeneralAccount
+                    },
+                    transfer = new
+                    {
+                        amount = s.Transfer.Amount,
+                        account = s.Transfer.GeneralAccount,
+                        reference_number = s.Transfer.ReferenceNumber,
+                        date = s.Transfer.Date
+                    },
+                    checks = s.Checks.ToList(),
+                    invoices = s.PaymentInvoices
+                    .Where(w => w.PaymentId == s.PaymentId)
+                    .ToList()
+                    .Select(i => new {
+                        document_code = i.Document.DocumentCode,
+                        total_amount = i.Document.TotalAmount,
+                        total_payed = i.Document.PayedAmount,
+                        due_date = i.Document.DueDate
+                    })
+                });
+
+            var records = new
+            {
+                payments = result
+            };
+
+            return Request.CreateResponse(HttpStatusCode.OK, records, Configuration.Formatters.JsonFormatter);
+        }
+
+        [HttpGet]
+        public HttpResponseMessage Payment(int id)
+        {
+            var payment = db.Payments
+                .Where(w => w.PaymentId == id)
+                .ToList()
+                .Select(s => new
+                {
+                    id = s.PaymentId,
+                    doc_entry = s.DocEntry,
+                    client = new {
+                        name = s.Client.Name,
+                        cardcode = s.Client.CardCode,
+                        balance = s.Client.Balance
+                    },
+                    total = s.TotalAmount,
+                    cash = new
+                    {
+                        amount = s.Cash.Amount,
+                        account = s.Cash.GeneralAccount
+                    },
+                    transfer = new
+                    {
+                        amount = s.Transfer.Amount,
+                        account = s.Transfer.GeneralAccount,
+                        reference_number = s.Transfer.ReferenceNumber,
+                        date = s.Transfer.Date
+                    },
+                    checks = s.Checks.ToList(),
+                    invoices = s.PaymentInvoices.Where(w => w.PaymentId == s.PaymentId).ToList()
+                });
+
+            return Request.CreateResponse(HttpStatusCode.OK, payment, Configuration.Formatters.JsonFormatter);
+        }
 
         [AutomaticRetry(Attempts = 0)]
         public void CreatePaymentOnSAP(int paymentId)
@@ -477,6 +574,53 @@ namespace OpenshopBackend.Api
         }
 
         [HttpGet]
+        public HttpResponseMessage GetBanks()
+        {
+            var banks = db.Banks
+                .ToList()
+                .Select(s => new
+                {
+                    id = s.BankId,
+                    name = s.Name,
+                    general_account = s.GeneralAccount
+                });
+
+            var result = new
+            {
+                banks = banks
+            };
+
+            return Request.CreateResponse(HttpStatusCode.OK, result, Configuration.Formatters.JsonFormatter);
+        }
+
+        [HttpGet]
+        public HttpResponseMessage Client(string cardcode)
+        {
+            var clients = db.Clients
+                .Where(w => w.CardCode == cardcode)
+                .ToList()
+                .Select(s => new
+                {
+                    name = s.Name,
+                    card_code = s.CardCode,
+                    phone = s.PhoneNumber,
+                    RTN = s.RTN,
+                    invoices = s.Invoices
+                        .ToList()
+                        .Select(d => new {
+                            document_code = d.DocumentCode,
+                            created_date = d.CreatedDate,
+                            dueDate = d.DueDate,
+                            total_amount = d.TotalAmount,
+                            payed_amount = d.PayedAmount
+                        })
+                })
+                .FirstOrDefault();
+
+            return Request.CreateResponse(HttpStatusCode.OK, clients, Configuration.Formatters.JsonFormatter);
+        }
+
+        [HttpGet]
         public HttpResponseMessage GetClients(String search = "")
         {
             var clients = db.Clients.AsQueryable();
@@ -696,6 +840,7 @@ namespace OpenshopBackend.Api
                         WareHouseCode = product_variant.WareHouseCode,
                         Url = "",
                         Price = product_variant.Price,
+                        DiscountPercent = (discount != null ? discount.Discount : 0.0),
                         Discount = (discount != null ? (product_variant.Price * discount.Discount)/100 : 0.0),
                         PriceFormatted = product_variant.GetPriceTotalFormated()
                     };
@@ -714,6 +859,7 @@ namespace OpenshopBackend.Api
                         Expiration = 0,
                         Quantity = quantity,
                         ISV = ((quantity * product_variant.Price) - discountvalue) * isv,
+                        DiscountPercent = (discount != null ? discount.Discount : 0.0),
                         Discount = discountvalue,
                         RemoteId = product_variant.Product.RemoteId,
                         TotalItemPrice = (quantity * product_variant.Price),
@@ -911,6 +1057,7 @@ namespace OpenshopBackend.Api
                             TaxValue = 0.15,
                             TaxCode = "IVA",
                             Discount = item.CartProductVariant.Discount,
+                            DiscountPercent = item.CartProductVariant.DiscountPercent,
                             WarehouseCode = item.CartProductVariant.WareHouseCode                  
                         };
 

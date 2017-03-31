@@ -73,6 +73,8 @@ namespace OpenshopBackend.Models
         public DbSet<Transfer> Transfers { get; set; }
         public DbSet<Check> Checks { get; set; }
 
+        public DbSet<Bank> Banks { get; set; }
+
         public DbSet<Setting> Settings { get; set; }
     }
 }

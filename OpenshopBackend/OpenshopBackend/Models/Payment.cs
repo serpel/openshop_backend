@@ -14,6 +14,7 @@ namespace OpenshopBackend.Models
         public Int32? ClientId { get; set; }
         public Int32? CashId { get; set; }
         public Int32? TransferId { get; set; }
+        public Int32? DeviceUserId { get; set; }
         public Double TotalAmount { get; set; }
         public String LastErrorMessage { get; set; }
         public DateTime CreatedDate { get; set; }
@@ -21,6 +22,7 @@ namespace OpenshopBackend.Models
         public virtual Cash Cash { get; set; }
         public virtual Transfer Transfer { get; set; }
         public virtual Client Client { get; set; }
+        public virtual DeviceUser DeviceUser { get; set; }
         public virtual List<PaymentInvoice> PaymentInvoices { get; set; }
     }
 }

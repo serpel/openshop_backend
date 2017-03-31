@@ -17,6 +17,7 @@ namespace OpenshopBackend.Models
         public Int32? OrderId { get; set; }
         public int Quantity { get; set; }
         public Double Discount { get; set; }
+        public Double DiscountPercent { get; set; }
         public Double ISV { get; set; }
         public Double TotalItemPrice { get; set; }
         public String TotalItemPriceFormatted { get; set; }

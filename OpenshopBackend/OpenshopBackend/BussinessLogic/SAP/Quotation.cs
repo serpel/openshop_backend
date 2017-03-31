@@ -52,7 +52,8 @@ namespace OpenshopBackend.BussinessLogic
 
                 if (_connection.Connect() == 0)
                 {
-                    if (order != null)
+                    String mykey = order.RemoteId != null ? order.RemoteId : "";
+                    if (order != null && mykey.Count() == 0)
                     {
                         company = _connection.GetCompany();
                         salesOrder = company.GetBusinessObject(BoObjectTypes.oQuotations);
@@ -67,6 +68,7 @@ namespace OpenshopBackend.BussinessLogic
                             salesOrder.Lines.ItemCode = item.SKU;
                             salesOrder.Lines.Quantity = item.Quantity;
                             salesOrder.Lines.TaxCode = item.TaxCode;
+                            salesOrder.Lines.DiscountPercent = item.DiscountPercent;
                             salesOrder.Lines.WarehouseCode = item.WarehouseCode;
                             salesOrder.Lines.Add();
                         }

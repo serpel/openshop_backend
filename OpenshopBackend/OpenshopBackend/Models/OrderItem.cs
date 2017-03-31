@@ -15,6 +15,7 @@ namespace OpenshopBackend.Models
         public Int32 Quantity { get; set; }
         public Double Price { get; set; }
         public Double Discount { get; set; }
+        public Double DiscountPercent { get; set; }
         public Double TaxValue { get; set; }
         public String TaxCode { get; set; }
         public String WarehouseCode { get; set; }

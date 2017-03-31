@@ -62,6 +62,7 @@ namespace OpenshopBackend.BussinessLogic
                     salesOrder.Lines.ItemCode = item.SKU;
                     salesOrder.Lines.Quantity = item.Quantity;
                     salesOrder.Lines.TaxCode = item.TaxCode;
+                    salesOrder.Lines.DiscountPercent = item.DiscountPercent;
                     salesOrder.Lines.WarehouseCode = item.WarehouseCode;
                     salesOrder.Lines.Add();
                 }

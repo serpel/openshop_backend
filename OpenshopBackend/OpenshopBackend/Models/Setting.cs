@@ -9,6 +9,7 @@ namespace OpenshopBackend.Models
     {
         public Int32 SettingId { get; set; }
         public Int32 ShopId { get; set; }
+        public String Currency { get; set; }
         public double ISV { get; set; }
         public virtual Shop Shop { get; set; }
     }
