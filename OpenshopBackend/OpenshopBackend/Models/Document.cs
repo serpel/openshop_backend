@@ -15,8 +15,10 @@ namespace OpenshopBackend.Models
         public String DueDate { get; set; }
         public Double TotalAmount { get; set; }
         public Double PayedAmount { get; set; }
+        public Double BalanceDue { get; set; }
         public Int32 ClientId { get; set; }
         public Int32 DocEntry { get; set; }
+        public Int32 OverdueDays { get; set; }
         public virtual Client Client { get; set; }
         public virtual List<PaymentInvoice> PaymentInvoices { get; set; }
     }

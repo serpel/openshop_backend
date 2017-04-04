@@ -76,7 +76,9 @@ namespace OpenshopBackend.Api
                         document_code = i.Document.DocumentCode,
                         total_amount = i.Document.TotalAmount,
                         total_payed = i.Document.PayedAmount,
-                        due_date = i.Document.DueDate
+                        due_date = i.Document.DueDate,
+                        balance_due = i.Document.BalanceDue,
+                        overdue_days = i.Document.OverdueDays
                     })
                 });
 
@@ -135,6 +137,27 @@ namespace OpenshopBackend.Api
         //{
 
         //}
+
+
+        [HttpGet]
+        [HttpPut]
+        public HttpResponseMessage ProcessPayment(String payment)
+        {
+            bool success = true;
+
+            Payment myPayment = JsonConvert.DeserializeObject<Payment>(payment);
+
+            if(myPayment != null)
+            {
+                db.Payments.Add(myPayment);
+                db.SaveChanges();
+
+                BackgroundJob.Enqueue(() => CreatePaymentOnSAP(myPayment.PaymentId));
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, myPayment, Configuration.Formatters.JsonFormatter);
+        }
+
 
         [HttpGet]
         public HttpResponseMessage ProcessPayment(int paymentId)
@@ -601,6 +624,7 @@ namespace OpenshopBackend.Api
                 .ToList()
                 .Select(s => new
                 {
+                    id = s.ClientId,
                     name = s.Name,
                     card_code = s.CardCode,
                     phone = s.PhoneNumber,
@@ -612,7 +636,9 @@ namespace OpenshopBackend.Api
                             created_date = d.CreatedDate,
                             dueDate = d.DueDate,
                             total_amount = d.TotalAmount,
-                            payed_amount = d.PayedAmount
+                            payed_amount = d.PayedAmount,
+                            balance_due = d.BalanceDue,
+                            overdue_days = d.OverdueDays
                         })
                 })
                 .FirstOrDefault();
@@ -629,6 +655,8 @@ namespace OpenshopBackend.Api
                 clients = clients.Where(w => w.Name.ToLower().Contains(search.ToLower())
                 || w.CardCode.ToLower().Contains(search.ToLower()));
 
+            clients = clients.Take(30);
+
             var result = clients
                 .ToList()
                 .Select(s => new
@@ -637,7 +665,19 @@ namespace OpenshopBackend.Api
                     card_code = s.CardCode,
                     phone = s.PhoneNumber,
                     address = s.Address,
-                    name = s.Name
+                    name = s.Name,
+                    RTN = s.RTN,
+                    invoices = s.Invoices
+                        .ToList()
+                        .Select(d => new {
+                            document_code = d.DocumentCode,
+                            created_date = d.CreatedDate,
+                            dueDate = d.DueDate,
+                            total_amount = d.TotalAmount,
+                            payed_amount = d.PayedAmount,
+                            balance_due = d.BalanceDue,
+                            overdue_days = d.OverdueDays
+                        })
                 });
 
             var records = new { records = result };
@@ -663,7 +703,9 @@ namespace OpenshopBackend.Api
                     created_date = s.CreatedDate,
                     due_date = s.DueDate,
                     total_amount = s.TotalAmount,
-                    payed_amount = s.PayedAmount
+                    payed_amount = s.PayedAmount,
+                    balance_due = s.BalanceDue,
+                    overdue_days = s.OverdueDays
                 });
 
             var result = new
@@ -841,7 +883,7 @@ namespace OpenshopBackend.Api
                         Url = "",
                         Price = product_variant.Price,
                         DiscountPercent = (discount != null ? discount.Discount : 0.0),
-                        Discount = (discount != null ? (product_variant.Price * discount.Discount)/100 : 0.0),
+                        Discount = (discount != null ? (((product_variant.Price * quantity) * discount.Discount)/100) : 0.0),
                         PriceFormatted = product_variant.GetPriceTotalFormated()
                     };
 
@@ -851,7 +893,7 @@ namespace OpenshopBackend.Api
                     var setting = db.Settings.ToList().FirstOrDefault();
                     var isv = setting != null ? setting.ISV : 0.0;
 
-                    var discountvalue = (discount != null ? ((product_variant.Price * discount.Discount) / 100) * quantity : 0.0);
+                    var discountvalue = (discount != null ? (((product_variant.Price * quantity) * discount.Discount) / 100) : 0.0);
                     var cart_item = new CartProductItem()
                     {
                         CartProductVariantId = cart_item_variant.CartProductVariantId,
@@ -1013,6 +1055,8 @@ namespace OpenshopBackend.Api
             {
                 OrderViewModel myOrder = JsonConvert.DeserializeObject<OrderViewModel>(jo);
 
+                var settings = db.Settings.Where(w => w.ShopId == 1).ToList().FirstOrDefault();              
+
                 var deviceuser = db.DeviceUser
                     .Where(w => w.DeviceUserId == userId)
                     .ToList()
@@ -1054,7 +1098,7 @@ namespace OpenshopBackend.Api
                             Quantity = item.Quantity,
                             SKU = item.CartProductVariant.Name,
                             Price = item.CartProductVariant.Price,
-                            TaxValue = 0.15,
+                            TaxValue = settings != null ? settings.ISV : 0.15,
                             TaxCode = "IVA",
                             Discount = item.CartProductVariant.Discount,
                             DiscountPercent = item.CartProductVariant.DiscountPercent,
