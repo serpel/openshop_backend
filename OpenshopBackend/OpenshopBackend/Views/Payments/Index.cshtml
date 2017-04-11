@@ -18,9 +18,6 @@
             @Html.DisplayNameFor(model => model.DocEntry)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Cash.GeneralAccount)
-        </th>
-        <th>
             @Html.DisplayNameFor(model => model.Client.Name)
         </th>
         <th>
@@ -41,9 +38,6 @@
             @Html.DisplayFor(modelItem => item.CreatedDate)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Cash.GeneralAccount)
-        </td>
-        <td>
             @Html.DisplayFor(modelItem => item.DocEntry)
         </td>
         <td>
@@ -60,8 +54,6 @@
         </td>
         <td>
             @Html.ActionLink("Process", "Process", new { id = item.PaymentId }) |
-            @Html.ActionLink("Edit", "Edit", new { id=item.PaymentId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.PaymentId }) |
             @Html.ActionLink("Delete", "Delete", new { id=item.PaymentId })
         </td>
     </tr>

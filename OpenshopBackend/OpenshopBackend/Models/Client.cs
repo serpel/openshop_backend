@@ -30,6 +30,9 @@ namespace OpenshopBackend.Models
         public String Address { get; set; }
         [JsonProperty(PropertyName = "discount_percent")]
         public String RTN { get; set; }
+        public Double past_due { get; set; }
+        public Double to_pay { get; set; }
+        public Double to_pay_future { get; set; }
         public String ContactPerson { get; set; }
         public virtual List<Document> Invoices { get; set; }
        

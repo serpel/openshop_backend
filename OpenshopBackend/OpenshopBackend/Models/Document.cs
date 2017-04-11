@@ -20,6 +20,5 @@ namespace OpenshopBackend.Models
         public Int32 DocEntry { get; set; }
         public Int32 OverdueDays { get; set; }
         public virtual Client Client { get; set; }
-        public virtual List<PaymentInvoice> PaymentInvoices { get; set; }
     }
 }

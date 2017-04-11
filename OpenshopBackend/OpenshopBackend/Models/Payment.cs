@@ -23,6 +23,6 @@ namespace OpenshopBackend.Models
         public virtual Transfer Transfer { get; set; }
         public virtual Client Client { get; set; }
         public virtual DeviceUser DeviceUser { get; set; }
-        public virtual List<PaymentInvoice> PaymentInvoices { get; set; }
+        public virtual List<InvoiceItem> Invoices { get; set; }
     }
 }

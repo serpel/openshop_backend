@@ -68,17 +68,21 @@ namespace OpenshopBackend.Api
                         reference_number = s.Transfer.ReferenceNumber,
                         date = s.Transfer.Date
                     },
-                    checks = s.Checks.ToList(),
-                    invoices = s.PaymentInvoices
-                    .Where(w => w.PaymentId == s.PaymentId)
+                    checks = s.Checks
+                    .ToList()
+                    .Select(c => new {
+                        amount = c.Amount,
+                        general_account = c.GeneralAccount,
+                        due_date = c.DueDate,
+                        bank = c.Bank.Name
+                    }),
+                    invoices = s.Invoices
                     .ToList()
                     .Select(i => new {
-                        document_code = i.Document.DocumentCode,
-                        total_amount = i.Document.TotalAmount,
-                        total_payed = i.Document.PayedAmount,
-                        due_date = i.Document.DueDate,
-                        balance_due = i.Document.BalanceDue,
-                        overdue_days = i.Document.OverdueDays
+                        document_code = i.DocumentNumber,
+                        total_amount = i.TotalAmount,
+                        total_payed = i.PayedAmount,
+                        doc_entry = i.DocEntry
                     })
                 });
 
@@ -118,8 +122,23 @@ namespace OpenshopBackend.Api
                         reference_number = s.Transfer.ReferenceNumber,
                         date = s.Transfer.Date
                     },
-                    checks = s.Checks.ToList(),
-                    invoices = s.PaymentInvoices.Where(w => w.PaymentId == s.PaymentId).ToList()
+                    checks = s.Checks
+                    .ToList()
+                    .Select(c => new {
+                        amount = c.Amount,
+                        general_account = c.GeneralAccount,
+                        due_date = c.DueDate,
+                        bank = c.Bank.Name
+                    }),
+                    invoices = s.Invoices
+                    .Where(w => w.PaymentId == s.PaymentId)
+                    .ToList()
+                    .Select(i => new {
+                        document_code = i.DocumentNumber,
+                        total_amount = i.TotalAmount,
+                        total_payed = i.PayedAmount,
+                        doc_entry = i.DocEntry
+                    })
                 });
 
             return Request.CreateResponse(HttpStatusCode.OK, payment, Configuration.Formatters.JsonFormatter);
@@ -128,34 +147,86 @@ namespace OpenshopBackend.Api
         [AutomaticRetry(Attempts = 0)]
         public void CreatePaymentOnSAP(int paymentId)
         {
-            IncomingPayment incomingPayment = new IncomingPayment();
-            incomingPayment.MakePayment(paymentId);
+            DraftPayment draft = new DraftPayment();
+            draft.MakePayment(paymentId);
         }
-
-        //[HttpGet]
-        //public HttpResponseMessage CreatePayment(String cash, String transfer)
-        //{
-
-        //}
-
 
         [HttpGet]
         [HttpPut]
-        public HttpResponseMessage ProcessPayment(String payment)
+        public HttpResponseMessage AddPayment(Int32 userId, Int32 clientId, Double totalPaid, String cash, String transfer = "", String checks = "", String invoices = "")
         {
             bool success = true;
 
-            Payment myPayment = JsonConvert.DeserializeObject<Payment>(payment);
+            List<Check> myChecks;
+            Transfer myTransfer;
+            Cash myCash;
+            List<InvoiceItem> invoicesItems;
+            int cashId = 0, transferId = 0;
+            int paymentId = 0;
 
-            if(myPayment != null)
+            if (cash.Count() > 0)
             {
+                myCash = JsonConvert.DeserializeObject<Cash>(cash);
+                db.Cash.Add(myCash);
+                db.SaveChanges();
+                cashId = myCash.CashId;
+            }
+
+            if (transfer.Count() > 0) {
+                myTransfer = JsonConvert.DeserializeObject<Transfer>(transfer);
+                db.Transfers.Add(myTransfer);
+                db.SaveChanges();
+                transferId = myTransfer.TransferId;
+            }
+
+                var myPayment = new Payment()
+                {
+                    TotalAmount = totalPaid,
+                    CashId = cashId,
+                    TransferId = transferId,
+                    DeviceUserId = userId,
+                    ClientId = clientId,
+                    CreatedDate = DateTime.Now    
+                };
+
                 db.Payments.Add(myPayment);
                 db.SaveChanges();
 
-                BackgroundJob.Enqueue(() => CreatePaymentOnSAP(myPayment.PaymentId));
+                paymentId = myPayment.PaymentId;
+        
+
+            if (checks.Count() > 0) {
+                myChecks = JsonConvert.DeserializeObject<List<Check>>(checks);
+
+                if(myChecks != null) { 
+                    foreach(var item in myChecks)
+                    {
+                        item.PaymentId = paymentId;
+                        db.Checks.Add(item);
+                    }
+                    db.SaveChanges();
+                }
             }
 
-            return Request.CreateResponse(HttpStatusCode.OK, myPayment, Configuration.Formatters.JsonFormatter);
+            if(invoices.Count() > 0)
+            {
+                invoicesItems = JsonConvert.DeserializeObject<List<InvoiceItem>>(invoices);
+
+                if(invoicesItems != null)
+                {
+                    foreach (var item in invoicesItems)
+                    {
+                        item.PaymentId = paymentId;
+                        db.Invoices.Add(item);
+                    }
+                    db.SaveChanges();
+                }
+            }
+
+            if(paymentId > 0)
+                BackgroundJob.Enqueue(() => CreatePaymentOnSAP(paymentId));
+
+            return Request.CreateResponse(HttpStatusCode.OK, success, Configuration.Formatters.JsonFormatter);
         }
 
 
@@ -634,6 +705,7 @@ namespace OpenshopBackend.Api
                         .Select(d => new {
                             document_code = d.DocumentCode,
                             created_date = d.CreatedDate,
+                            doc_entry = d.DocEntry,
                             dueDate = d.DueDate,
                             total_amount = d.TotalAmount,
                             payed_amount = d.PayedAmount,
@@ -668,11 +740,13 @@ namespace OpenshopBackend.Api
                     name = s.Name,
                     RTN = s.RTN,
                     invoices = s.Invoices
+                        .OrderBy(o => o.DueDate)
                         .ToList()
                         .Select(d => new {
                             document_code = d.DocumentCode,
                             created_date = d.CreatedDate,
                             dueDate = d.DueDate,
+                            doc_entry = d.DocEntry,
                             total_amount = d.TotalAmount,
                             payed_amount = d.PayedAmount,
                             balance_due = d.BalanceDue,
@@ -695,6 +769,7 @@ namespace OpenshopBackend.Api
 
             var documents = db.Documents
                 .Where(w => w.Client.CardCode == card_code)
+                .OrderBy(o => o.DueDate)
                 .ToList()
                 .Select(s => new
                 {
@@ -703,6 +778,7 @@ namespace OpenshopBackend.Api
                     created_date = s.CreatedDate,
                     due_date = s.DueDate,
                     total_amount = s.TotalAmount,
+                    doc_entry = s.DocEntry,
                     payed_amount = s.PayedAmount,
                     balance_due = s.BalanceDue,
                     overdue_days = s.OverdueDays
@@ -710,13 +786,16 @@ namespace OpenshopBackend.Api
 
             var result = new
             {
-                records = documents,
                 client_card_code = client.CardCode,
                 client_name = client.Name,
                 credit_limit = client.CreditLimit,
                 balance = client.Balance,
                 in_orders = client.InOrders,
-                pay_condition = client.PayCondition
+                pay_condition = client.PayCondition,
+                client.past_due,
+                client.to_pay,
+                client.to_pay_future,
+                records = documents
             };
 
             return Request.CreateResponse(HttpStatusCode.OK, result, Configuration.Formatters.JsonFormatter);
@@ -752,91 +831,13 @@ namespace OpenshopBackend.Api
             return Request.CreateResponse(HttpStatusCode.OK, new { success = success, message = message }, Configuration.Formatters.JsonFormatter);
         }
 
-        //[HttpGet]
-        //[HttpPost]
-        //public HttpResponseMessage AddToCart(int userId = -1, int product_variant_id = -1, int quantity = 0)
-        //{
-        //    bool success = false;
-
-        //    if (userId > 0 && product_variant_id > 0)
-        //    {
-        //        var product_variant = db.ProductVariants
-        //            .ToList()
-        //            .Where(w => w.ProductVariantId == product_variant_id)
-        //            .FirstOrDefault();
-
-        //        var cart = db.Carts
-        //            .ToList()
-        //            .Where(w => w.DeviceUserId == userId)
-        //            .FirstOrDefault();
-
-        //        //create a new cart if not exist
-        //        if (cart == null && product_variant != null)
-        //        {
-        //            var new_cart = new Cart()
-        //            {
-        //                DeviceUserId = userId,
-        //                Currency = product_variant.Currency,
-        //                TotalPrice = 0,
-        //                TotalPriceFormatted = product_variant.Currency + ' ' + 0
-        //            };
-
-        //            db.Carts.Add(new_cart);
-        //            db.SaveChanges();
-        //            cart = new_cart;
-        //        }
-
-        //        if (cart != null && product_variant != null)
-        //        {
-        //            var cart_item_variant = new CartProductVariant()
-        //            {
-        //                CategoryId = product_variant.Product.CategoryId,
-        //                ColorId = product_variant.ColorId,
-        //                SizeId = product_variant.SizeId,
-        //                MainImage = product_variant.Product.MainImage,
-        //                Name = product_variant.Code,
-        //                ProductVariantId = product_variant.ProductVariantId,
-        //                WareHouseCode = product_variant.WareHouseCode,
-        //                Url = "",
-        //                Price = product_variant.Price,
-        //                Discount = 0.0,
-        //                PriceFormatted = product_variant.GetPriceTotalFormated()
-        //            };
-
-        //            db.CartProductVariants.Add(cart_item_variant);
-        //            db.SaveChanges();
-
-        //            var cart_item = new CartProductItem()
-        //            {
-        //                CartProductVariantId = cart_item_variant.CartProductVariantId,
-        //                CartId = cart.CartId,
-        //                Expiration = 0,
-        //                Quantity = quantity,
-        //                Discount = 0.0,
-        //                RemoteId = product_variant.Product.RemoteId,
-        //                TotalItemPrice = (quantity * product_variant.Price),
-        //                TotalItemPriceFormatted = product_variant.Currency + ' ' + (quantity * product_variant.Price)
-        //            };
-
-        //            db.CartProductItems.Add(cart_item);
-        //            db.SaveChanges();
-
-        //            MyLogger.GetInstance.Debug(String.Format("AddToCart - userId: {0}, product_variant_id: {1}, quantity: {2}", userId, product_variant_id, quantity));
-
-        //            success = true;
-        //        }
-        //    }
-
-        //    return Request.CreateResponse(HttpStatusCode.OK, new { success = success }, Configuration.Formatters.JsonFormatter);
-        //}
-
         [HttpGet]
         [HttpPost]
         public HttpResponseMessage AddToCart(int userId = -1, int product_variant_id = -1, int quantity = 0, String cardcode = "")
         {
             bool success = false;
 
-            if (userId > 0 && product_variant_id > 0)
+            if (userId > 0 && product_variant_id > 0 && quantity > 0)
             {
                 var product_variant = db.ProductVariants
                      .Where(w => w.ProductVariantId == product_variant_id)
@@ -1112,6 +1113,8 @@ namespace OpenshopBackend.Api
                     }
                     db.SaveChanges();
 
+                    //TODO: Remove CartProductVariant
+                    db.CartProductItems.RemoveRange(cartItems);
                     db.Carts.Remove(cart);
                     db.SaveChanges();
 
@@ -1357,24 +1360,24 @@ namespace OpenshopBackend.Api
                             price_formatted = p.CartProductVariant.Price,
                             category = p.CartProductVariant.CategoryId,
                             currency = "",
-                            code = p.CartProductVariant.ProductVariant.Code,
+                            code = p.CartProductVariant.Name,
                             description = p.CartProductVariant.Name,
-                            main_image = p.CartProductVariant.ProductVariant.Product.MainImage,
+                            main_image = p.CartProductVariant.MainImage,
                             warehouse_code = p.CartProductVariant.WareHouseCode,
                             color = new
                             {
-                                id = p.CartProductVariant.ProductVariant.Color.ColorId,
+                                id = p.CartProductVariant.Color.ColorId,
                                 remote_id = p.CartProductVariant.Color.RemoteId,
-                                value = p.CartProductVariant.ProductVariant.Color.Value,
-                                code = p.CartProductVariant.ProductVariant.Color.Code,
-                                img = p.CartProductVariant.ProductVariant.Color.Image
+                                value = p.CartProductVariant.Color.Value,
+                                code = p.CartProductVariant.Color.Code,
+                                img = p.CartProductVariant.Color.Image
                             },
                             size = new
                             {
-                                id = p.CartProductVariant.ProductVariant.Size.SizeId,
-                                remote_id = p.CartProductVariant.ProductVariant.Size.RemoteId,
-                                value = p.CartProductVariant.ProductVariant.Size.Value,
-                                description = p.CartProductVariant.ProductVariant.Size.Description
+                                id = p.CartProductVariant.Size.SizeId,
+                                remote_id = p.CartProductVariant.Size.RemoteId,
+                                value = p.CartProductVariant.Size.Value,
+                                description = p.CartProductVariant.Size.Description
                             }
                         }
                     })

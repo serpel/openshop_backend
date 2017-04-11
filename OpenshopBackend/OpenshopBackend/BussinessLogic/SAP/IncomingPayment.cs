@@ -71,14 +71,13 @@ namespace OpenshopBackend.BussinessLogic.SAP
                         }
                     }
 
-                    if (p.PaymentInvoices != null)
+                    if (p.Invoices != null)
                     {
-                        var invoices = p.PaymentInvoices
-                        .ToList()
+                        var invoices = p.Invoices
                         .Where(w => w.PaymentId == p.PaymentId)
-                        .Select(s => s.Document);
+                        .ToList();
 
-                        foreach (Document invoice in invoices)
+                        foreach (InvoiceItem invoice in invoices)
                         {
                             if (amountLeft > 0)
                             {

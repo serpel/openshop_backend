@@ -255,6 +255,7 @@
     <Compile Include="BussinessLogic\ILogger.cs" />
     <Compile Include="BussinessLogic\MyAuthorizeAttribute.cs" />
     <Compile Include="BussinessLogic\MyLogger.cs" />
+    <Compile Include="BussinessLogic\SAP\DraftPayment.cs" />
     <Compile Include="BussinessLogic\SAP\IncomingPayment.cs" />
     <Compile Include="BussinessLogic\SAP\Quotation.cs" />
     <Compile Include="BussinessLogic\SAP\SalesOrder.cs" />
@@ -266,6 +267,7 @@
     <Compile Include="Controllers\BrandsController.cs" />
     <Compile Include="Controllers\CategoriesController.cs" />
     <Compile Include="Controllers\PaymentsController.cs" />
+    <Compile Include="Controllers\SettingsController.cs" />
     <Compile Include="Migrations\201703261435172_InitialModels.cs" />
     <Compile Include="Migrations\201703261435172_InitialModels.Designer.cs">
       <DependentUpon>201703261435172_InitialModels.cs</DependentUpon>
@@ -318,12 +320,12 @@
     <Compile Include="Models\CartProductItem.cs" />
     <Compile Include="Models\Document.cs" />
     <Compile Include="Models\Invoice.cs" />
+    <Compile Include="Models\InvoiceItem.cs" />
     <Compile Include="Models\LogEntry.cs" />
     <Compile Include="Models\OrderItem.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\OrderViewModel.cs" />
     <Compile Include="Models\Payment.cs" />
-    <Compile Include="Models\PaymentInvoice.cs" />
     <Compile Include="Models\Setting.cs" />
     <Compile Include="Models\Shop.cs" />
     <Compile Include="Models\Helper\Link.cs" />
@@ -1550,6 +1552,11 @@
     <Content Include="Views\Payments\Edit.cshtml" />
     <Content Include="Views\Payments\Index.cshtml" />
     <Content Include="Views\Payments\Process.cshtml" />
+    <Content Include="Views\Settings\Create.cshtml" />
+    <Content Include="Views\Settings\Delete.cshtml" />
+    <Content Include="Views\Settings\Details.cshtml" />
+    <Content Include="Views\Settings\Edit.cshtml" />
+    <Content Include="Views\Settings\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

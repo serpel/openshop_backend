@@ -20,7 +20,7 @@ namespace OpenshopBackend.Controllers
         public ActionResult Index()
         {
             var payments = db.Payments.Include(p => p.Cash).Include(p => p.Client).Include(p => p.Transfer);
-            return View(payments.ToList().OrderByDescending(o => o.CreatedDate));
+            return View(payments.ToList().OrderByDescending(o => o.CreatedDate).Take(20));
         }
 
         // GET: Payments/Details/5
@@ -115,8 +115,23 @@ namespace OpenshopBackend.Controllers
         [AutomaticRetry(Attempts = 0)]
         public void CreatePaymentOnSAP(int paymentId)
         {
-            IncomingPayment incomingPayment = new IncomingPayment();
-            String message = incomingPayment.MakePayment(paymentId);
+
+            try
+            {
+                DraftPayment draftPayment = new DraftPayment();
+                String message = draftPayment.MakePayment(paymentId);
+
+            }catch(Exception e)
+            {
+                var payment = db.Payments.Where(w => w.PaymentId == paymentId).ToList().FirstOrDefault();
+                
+                if(payment != null)
+                {
+                    payment.LastErrorMessage = payment.LastErrorMessage + " - " + e.Message;
+                    db.Entry(payment).State = EntityState.Modified;
+                    db.SaveChanges();
+                }            
+            }
         }
 
         // GET: Payments/Delete/5

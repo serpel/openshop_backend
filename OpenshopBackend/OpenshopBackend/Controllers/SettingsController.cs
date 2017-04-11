@@ -7,137 +7,115 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using OpenshopBackend.Models;
-using OpenshopBackend.BussinessLogic;
-using Hangfire;
 
 namespace OpenshopBackend.Controllers
 {
-    [AccessAuthorizeAttribute(Roles = "Admin, SalesAdmin")]
-    public class OrdersController : BaseController
+    public class SettingsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        // GET: Orders
+        // GET: Settings
         public ActionResult Index()
         {
-            return View(db.Orders.ToList().OrderByDescending(o => o.DateCreated).Take(20));
+            var settings = db.Settings.Include(s => s.Shop);
+            return View(settings.ToList());
         }
 
-        // GET: Orders/Details/5
+        // GET: Settings/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Order order = db.Orders.Find(id);
-            if (order == null)
+            Setting setting = db.Settings.Find(id);
+            if (setting == null)
             {
                 return HttpNotFound();
             }
-            return View(order);
+            return View(setting);
         }
 
-        // GET: Orders/Create
+        // GET: Settings/Create
         public ActionResult Create()
         {
+            ViewBag.ShopId = new SelectList(db.Shops, "ShopId", "Name");
             return View();
         }
 
-        [AutomaticRetry(Attempts = 0)]
-        public void CreateQuotationOrderOnSap(int orderId)
-        {
-
-            String message = "";
-
-            try
-            {
-                Quotation salesorder = new Quotation();
-                message = salesorder.AddQuotation(orderId);
-            }
-            catch (Exception e)
-            {
-                MyLogger.GetInstance.Error(e.Message, e);
-            }
-        }
-
-        public ActionResult Process(int id)
-        {
-            BackgroundJob.Enqueue(() => CreateQuotationOrderOnSap(id));
-
-            return RedirectToAction("Index");
-        }
-
-        // POST: Orders/Create
+        // POST: Settings/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "OrderId,RemoteId,DateCreated,Status,Total,CardCode,Comment,SalesPersonCode,Series")] Order order)
+        public ActionResult Create([Bind(Include = "SettingId,ShopId,Currency,ISV")] Setting setting)
         {
             if (ModelState.IsValid)
             {
-                db.Orders.Add(order);
+                db.Settings.Add(setting);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(order);
+            ViewBag.ShopId = new SelectList(db.Shops, "ShopId", "Name", setting.ShopId);
+            return View(setting);
         }
 
-        // GET: Orders/Edit/5
+        // GET: Settings/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Order order = db.Orders.Find(id);
-            if (order == null)
+            Setting setting = db.Settings.Find(id);
+            if (setting == null)
             {
                 return HttpNotFound();
             }
-            return View(order);
+            ViewBag.ShopId = new SelectList(db.Shops, "ShopId", "Name", setting.ShopId);
+            return View(setting);
         }
 
-        // POST: Orders/Edit/5
+        // POST: Settings/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "OrderId,RemoteId,DateCreated,Status,Total,CardCode,Comment,SalesPersonCode,Series")] Order order)
+        public ActionResult Edit([Bind(Include = "SettingId,ShopId,Currency,ISV")] Setting setting)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(order).State = EntityState.Modified;
+                db.Entry(setting).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(order);
+            ViewBag.ShopId = new SelectList(db.Shops, "ShopId", "Name", setting.ShopId);
+            return View(setting);
         }
 
-        // GET: Orders/Delete/5
+        // GET: Settings/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Order order = db.Orders.Find(id);
-            if (order == null)
+            Setting setting = db.Settings.Find(id);
+            if (setting == null)
             {
                 return HttpNotFound();
             }
-            return View(order);
+            return View(setting);
         }
 
-        // POST: Orders/Delete/5
+        // POST: Settings/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Order order = db.Orders.Find(id);
-            db.Orders.Remove(order);
+            Setting setting = db.Settings.Find(id);
+            db.Settings.Remove(setting);
             db.SaveChanges();
             return RedirectToAction("Index");
         }
