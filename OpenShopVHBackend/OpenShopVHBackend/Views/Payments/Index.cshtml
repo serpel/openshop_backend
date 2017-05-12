@@ -17,9 +17,10 @@
          items.AddTool(ToolBarItems.PdfExport);
      }))
      .AllowPaging()
-     .AllowFiltering()
-     .IsResponsive(true)
-     .EnableResponsiveRow(true)
+     .AllowResizing(true)
+     .AllowSorting(true)
+     .AllowFiltering(true)
+     .AllowTextWrap(true)
      .Columns(col =>
      {
          col.Field(p => p.PaymentId).TextAlign(TextAlign.Left).Width(40).Add();

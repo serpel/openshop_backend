@@ -10,7 +10,7 @@ using OpenShopVHBackend.Models;
 
 namespace OpenShopVHBackend.Controllers
 {
-    public class SettingsController : Controller
+    public class SettingsController : BaseController
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 

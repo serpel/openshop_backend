@@ -20,17 +20,19 @@
          items.AddTool(ToolBarItems.PdfExport);
      }))
      .AllowPaging()
-     .AllowFiltering()
-     .AllowResizeToFit()
+     .AllowResizing(true)
+     .AllowSorting(true)
+     .AllowFiltering(true)
+     .AllowTextWrap(true)
      .Columns(col =>
      {
-         col.Field(p => p.OrderId).TextAlign(TextAlign.Left).Width(40).Add();
-         col.Field(p => p.RemoteId).TextAlign(TextAlign.Left).Width(50).Add();
-         col.Field(p => p.DateCreated).TextAlign(TextAlign.Left).Width(80).Add();
-         col.Field(p => p.Status).TextAlign(TextAlign.Left).Width(80).Add();
-         col.Field(p => p.CardCode).TextAlign(TextAlign.Left).Width(50).Add();
-         col.Field(p => p.SalesPersonName).TextAlign(TextAlign.Left).Width(40).Add();
-         col.Field(p => p.LastErrorMessage).TextAlign(TextAlign.Left).Width(150).Add();
+         col.Field(p => p.OrderId).TextAlign(TextAlign.Left).Width(50).Add();
+         col.Field(p => p.RemoteId).TextAlign(TextAlign.Left).Width(60).Add();
+         col.Field(p => p.DateCreated).TextAlign(TextAlign.Left).Width(180).Add();
+         col.Field(p => p.Status).TextAlign(TextAlign.Left).Width(120).Add();
+         col.Field(p => p.CardCode).TextAlign(TextAlign.Left).Width(90).Add();
+         col.Field(p => p.SalesPersonName).TextAlign(TextAlign.Left).Width(120).Add();
+         col.Field(p => p.LastErrorMessage).TextAlign(TextAlign.Left).Width(200).Add();
          col.HeaderText("Options").Template("<a href=./Orders/Process/{{:OrderId}}>Process</a>").Add();
      }))
 
