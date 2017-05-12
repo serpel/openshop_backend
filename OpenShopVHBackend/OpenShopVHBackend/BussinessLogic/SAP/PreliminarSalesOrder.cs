@@ -6,17 +6,17 @@ using System.Linq;
 
 namespace OpenShopVHBackend.BussinessLogic
 {
-    class DraftSalesOrder
+    class PreliminarSalesOrder
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
         private ServerConnection _connection;
 
-        public DraftSalesOrder(){
+        public PreliminarSalesOrder(){
             _connection = new ServerConnection();
         }
 
-        public DraftSalesOrder(ServerConnection serverConnection)
+        public PreliminarSalesOrder(ServerConnection serverConnection)
         {
             this._connection = serverConnection;
         }
@@ -53,7 +53,8 @@ namespace OpenShopVHBackend.BussinessLogic
                         if (_connection.Connect() == 0)
                         {
                             company = _connection.GetCompany();
-                            salesOrder = company.GetBusinessObject(BoObjectTypes.oOrders);
+                            salesOrder = company.GetBusinessObject(BoObjectTypes.oDrafts);
+                            salesOrder.DocObjectCode = BoObjectTypes.oOrders;
                             salesOrder.CardCode = order.Client.CardCode;
                             salesOrder.Comments = order.Comment;
                             salesOrder.SalesPersonCode = order.DeviceUser.SalesPersonId;

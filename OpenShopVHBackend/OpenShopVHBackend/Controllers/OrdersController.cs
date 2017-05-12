@@ -82,9 +82,27 @@ namespace OpenShopVHBackend.Controllers
             }
         }
 
+
+        [AutomaticRetry(Attempts = 0)]
+        public void CreateDraftOrderOnSap(int orderId)
+        {
+
+            String message = "";
+
+            try
+            {
+                DraftSalesOrder salesorder = new DraftSalesOrder();
+                message = salesorder.AddSalesOrder(orderId);
+            }
+            catch (Exception e)
+            {
+                MyLogger.GetInstance.Error(e.Message, e);
+            }
+        }
+
         public ActionResult Process(int id)
         {
-            BackgroundJob.Enqueue(() => CreateQuotationOrderOnSap(id));
+            BackgroundJob.Enqueue(() => CreateDraftOrderOnSap(id));
 
             return RedirectToAction("Index");
         }

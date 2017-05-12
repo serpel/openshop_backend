@@ -972,8 +972,19 @@ namespace OpenShopVHBackend.Api
                         db.CartProductItems.Add(cart_item);
                         db.SaveChanges();
                     }
+                    else
+                    {
+                        tmp.Quantity += quantity;
+                        double dvalue = (discount != null ? (((product_variant.Price * tmp.Quantity) * discount.Discount) / 100) : 0.0);
+                        tmp.ISV = ((tmp.Quantity * product_variant.Price) - dvalue) * isv;
+                        tmp.Discount = dvalue;
+                        tmp.TotalItemPrice = (tmp.Quantity * product_variant.Price);
+                        tmp.TotalItemPriceFormatted = product_variant.Currency + ' ' + tmp.TotalItemPrice;
+                        db.Entry(tmp).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
 
-                    MyLogger.GetInstance.Debug(String.Format("AddToCart - userId: {0}, product_variant_id: {1}, quantity: {2}", userId, product_variant_id, quantity));
+                    MyLogger.GetInstance.Info(String.Format("AddToCart - userId: {0}, product_variant_id: {1}, quantity: {2}", userId, product_variant_id, quantity));
 
                     success = true;
                 }
@@ -1256,7 +1267,7 @@ namespace OpenShopVHBackend.Api
             //String message = "";
             try
             {
-                DraftSalesOrder salesorder = new DraftSalesOrder();
+                PreliminarSalesOrder salesorder = new PreliminarSalesOrder();
                 salesorder.AddSalesOrder(orderId);
             }
             catch (Exception e)

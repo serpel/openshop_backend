@@ -208,6 +208,7 @@
     <Compile Include="BussinessLogic\MyAuthorizeAttribute.cs" />
     <Compile Include="BussinessLogic\MyLogger.cs" />
     <Compile Include="BussinessLogic\SAP\DraftPayment.cs" />
+    <Compile Include="BussinessLogic\SAP\PreliminarSalesOrder.cs" />
     <Compile Include="BussinessLogic\SAP\DraftSalesOrder.cs" />
     <Compile Include="BussinessLogic\SAP\IncomingPayment.cs" />
     <Compile Include="BussinessLogic\SAP\Quotation.cs" />
@@ -1670,7 +1671,14 @@
     <Content Include="Content\assets\scss\themes\elegant\var.scss" />
     <Content Include="Content\assets\scss\themes\simple\theme.scss" />
     <Content Include="Content\assets\scss\themes\simple\var.scss" />
+    <Content Include="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\CustomProfile1.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\ej\ej.globalize.min.js" />
     <Content Include="Scripts\ej\ej.unobtrusive.min.js" />
