@@ -1,0 +1,37 @@
+﻿@using OpenShopVHBackend.Models;
+@model IEnumerable<PaymentViewModel>
+
+<div class="page-title">
+    <i class="icon-custom-left"></i>
+    <h3><span class="semi-bold">Payments</span></h3>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+
+    @(Html.EJ().Grid<PaymentViewModel>("Grid")
+     .Datasource(Model)
+     .ToolbarSettings(toolBar => toolBar.ShowToolbar().ToolbarItems(items =>
+     {
+         items.AddTool(ToolBarItems.ExcelExport);
+         items.AddTool(ToolBarItems.PdfExport);
+     }))
+     .AllowPaging()
+     .AllowFiltering()
+     .IsResponsive(true)
+     .EnableResponsiveRow(true)
+     .Columns(col =>
+     {
+         col.Field(p => p.PaymentId).TextAlign(TextAlign.Left).Width(40).Add();
+         col.Field(p => p.DocEntry).TextAlign(TextAlign.Left).Width(50).Add();
+         col.Field(p => p.CreatedDate).TextAlign(TextAlign.Left).Width(120).Add();
+         col.Field(p => p.SalesPersonName).TextAlign(TextAlign.Left).Width(100).Add();
+         col.Field(p => p.Status).TextAlign(TextAlign.Left).Width(130).Add();
+         col.Field(p => p.Invoices).TextAlign(TextAlign.Left).Width(150).Add();
+         col.Field(p => p.TotalAmount).TextAlign(TextAlign.Left).Width(100).Add();
+         col.Field(p => p.LastErrorMessage).TextAlign(TextAlign.Left).Width(160).Add();
+         col.HeaderText("Options").Template("<a href='/Payments/Process/{{:PaymentId}}'>Process</a>").Width(60).Add();
+     }))
+
+    </div>
+</div>

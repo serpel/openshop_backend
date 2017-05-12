@@ -1,0 +1,71 @@
+﻿@model OpenShopVHBackend.Models.RegisterViewModel
+@using Resources
+
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title" id="myModalLabel">@Resources.Register</h4>
+</div>
+
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "CreateForm" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+
+    <div class="modal-body">
+        <div class="row form-row">
+            <div class="col-md-4">
+                <div class="text-center">
+                    @if (Model.ProfileUrl == null)
+                    {
+                        <img src='@Url.Content("~/Content/assets/img/profiles/default-100.png")' class="avatar img-circle" alt="avatar">
+                    }
+                    else
+                    {
+                        <img src="@Url.Content(Model.ProfileUrl)" class="avatar img-circle" alt="avatar" style="width:100px;height:100px">
+                    }
+
+                    <h6>@Resources.Profile</h6>
+                    <input type="file" name="file" id="file" style="width:100%">
+                    @Html.HiddenFor(model => model.ProfileUrl)
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="col-md-12">
+                        <label class="form-label">@Resources.Email</label>
+                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = Resources.Email })
+                        @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                    </div>
+                 </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-label">@Resources.Password</label>
+                        @Html.PasswordFor(m => m.Password, new { @class = "form-control", @placeholder = Resources.Password })
+                        @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">@Resources.ConfirmPassword</label>
+                        @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", @placeholder = Resources.ConfirmPassword })
+                        @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
+                    </div>
+                </div>          
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" type="button" data-dismiss="modal">@Resources.Cancel</button>
+        <input class="btn btn-primary" type="submit" value="@Resources.Save" />
+    </div>
+}
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#CreateForm').submit(function () {
+            $('input[type=submit]', this).attr('disabled', 'disabled');
+        });
+    });
+</script>

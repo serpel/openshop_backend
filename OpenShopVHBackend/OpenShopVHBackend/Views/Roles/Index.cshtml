@@ -1,0 +1,62 @@
+﻿@using OpenShopVHBackend.BussinessLogic
+@using OpenShopVHBackend.Properties
+
+@section styles{
+    <link href="~/Content/css/select2.min.css" rel="stylesheet" />
+}
+
+<div class="row-fluid">
+    <div class="span12">
+        <div class="grid simple ">
+            <div class="grid-title">
+                <h4>@Resources.Users</h4>
+                <div class="tools"> <a href="javascript:;" class="collapse"></a> <a href="#grid-config" data-toggle="modal" class="config"></a> <a href="javascript:;" class="reload"></a> <a href="javascript:;" class="remove"></a> </div>
+            </div>
+            <div class="grid-body ">
+
+                <table class="table table-hover table-condensed" id="datatable">
+                    <thead>
+                        <tr>
+                            <th>@Resources.Id</th>
+                            <th>@Resources.Name</th>                            
+                            <th>@Html.NoEncodeActionLink("<span class='glyphicon glyphicon-plus'></span>", Resources.CreateNew, "Create", "Roles", routeValues: null, htmlAttributes: new { data_modal = "", @class = "btn btn-primary pull-right" })</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/Scripts/DataTables-1.10.11/media/js/jquery.dataTables.min.js"></script>
+    <script src="~/Scripts/DataTables-1.10.11/media/js/dataTables.bootstrap.min.js"></script>
+    <script src="~/Scripts/select2.min.js"></script>
+    <script src="~/Scripts/modal.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            var options = {
+                editUrl: '@Url.Action("Edit")',
+                deleteUrl: '@Url.Action("Delete")',
+                url: '@Url.Action("GetRoles")',
+                id: '#datatable'
+            };
+
+            var columns =
+            [
+                        { data: 'Id' },
+                        { data: 'Name' },
+                        { data: 'Id' }
+            ];
+
+            var datatable = CreateTable(columns, options);
+
+            $(options.id).on('draw.dt', function () {
+                LoadModal(columns, options);
+            });
+
+        });
+    </script>
+}

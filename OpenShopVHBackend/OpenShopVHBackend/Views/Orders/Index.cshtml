@@ -1,0 +1,38 @@
+﻿@using OpenShopVHBackend.Models;
+@model IEnumerable<OrderViewModel>
+
+<div class="page-title">
+    <i class="icon-custom-left"></i>
+    <h3><span class="semi-bold">Payments</span></h3>
+</div>
+@{
+    var url = Url.Action("Process");
+}
+
+<div class="row">
+    <div class="col-lg-12">
+
+     @(Html.EJ().Grid<OrderViewModel>("Grid")
+     .Datasource(Model)
+     .ToolbarSettings(toolBar => toolBar.ShowToolbar().ToolbarItems(items =>
+     {
+         items.AddTool(ToolBarItems.ExcelExport);
+         items.AddTool(ToolBarItems.PdfExport);
+     }))
+     .AllowPaging()
+     .AllowFiltering()
+     .AllowResizeToFit()
+     .Columns(col =>
+     {
+         col.Field(p => p.OrderId).TextAlign(TextAlign.Left).Width(40).Add();
+         col.Field(p => p.RemoteId).TextAlign(TextAlign.Left).Width(50).Add();
+         col.Field(p => p.DateCreated).TextAlign(TextAlign.Left).Width(80).Add();
+         col.Field(p => p.Status).TextAlign(TextAlign.Left).Width(80).Add();
+         col.Field(p => p.CardCode).TextAlign(TextAlign.Left).Width(50).Add();
+         col.Field(p => p.SalesPersonName).TextAlign(TextAlign.Left).Width(40).Add();
+         col.Field(p => p.LastErrorMessage).TextAlign(TextAlign.Left).Width(150).Add();
+         col.HeaderText("Options").Template("<a href=./Orders/Process/{{:OrderId}}>Process</a>").Add();
+     }))
+
+    </div>
+</div>

@@ -1,0 +1,64 @@
+﻿@model IEnumerable<OpenShopVHBackend.Models.ApplicationUser>
+@using OpenShopVHBackend.BussinessLogic
+@using Resources
+
+@section styles{
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/zf/jszip-2.5.0/pdfmake-0.1.18/dt-1.10.12/b-1.2.2/b-colvis-1.2.2/b-html5-1.2.2/b-print-1.2.2/cr-1.3.2/r-2.1.0/datatables.min.css" />
+}
+
+<div class="row-fluid">
+    <div class="span12">
+        <div class="grid simple ">
+            <div class="grid-title">
+                <h4>@Resources.Users</h4>
+                <div class="tools"> <a href="javascript:;" class="collapse"></a> <a href="#grid-config" data-toggle="modal" class="config"></a> <a href="javascript:;" class="reload"></a> <a href="javascript:;" class="remove"></a> </div>
+            </div>
+            <div class="grid-body ">
+
+                <table class="table table-hover table-condensed" id="datatable">
+                    <thead>
+                        <tr>
+                            <th>@Resources.Id</th>
+                            <th>@Resources.Email</th>
+                            <th>@Resources.Confirmed?</th>
+                            <th>@Html.NoEncodeActionLink("<span class='glyphicon glyphicon-plus'></span>", Resources.CreateNew, "Create", "Users", routeValues: null, htmlAttributes: new { data_modal = "", @class = "btn btn-primary pull-right" })</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/Content/assets/plugins/bootstrap-select2/select2.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs/jszip-2.5.0/pdfmake-0.1.18/dt-1.10.12/b-1.2.2/b-colvis-1.2.2/b-html5-1.2.2/b-print-1.2.2/cr-1.3.2/r-2.1.0/datatables.min.js"></script>
+    <script src="~/Scripts/modal.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            var options = {
+                editUrl: '@Url.Action("Edit")',
+                deleteUrl: '@Url.Action("Delete")',
+                url: '@Url.Action("GetUsers")',
+                id: '#datatable'
+            };
+
+            var columns =
+            [
+                        { data: 'Id' },
+                        { data: 'Email' },
+                        { data: 'EmailConfirmed' },
+                        { data: 'Id' }
+            ];
+
+            var datatable = CreateTable(columns, options);
+
+            $(options.id).on('draw.dt', function () {
+                LoadModal(columns, options);
+            });
+
+        });
+    </script>
+}

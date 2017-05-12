@@ -1,0 +1,32 @@
+﻿@model OpenShopVHBackend.Models.UserViewModel
+@using Resources
+
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title" id="myModalLabel">@Resources.Delete</h4>
+</div>
+
+
+@using (Html.BeginForm())
+{
+    <div class="modal-body">
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary("", new { @class = "text-danger" })
+
+        <div class="row form-row">
+            <div class="col-md-6">
+                <label class="form-label">@Resources.Id</label>
+                @Html.EditorFor(m => m.Id, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">@Resources.Email</label>
+                @Html.EditorFor(m => m.Email, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" type="button" data-dismiss="modal">@Resources.Cancel</button>
+        <input class="btn btn-primary" type="submit" value="@Resources.Save" />
+    </div>
+}

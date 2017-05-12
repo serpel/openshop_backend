@@ -1,0 +1,121 @@
+﻿@using Microsoft.AspNet.Identity
+@using Microsoft.AspNet.Identity.EntityFramework
+@using OpenShopVHBackend.Properties
+@using OpenShopVHBackend.Models
+
+<div class="header navbar navbar-inverse">
+    <!-- BEGIN TOP NAVIGATION BAR -->
+    <div class="navbar-inner">
+        <!-- BEGIN NAVIGATION HEADER -->
+        <div class="header-seperation">
+            <!-- BEGIN MOBILE HEADER -->
+            <ul class="nav pull-left notifcation-center" id="main-menu-toggle-wrapper" style="display:none">
+                <li class="dropdown">
+                    <a id="main-menu-toggle" href="#main-menu" class="">
+                        <div class="iconset top-menu-toggle-white"></div>
+                    </a>
+                </li>
+            </ul>
+            <!-- END MOBILE HEADER -->
+            <!-- BEGIN LOGO -->
+            <a href='@Url.Action("Index", "Home")'>
+                <img src='@Url.Content("~/Content/assets/img/logo.png")' class="logo" alt="" data-src='@Url.Content("~/Content/assets/img/logo.png")' data-src-retina='@Url.Content("~/Content/assets/img/logo2x.png")' width="160" height="26" />
+            </a>
+            <!-- END LOGO -->
+            <!-- BEGIN LOGO NAV BUTTONS -->
+            <ul class="nav pull-right notifcation-center">
+                <li class="dropdown" id="header_task_bar">
+                    <a href="#" class="dropdown-toggle active" data-toggle="">
+                        <div class="iconset top-home"></div>
+                    </a>
+                </li>
+                <!-- BEGIN MOBILE CHAT TOGGLER -->
+                <li class="dropdown" id="portrait-chat-toggler" style="display:none">
+                    <a href="#sidr" class="chat-menu-toggle">
+                        <div class="iconset top-chat-white"></div>
+                    </a>
+                </li>
+                <!-- END MOBILE CHAT TOGGLER -->
+            </ul>
+            <!-- END LOGO NAV BUTTONS -->
+        </div>
+        <!-- END NAVIGATION HEADER -->
+        <!-- BEGIN CONTENT HEADER -->
+        <div class="header-quick-nav">
+            <!-- BEGIN HEADER LEFT SIDE SECTION -->
+            <div class="pull-left">
+                <!-- BEGIN SLIM NAVIGATION TOGGLE -->
+                <ul class="nav quick-section">
+                    <li class="quicklinks">
+                        <a href="#" class="" id="layout-condensed-toggle">
+                            <div class="iconset top-menu-toggle-dark"></div>
+                        </a>
+                    </li>
+                </ul>
+                <!-- END SLIM NAVIGATION TOGGLE -->
+                <!-- BEGIN HEADER QUICK LINKS -->
+                <ul class="nav quick-section">
+                    <li class="quicklinks"><a href="#" class=""><div class="iconset top-reload"></div></a></li>
+                    <li class="quicklinks"><span class="h-seperate"></span></li>
+                    <li class="quicklinks"><a href="#" class=""><div class="iconset top-tiles"></div></a></li>
+                    <!-- BEGIN SEARCH BOX -->
+                    <!--<li class="m-r-10 input-prepend inside search-form no-boarder">
+                        <span class="add-on"><span class="iconset top-search"></span></span>
+                        <input name="" type="text" class="no-boarder" placeholder="Search Dashboard" style="width:250px;">
+                    </li>-->
+                    <!-- END SEARCH BOX -->
+                </ul>
+                <!-- BEGIN HEADER QUICK LINKS -->
+            </div>
+            <!-- END HEADER LEFT SIDE SECTION -->
+            <!-- BEGIN HEADER RIGHT SIDE SECTION -->
+            @if (Request.IsAuthenticated)
+            {
+                <div class="pull-right">
+                    <div class="chat-toggler">
+                        <!-- BEGIN USER DETAILS -->
+                        <div class="user-details">
+                            <div class="username">
+                                @User.Identity.GetUserName()
+                            </div>
+                        </div>
+                        <div class="iconset top-down-arrow"></div>
+                        <!-- BEGIN PROFILE PICTURE -->
+                        <div class="profile-pic">
+
+                            @{ 
+                                var manager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
+                                var currentUser = manager.FindById(User.Identity.GetUserId());
+                            }
+
+                            @if (currentUser.ProfileUrl != null)
+                            {
+                                <img src='@currentUser.ProfileUrl' alt="" data-src='@currentUser.ProfileUrl' data-src-retina='@currentUser.ProfileUrl' width="35" height="35" />
+                            }
+                            else
+                            {
+                                <img src='@Url.Content("~/Content/assets/img/profiles/default-100.png")' alt="" data-src='@Url.Content("~/Content/assets/img/profiles/default-100.png")' data-src-retina='@Url.Content("~/Content/assets/img/profiles/default-100.png")' width="35" height="35" />
+                            }                            
+                        </div>
+                        <!-- END PROFILE PICTURE -->
+                    </div>
+                    <ul class="nav quick-section ">
+                        <li class="quicklinks">
+                            <a data-toggle="dropdown" class="dropdown-toggle  pull-right " href="#" id="user-options">
+                                <div class="iconset top-settings-dark "></div>
+                            </a>
+                            <ul class="dropdown-menu  pull-right" role="menu" aria-labelledby="user-options">
+                                <li><a href="@Url.Action("Index","Profile")"> @Resources.Profile</a> </li>
+                                <li class="divider"></li>
+                                <li><a href="@Url.Action("LogOut", "Account")"><i class="fa fa-power-off"></i>&nbsp;&nbsp;@Resources.LogOff</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            }
+            <!-- END HEADER RIGHT SIDE SECTION -->
+        </div>
+        <!-- END CONTENT HEADER -->
+    </div>
+    <!-- END TOP NAVIGATION BAR -->
+</div>

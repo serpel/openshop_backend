@@ -1,0 +1,62 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Van Heusen Admin</title>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta content="" name="description" />
+    <meta content="Intellisys Technology" name="author" />
+    @Styles.Render("~/Content/css")
+    @Styles.Render("~/Content/ej/web/bootstrap-theme/ej.web.all.min.css")
+    @Scripts.Render("~/Scripts/jquery-3.1.1.min.js")
+    @Scripts.Render("~/Scripts/jsrender.min.js")
+    @Scripts.Render("~/Scripts/ej/ej.web.all.min.js")
+</head>
+<body class="">
+    <!-- BEGIN HEADER -->
+    @Html.Action("TopNavBar")
+    <!-- END HEADER -->
+    <!-- BEGIN CONTENT -->
+    <div class="page-container row-fluid">
+        <!-- BEGIN SIDEBAR -->
+        <!-- BEGIN MENU -->
+        @Html.Action("LeftNavBar")
+        <!-- BEGIN SCROLL UP HOVER -->
+        <a href="#" class="scrollup">Scroll</a>
+        <!-- END SCROLL UP HOVER -->
+        <!-- END MENU -->
+        <!-- BEGIN SIDEBAR FOOTER WIDGET -->
+        <div class="footer-widget">
+            <div class="progress transparent progress-small no-radius no-margin">
+                <div data-percentage="79%" class="progress-bar progress-bar-success animate-progress-bar"></div>
+            </div>
+            <div class="pull-right">
+                <div class="details-status">
+                    <span data-animation-duration="560" data-value="80" class="animate-number"></span>%
+                </div>
+                <a href="@Url.Action("LogOut", "Account")"><i class="fa fa-power-off"></i></a>
+            </div>
+        </div>
+        <!-- END SIDEBAR FOOTER WIDGET -->
+        <!-- END SIDEBAR -->
+        <!-- BEGIN PAGE CONTAINER-->
+        <div class="page-content">
+            <div class="content">
+                <div id='myModal' class='modal fade in'>
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div id='myModalContent'></div>
+                        </div>
+                    </div>
+                </div>
+                @RenderBody()
+            </div>
+        </div>
+        <!-- END PAGE CONTAINER -->
+    </div>
+    @Html.EJ().ScriptManager()
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+    </body>
+</html>
