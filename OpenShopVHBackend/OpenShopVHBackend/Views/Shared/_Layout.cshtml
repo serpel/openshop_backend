@@ -7,7 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta content="" name="description" />
     <meta content="Intellisys Technology" name="author" />
+    @RenderSection("StylesOnTop", required: false)
     @Styles.Render("~/Content/css")
+    @RenderSection("Styles", required: false)
     @Styles.Render("~/Content/ej/web/bootstrap-theme/ej.web.all.min.css")
     @Scripts.Render("~/Scripts/jquery-3.1.1.min.js")
     @Scripts.Render("~/Scripts/jsrender.min.js")
@@ -56,7 +58,7 @@
         <!-- END PAGE CONTAINER -->
     </div>
     @Html.EJ().ScriptManager()
-    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/javascripts")
     @RenderSection("scripts", required: false)
     </body>
 </html>
