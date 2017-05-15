@@ -91,7 +91,7 @@ namespace OpenShopVHBackend.Controllers
 
             try
             {
-                DraftSalesOrder salesorder = new DraftSalesOrder();
+                PreliminarSalesOrder salesorder = new PreliminarSalesOrder();
                 message = salesorder.AddSalesOrder(orderId);
             }
             catch (Exception e)

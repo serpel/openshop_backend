@@ -845,7 +845,7 @@ namespace OpenShopVHBackend.Api
                 client_name = client.Name,
                 credit_limit = client.CreditLimit,
                 balance = client.Balance,
-                pas_due = client.past_due,
+                pas_due = client.PastDue,
                 pay_condition = client.PayCondition,
                 records = documents
             };
