@@ -29,7 +29,8 @@ namespace OpenShopVHBackend.Models
         public String LastErrorMessage { get; set; }
         public Int32 Series { get; set; }
         public String DeliveryDate { get; set; }
-        
+        public DateTime CreatedDate { get; set; }
+
         public Double GetTotal()
         {
             return (GetSubtotal() - GetDiscount()) + GetIVA();

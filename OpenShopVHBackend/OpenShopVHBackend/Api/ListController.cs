@@ -28,6 +28,89 @@ namespace OpenShopVHBackend.Api
         //GetClientTransactions
 
         [HttpGet]
+        public HttpResponseMessage GetReportQuota(int userId, int year, int month)
+        {
+            var quotas = db.Fees
+                .Where(w => w.DeviceUserId == userId 
+                       && w.Date.Year == year 
+                       && w.Date.Month == month)
+                .GroupBy(g => g.DeviceUserId)
+                .Select(s => new ReportEntry() {
+                    Y = s.Sum(c => c.Amount),
+                    Label = "Cuota"
+                }).ToList()
+                .FirstOrDefault();
+
+            var orders = db.Orders
+                .Where(w => w.DeviceUserId == userId
+                      && w.CreatedDate.Year == year
+                      && w.CreatedDate.Month == month)
+                .GroupBy(g => g.DeviceUserId)
+                .ToList()
+                .Select(s => new ReportEntry() {
+                    Y = s.Sum(c => c.GetTotal()),
+                    Label = "Ventas"
+                }).ToList()
+                .FirstOrDefault();
+
+            if (quotas != null && orders != null)
+                quotas.Y = quotas.Y - orders.Y;
+
+            List<ReportEntry> entries = new List<ReportEntry>();
+
+            if(quotas != null)
+                entries.Add(quotas);
+            if(orders != null)
+                entries.Add(orders);
+
+            var records = new
+            {
+                entries = entries
+            };
+             
+            return Request.CreateResponse(HttpStatusCode.OK, records, Configuration.Formatters.JsonFormatter);
+        }
+
+        [HttpGet]
+        public HttpResponseMessage GetReportQuotaAccum(int userId, int year, int week)
+        {
+            var quotas = db.Fees
+                .Where(w => w.DeviceUserId == userId
+                       && w.Date.Year == year
+                       && Math.Floor((decimal)w.Date.DayOfYear / 7) == week)
+                .GroupBy(g => g.Date.DayOfWeek)
+                .Select(s => new ReportEntry()
+                {
+                    X = (Double)s.Key,
+                    Y = s.Sum(c => c.Amount),
+                    Label = s.Key.ToString()
+                }).ToList()
+                .FirstOrDefault();
+
+            var orders = db.Orders
+                .Where(w => w.DeviceUserId == userId
+                      && w.CreatedDate.Year == year
+                      && Math.Floor((decimal)w.CreatedDate.DayOfYear / 7) == week)
+                .GroupBy(g => g.CreatedDate.DayOfWeek)
+                .ToList()
+                .Select(s => new ReportEntry()
+                {
+                    X = (Double)s.Key,
+                    Y = s.Sum(c => c.GetTotal()),
+                    Label = s.Key.ToString()
+                }).ToList()
+                .FirstOrDefault();
+
+            var records = new
+            {
+                firstlist = quotas,
+                secondlist = orders
+            };
+
+            return Request.CreateResponse(HttpStatusCode.OK, records, Configuration.Formatters.JsonFormatter);
+        }
+
+        [HttpGet]
         public HttpResponseMessage GetClientTransactions(String cardcode = "", String begin = "", String end = "")
         {
             var transactions = db.ClientTransactions.AsQueryable();
@@ -1152,6 +1235,7 @@ namespace OpenShopVHBackend.Api
                     var order = new Order()
                     {
                         DateCreated = DateTime.Now.ToString(),
+                        CreatedDate = DateTime.Now,
                         Series = myOrder.Series,
                         //RemoteId = order.RemoteId,
                         Comment = myOrder.Comment,

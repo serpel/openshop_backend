@@ -248,6 +248,10 @@
     <Compile Include="Migrations\201705122109250_Reset.Designer.cs">
       <DependentUpon>201705122109250_Reset.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201705152217046_CreatedDateColumnOnOrders.cs" />
+    <Compile Include="Migrations\201705152217046_CreatedDateColumnOnOrders.Designer.cs">
+      <DependentUpon>201705152217046_CreatedDateColumnOnOrders.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AppUser.cs" />
@@ -286,6 +290,7 @@
     <Compile Include="Models\PaymentViewReport.cs" />
     <Compile Include="Models\Product.cs" />
     <Compile Include="Models\ProductVariant.cs" />
+    <Compile Include="Models\ReportEntry.cs" />
     <Compile Include="Models\Setting.cs" />
     <Compile Include="Models\Shop.cs" />
     <Compile Include="Models\Size.cs" />
@@ -1838,6 +1843,11 @@
     <Content Include="Views\Users\_Create.cshtml" />
     <Content Include="Views\Users\_Delete.cshtml" />
     <Content Include="Views\Users\_Edit.cshtml" />
+    <Content Include="Views\Fees\Create.cshtml" />
+    <Content Include="Views\Fees\Delete.cshtml" />
+    <Content Include="Views\Fees\Details.cshtml" />
+    <Content Include="Views\Fees\Edit.cshtml" />
+    <Content Include="Views\Fees\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="SAPbobsCOM">
@@ -1859,6 +1869,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201705122109250_Reset.resx">
       <DependentUpon>201705122109250_Reset.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705152217046_CreatedDateColumnOnOrders.resx">
+      <DependentUpon>201705152217046_CreatedDateColumnOnOrders.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
