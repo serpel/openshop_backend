@@ -540,4 +540,7 @@
   <data name="WorkSchedule" xml:space="preserve">
     <value>Work Schedule</value>
   </data>
+  <data name="Quotes" xml:space="preserve">
+    <value>Quotes</value>
+  </data>
 </root>

@@ -17,6 +17,8 @@ using System.Web.Script.Serialization;
 using System.Text;
 using OpenShopVHBackend.Controllers;
 using OpenShopVHBackend.BussinessLogic.SAP;
+using System.Data.Entity.Core.Objects;
+using System.Globalization;
 
 namespace OpenShopVHBackend.Api
 {
@@ -65,6 +67,8 @@ namespace OpenShopVHBackend.Api
 
             var records = new
             {
+                totalinvoiced = orders != null ? orders.Y : 0,
+                quota = quotas != null ? quotas.Y : 0,
                 entries = entries
             };
              
@@ -72,37 +76,41 @@ namespace OpenShopVHBackend.Api
         }
 
         [HttpGet]
-        public HttpResponseMessage GetReportQuotaAccum(int userId, int year, int week)
+        public HttpResponseMessage GetReportQuotaAccum(int userId, int year, int month, int day)
         {
+            DateTime currentDate = new DateTime(year, month, day);
+            int days = currentDate.DayOfWeek - DayOfWeek.Monday;
+            DateTime weekStart = currentDate.AddDays(-days);
+            DateTime weekEnd = weekStart.AddDays(6);
+
             var quotas = db.Fees
                 .Where(w => w.DeviceUserId == userId
-                       && w.Date.Year == year
-                       && Math.Floor((decimal)w.Date.DayOfYear / 7) == week)
-                .GroupBy(g => g.Date.DayOfWeek)
-                .Select(s => new ReportEntry()
-                {
-                    X = (Double)s.Key,
-                    Y = s.Sum(c => c.Amount),
-                    Label = s.Key.ToString()
-                }).ToList()
-                .FirstOrDefault();
-
-            var orders = db.Orders
-                .Where(w => w.DeviceUserId == userId
-                      && w.CreatedDate.Year == year
-                      && Math.Floor((decimal)w.CreatedDate.DayOfYear / 7) == week)
-                .GroupBy(g => g.CreatedDate.DayOfWeek)
+                       && w.Date >= weekStart && w.Date <= weekEnd)
+                .GroupBy(g => g.Date.Day)
                 .ToList()
                 .Select(s => new ReportEntry()
                 {
-                    X = (Double)s.Key,
+                    X = s.Key,
+                    Y = s.Sum(c => c.Amount),
+                    Label = s.Key.ToString()
+                }).ToList();
+
+            var orders = db.Orders
+                .Where(w => w.DeviceUserId == userId
+                       && w.CreatedDate >= weekStart && w.CreatedDate <= weekEnd)
+                .GroupBy(g => g.CreatedDate.Day)
+                .ToList()
+                .Select(s => new ReportEntry()
+                {
+                    X = s.Key,
                     Y = s.Sum(c => c.GetTotal()),
                     Label = s.Key.ToString()
-                }).ToList()
-                .FirstOrDefault();
+                }).ToList();
 
             var records = new
             {
+                quotaaccum = quotas != null ? quotas.Sum(s => s.Y) : 0,
+                totalinvoiced = orders != null ? orders.Sum(s => s.Y) : 0,
                 firstlist = quotas,
                 secondlist = orders
             };
@@ -1076,15 +1084,20 @@ namespace OpenShopVHBackend.Api
             return Request.CreateResponse(HttpStatusCode.OK, new { success = success }, Configuration.Formatters.JsonFormatter);
         }
 
-        public HttpResponseMessage GetOrders(int userId)
+        public HttpResponseMessage GetOrders(int userId, DateTime begin, DateTime end)
         {
-            bool success = false;
+            var user = db.DeviceUser
+                .Where(w => w.DeviceUserId == userId)
+                .ToList()
+                .FirstOrDefault();
 
-            if (userId > 0)
-            {
-                var orders = db.Orders
-                    .Where(w => w.DeviceUser.DeviceUserId == userId)
-                    .OrderByDescending(o => o.OrderId)
+            var orders = db.Orders
+                .Where(w => w.DeviceUser.SalesPersonId == user.SalesPersonId
+                       && w.CreatedDate >= begin && w.CreatedDate <= end)
+                .OrderByDescending(o => o.OrderId)
+                .AsQueryable();
+
+            var result = orders
                     .ToList()
                     .Select(s => new
                     {
@@ -1092,7 +1105,7 @@ namespace OpenShopVHBackend.Api
                         remote_id = s.RemoteId,
                         series = s.Series,
                         comment = s.Comment,
-                        status = s.Status,
+                        status = s.Status.ToString(),
                         date_created = s.DateCreated,
                         item_count = s.GetItemCount(),
                         subtotal = s.GetSubtotal(),
@@ -1121,16 +1134,14 @@ namespace OpenShopVHBackend.Api
                         seller = s.DeviceUser.Name
                     });
 
-                var result = new
+                var myrecords = new
                 {
                     metadata = new Object(),
                     records = orders
                 };
 
-                return Request.CreateResponse(HttpStatusCode.OK, result, Configuration.Formatters.JsonFormatter);
-            }
-
-            return Request.CreateResponse(HttpStatusCode.InternalServerError, new { success = success }, Configuration.Formatters.JsonFormatter);
+                return Request.CreateResponse(HttpStatusCode.OK, myrecords, Configuration.Formatters.JsonFormatter);
+        
         }
 
         [HttpGet]

@@ -5,13 +5,9 @@
     <i class="icon-custom-left"></i>
     <h3><span class="semi-bold">Payments</span></h3>
 </div>
-@{
-    var url = Url.Action("Process");
-}
 
 <div class="row">
     <div class="col-lg-12">
-
      @(Html.EJ().Grid<OrderViewModel>("Grid")
      .Datasource(Model)
      .ToolbarSettings(toolBar => toolBar.ShowToolbar().ToolbarItems(items =>

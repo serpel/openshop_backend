@@ -961,6 +961,15 @@ namespace OpenShopVHBackend.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Quotes.
+        /// </summary>
+        public static string Quotes {
+            get {
+                return ResourceManager.GetString("Quotes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Records.
         /// </summary>
         public static string Records {

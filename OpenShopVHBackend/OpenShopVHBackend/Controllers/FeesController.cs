@@ -7,6 +7,8 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using OpenShopVHBackend.Models;
+using Excel;
+using System.IO;
 
 namespace OpenShopVHBackend.Controllers
 {
@@ -14,10 +16,104 @@ namespace OpenShopVHBackend.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
+
+        // GET: Fees
+        public ActionResult Upload()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Upload(HttpPostedFileBase uploadfile)
+        {
+            if (ModelState.IsValid)
+            {
+                if (uploadfile != null && uploadfile.ContentLength > 0)
+                {
+                    //ExcelDataReader works on binary excel file
+                    Stream stream = uploadfile.InputStream;
+                    //We need to written the Interface.
+                    IExcelDataReader reader = null;
+                    if (uploadfile.FileName.EndsWith(".xls"))
+                    {
+                        //reads the excel file with .xls extension
+                        reader = ExcelReaderFactory.CreateBinaryReader(stream);
+                    }
+                    else if (uploadfile.FileName.EndsWith(".xlsx"))
+                    {
+                        //reads excel file with .xlsx extension
+                        reader = ExcelReaderFactory.CreateOpenXmlReader(stream);
+                    }
+                    else
+                    {
+                        //Shows error if uploaded file is not Excel file
+                        ModelState.AddModelError("File", "This file format is not supported");
+                        return View();
+                    }
+                    //treats the first row of excel file as Coluymn Names
+                    reader.IsFirstRowAsColumnNames = true;
+                    //Adding reader data to DataSet()
+                    DataSet result = reader.AsDataSet();
+                    reader.Close();
+
+                    if (result != null)
+                    {
+                        foreach (DataRow row in result.Tables[0].Rows)
+                        {
+                            Fees fee = new Fees();
+
+                            foreach (DataColumn col in result.Tables[0].Columns)
+                            {
+                                if (col.ColumnName.ToUpper() == "FECHA")
+                                    fee.Date = DateTime.Parse(row[col.ColumnName].ToString());
+                                if (col.ColumnName.ToUpper() == "CUOTA")
+                                    fee.Amount = Double.Parse(row[col.ColumnName].ToString());
+                                if (col.ColumnName.ToUpper() == "CODIGOVENDEDORSAP")
+                                {
+                                    Int32 salesperson = Int32.Parse(row[col.ColumnName].ToString());
+                                    var user = db.DeviceUser.Where(w => w.SalesPersonId == salesperson).ToList().FirstOrDefault();
+                                    fee.DeviceUserId = user.DeviceUserId;
+                                }
+                            }
+
+                            db.Fees.Add(fee);
+                        }
+
+                        try { 
+                            db.SaveChanges();
+                        }catch(Exception e)
+                        {
+                            ModelState.AddModelError("File", e.Message);
+                        }
+                    }
+                    //Sending result data to View
+                    return View(result.Tables[0]);
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("File", "Please upload your file");
+            }
+            return View();
+        }
+
+
         // GET: Fees
         public ActionResult Index()
         {
-            var fees = db.Fees.Include(f => f.DeviceUser);
+            var fees = db.Fees
+                .Include(f => f.DeviceUser)
+                .OrderByDescending(o => o.Date)
+                .ToList()
+                .Select(s => new FeesViewModel
+                {
+                    FeesId = s.FeesId,
+                    Date = s.Date,
+                    Amount = s.Amount,
+                    UserName = s.DeviceUser.Name
+                });
+
             return View(fees.ToList());
         }
 

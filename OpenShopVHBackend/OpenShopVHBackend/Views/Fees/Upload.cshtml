@@ -1,0 +1,41 @@
+﻿@{
+    ViewBag.Title = "Read Excel File";
+}
+@model System.Data.DataTable
+@using System.Data
+
+<h2>Upload Excel File</h2>
+@using (Html.BeginForm("Upload", "Fees", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken();
+    @Html.ValidationSummary();
+
+    <label class="text-info">Upload Excel File</label>
+    <input type="file" class="form-control" name="uploadfile" id="uploadfile" />
+    <input type="submit" value="submit" class="btn btn-default" />
+
+    if (Model != null)
+    {
+        <table class="table table-responsive table-bordered">
+            <thead>
+                <tr>
+                    @foreach (DataColumn column in Model.Columns)
+                    {
+                        <th>@column.ColumnName</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (DataRow row in Model.Rows)
+                {
+                    <tr>
+                        @foreach (DataColumn col in Model.Columns)
+                        {
+                            <td>@row[col.ColumnName]</td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
