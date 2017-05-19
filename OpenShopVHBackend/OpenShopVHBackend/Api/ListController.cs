@@ -119,21 +119,12 @@ namespace OpenShopVHBackend.Api
         }
 
         [HttpGet]
-        public HttpResponseMessage GetClientTransactions(String cardcode = "", String begin = "", String end = "")
+        public HttpResponseMessage GetClientTransactions(String cardcode, DateTime begin, DateTime end)
         {
-            var transactions = db.ClientTransactions.AsQueryable();
-
-            if (cardcode.Length > 0)
-                transactions = transactions.Where(w => w.CardCode == cardcode);
-            if (begin.Count() > 0 && end.Count() > 0)
-            {
-                DateTime beginDate = DateTime.Parse(begin);
-                DateTime endDate = DateTime.Parse(end);
-
-                transactions = transactions.Where(w => w.CreatedDate >= beginDate && w.CreatedDate <= endDate);
-            }
-
-            var result = transactions
+            var transactions = db.ClientTransactions
+                .Where(w => w.CardCode == cardcode
+                       && w.CreatedDate >= begin && w.CreatedDate <= end)
+                 .OrderBy(o => o.CreatedDate)
                 .ToList()
                 .Select(s => new
                 {
@@ -143,33 +134,23 @@ namespace OpenShopVHBackend.Api
                     reference_number = s.ReferenceNumber,
                     card_code = s.CardCode,
                     amount = s.Amount
-                })
-                .OrderBy(o => o.date);
+                });
 
             var records = new
             {
-                transactions = result
+                transactions = transactions
             };
 
             return Request.CreateResponse(HttpStatusCode.OK, records, Configuration.Formatters.JsonFormatter);
         }
 
         [HttpGet]
-        public HttpResponseMessage GetPayments(int userId = -1, String begin = "", String end = "")
+        public HttpResponseMessage GetPayments(int userId, DateTime begin, DateTime end)
         {
-            var payments = db.Payments.AsQueryable();
-
-            if (userId > 0)
-                payments = payments.Where(w => w.DeviceUserId == userId);
-            if(begin.Count() > 0 && end.Count() > 0)
-            {
-                DateTime beginDate = DateTime.Parse(begin);
-                DateTime endDate = DateTime.Parse(end);
-
-                payments = payments.Where(w => w.CreatedDate >= beginDate && w.CreatedDate <= endDate);
-            }
-                
-            var result = payments
+            var payments = db.Payments
+                .Where(w => w.DeviceUserId == userId 
+                    && w.CreatedDate >= begin && w.CreatedDate <= end)
+                .OrderByDescending(o => o.PaymentId)
                 .ToList()
                 .Select(s => new
                 {
@@ -216,7 +197,7 @@ namespace OpenShopVHBackend.Api
 
             var records = new
             {
-                payments = result
+                payments = payments
             };
 
             return Request.CreateResponse(HttpStatusCode.OK, records, Configuration.Formatters.JsonFormatter);
@@ -1095,10 +1076,7 @@ namespace OpenShopVHBackend.Api
                 .Where(w => w.DeviceUser.SalesPersonId == user.SalesPersonId
                        && w.CreatedDate >= begin && w.CreatedDate <= end)
                 .OrderByDescending(o => o.OrderId)
-                .AsQueryable();
-
-            var result = orders
-                    .ToList()
+                .ToList()
                     .Select(s => new
                     {
                         id = s.OrderId,

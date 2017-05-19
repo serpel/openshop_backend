@@ -529,6 +529,15 @@ namespace OpenShopVHBackend.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fees.
+        /// </summary>
+        public static string Fees {
+            get {
+                return ResourceManager.GetString("Fees", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to FirstName.
         /// </summary>
         public static string FirstName {
@@ -1299,6 +1308,15 @@ namespace OpenShopVHBackend.Properties {
         public static string Unknown {
             get {
                 return ResourceManager.GetString("Unknown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Upload Excel.
+        /// </summary>
+        public static string UploadExcel {
+            get {
+                return ResourceManager.GetString("UploadExcel", resourceCulture);
             }
         }
         

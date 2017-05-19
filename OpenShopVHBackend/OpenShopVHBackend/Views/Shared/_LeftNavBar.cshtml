@@ -39,11 +39,18 @@
                 </ul>
             </li>
              <li class="">
-                <a href="javascript:;"> <i class="fa fa-user"></i> <span class="title">@Resources.OrdersAndPayments</span> <span class="arrow "></span> </a>
+                <a href="javascript:;"> <i class="fa fa-cubes"></i> <span class="title">@Resources.OrdersAndPayments</span> <span class="arrow "></span> </a>
                 <ul class="sub-menu">
                     <li><a href="@Url.Action("Index", "Clients")"> @Resources.Clients </a></li>     
                     <li><a href="@Url.Action("Index", "Orders")"> @Resources.Orders </a> </li>
                     <li><a href="@Url.Action("Index", "Payments")"> @Resources.Payments </a> </li>
+                </ul>
+            </li>
+            <li class="">
+                <a href="javascript:;"> <i class="fa fa-bars"></i> <span class="title">@Resources.Fees</span> <span class="arrow "></span> </a>
+                <ul class="sub-menu">
+                    <li> <a href="@Url.Action("Index", "Fees")"> @Resources.Fees </a> </li>
+                    <li> <a href="@Url.Action("Upload", "Fees")"> @Resources.UploadExcel </a> </li>
                 </ul>
             </li>
             <li class="">

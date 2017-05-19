@@ -543,4 +543,10 @@
   <data name="Quotes" xml:space="preserve">
     <value>Quotes</value>
   </data>
+  <data name="Fees" xml:space="preserve">
+    <value>Fees</value>
+  </data>
+  <data name="UploadExcel" xml:space="preserve">
+    <value>Upload Excel</value>
+  </data>
 </root>
