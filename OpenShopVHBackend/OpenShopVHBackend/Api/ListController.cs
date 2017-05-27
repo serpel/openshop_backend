@@ -27,7 +27,112 @@ namespace OpenShopVHBackend.Api
         private ApplicationDbContext db = new ApplicationDbContext();
         private String default_currency = "L";
 
+
+
+        [HttpGet]
+        public HttpResponseMessage MoveToWishList(int userId)
+        {
+            var cart = db.Carts
+                .Where(w => w.DeviceUserId == userId 
+                        && w.Type == 0)
+                .ToList()
+                .FirstOrDefault();
+
+            if(cart != null && cart.CartProductItems.Count > 0)
+            {
+                //foreach (var item in cart.CartProductItems)
+                //{
+                //    var i = new CartProductItem()
+                //    {
+                //        CartId
+                //    }
+                //}
+            }
+
+            
+
+            return Request.CreateResponse(HttpStatusCode.OK, new object(), Configuration.Formatters.JsonFormatter);
+        }
         //GetClientTransactions
+
+        [HttpGet]
+        public HttpResponseMessage AddToWishList(int userId, int variantId)
+        {
+            var variant = db.ProductVariants
+                .Where(w => w.ProductVariantId == variantId)
+                .ToList()
+                .FirstOrDefault();
+
+            if (variant == null)
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new object(), Configuration.Formatters.JsonFormatter);
+
+            var wishListVariant = new WishlistProductVariant()
+            {
+                ProductId = variant.ProductId,
+                Name = variant.Product.Name,
+                Currency = variant.Currency,
+                Description = variant.Product.Description,
+                MainImage = variant.Product.MainImage,
+                Price = variant.Price,
+                Code = variant.Code,
+                CategoryId = variant.Product.CategoryId,
+                PriceFormatted = variant.GetPriceTotalFormated(),
+            };
+
+            db.WishlistProductVariant.Add(wishListVariant);
+            db.SaveChanges();
+
+            var wishlist = new WishlistItem()
+            {
+                DeviceUserId = userId,
+                WishlistProductVariantId = wishListVariant.WishlistProductVariantId
+            };
+
+            db.WishlistItem.Add(wishlist);
+            db.SaveChanges();
+
+            var result = new
+            {
+                success = true
+            };
+
+            return Request.CreateResponse(HttpStatusCode.OK, result, Configuration.Formatters.JsonFormatter);
+        }
+        [HttpGet]
+        public HttpResponseMessage GetWishlist(int userId)
+        {
+            var list = db.WishlistItem
+                .Include(i => i.WishlistProductVariant)
+                .Where(w => w.DeviceUserId == userId)
+                .ToList()
+                .Select(s => new {
+                    user_id = s.DeviceUserId,
+                    id = s.WishlistItemId,
+                    variant = new {
+                        category = s.WishlistProductVariant.CategoryId,
+                        code = s.WishlistProductVariant.Code,
+                        currency = s.WishlistProductVariant.Currency,
+                        description = s.WishlistProductVariant.Description,
+                        discount_price = s.WishlistProductVariant.DiscountPrice,
+                        discount_price_formatted = s.WishlistProductVariant.DiscountPriceFormatted,
+                        main_image = s.WishlistProductVariant.MainImage,
+                        main_image_high_res = s.WishlistProductVariant.MainImageHighRes,
+                        name = s.WishlistProductVariant.Name,
+                        price = s.WishlistProductVariant.Price,
+                        price_formatted = s.WishlistProductVariant.PriceFormatted,
+                        product_id = s.WishlistProductVariant.ProductId
+                    }                  
+                });
+
+            var records = new
+            {
+                id = 0,
+                product_count = list.Count(),
+                items = list
+            };
+
+            return Request.CreateResponse(HttpStatusCode.OK, records, Configuration.Formatters.JsonFormatter);
+        }
 
         [HttpGet]
         public HttpResponseMessage GetReportQuota(int userId, int year, int month)
@@ -121,6 +226,8 @@ namespace OpenShopVHBackend.Api
         [HttpGet]
         public HttpResponseMessage GetClientTransactions(String cardcode, DateTime begin, DateTime end)
         {
+            end = end.AddDays(1);
+
             var transactions = db.ClientTransactions
                 .Where(w => w.CardCode == cardcode
                        && w.CreatedDate >= begin && w.CreatedDate <= end)
@@ -147,6 +254,8 @@ namespace OpenShopVHBackend.Api
         [HttpGet]
         public HttpResponseMessage GetPayments(int userId, DateTime begin, DateTime end)
         {
+            end = end.AddDays(1);
+
             var payments = db.Payments
                 .Where(w => w.DeviceUserId == userId 
                     && w.CreatedDate >= begin && w.CreatedDate <= end)
@@ -866,6 +975,7 @@ namespace OpenShopVHBackend.Api
                     address = s.Address,
                     name = s.Name,
                     RTN = s.RTN,
+                    in_orders = s.PastDue,
                     invoices = s.Invoices
                         .OrderBy(o => o.DueDate)
                         .ToList()
@@ -913,11 +1023,12 @@ namespace OpenShopVHBackend.Api
 
             var result = new
             {
+                address = client.Address,
                 client_card_code = client.CardCode,
                 client_name = client.Name,
                 credit_limit = client.CreditLimit,
                 balance = client.Balance,
-                pas_due = client.PastDue,
+                in_orders = client.PastDue,
                 pay_condition = client.PayCondition,
                 records = documents
             };
@@ -927,13 +1038,15 @@ namespace OpenShopVHBackend.Api
 
         [HttpGet]
         [HttpDelete]
-        public HttpResponseMessage DeleteToCart(int userId, int id)
+        public HttpResponseMessage DeleteToCart(int userId, int id, int type)
         {
             bool success = true;
             String message = "";
 
             var cart_item = db.CartProductItems
-                .Where(w => w.Cart.DeviceUserId == userId && w.CartProductItemId == id)
+                .Where(w => w.Cart.DeviceUserId == userId 
+                        && w.CartProductItemId == id
+                        && w.Type == type)
                 .ToList()
                 .FirstOrDefault();
 
@@ -957,7 +1070,7 @@ namespace OpenShopVHBackend.Api
 
         [HttpGet]
         [HttpPost]
-        public HttpResponseMessage AddToCart(int userId = -1, int product_variant_id = -1, int quantity = 0, String cardcode = "")
+        public HttpResponseMessage AddToCart(int userId = -1, int product_variant_id = -1, int quantity = 0, String cardcode = "", int type = 0)
         {
             bool success = false;
 
@@ -969,7 +1082,8 @@ namespace OpenShopVHBackend.Api
                     .FirstOrDefault();
 
                 var cart = db.Carts
-                    .Where(w => w.DeviceUserId == userId)
+                    .Where(w => w.DeviceUserId == userId
+                            && w.Type ==  type)
                     .ToList()
                     .FirstOrDefault();
 
@@ -980,6 +1094,7 @@ namespace OpenShopVHBackend.Api
                     {
                         DeviceUserId = userId,
                         Currency = product_variant.Currency,
+                        Type = type,
                         TotalPrice = 0,
                         TotalPriceFormatted = product_variant.Currency + ' ' + 0
                     };
@@ -1030,7 +1145,8 @@ namespace OpenShopVHBackend.Api
                         Discount = discountvalue,
                         RemoteId = product_variant.Product.RemoteId,
                         TotalItemPrice = (quantity * product_variant.Price),
-                        TotalItemPriceFormatted = product_variant.Currency + ' ' + (quantity * product_variant.Price)
+                        TotalItemPriceFormatted = product_variant.Currency + ' ' + (quantity * product_variant.Price),
+                        Type = type
                     };
 
                     var tmp = db.CartProductItems
@@ -1067,6 +1183,8 @@ namespace OpenShopVHBackend.Api
 
         public HttpResponseMessage GetOrders(int userId, DateTime begin, DateTime end)
         {
+            end = end.AddDays(1);
+
             var user = db.DeviceUser
                 .Where(w => w.DeviceUserId == userId)
                 .ToList()
@@ -1448,10 +1566,10 @@ namespace OpenShopVHBackend.Api
         }
 
         [HttpGet]
-        public HttpResponseMessage Cart(int userId = -1)
+        public HttpResponseMessage Cart(int userId = -1, int type = 0)
         {
             var cart = db.Carts
-                .Where(w => w.DeviceUserId == userId)
+                .Where(w => w.DeviceUserId == userId && w.Type == type)
                 .ToList()
                 .Select(s => new
                 {

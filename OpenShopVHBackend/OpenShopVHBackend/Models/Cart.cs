@@ -6,6 +6,12 @@ using System.Web;
 
 namespace OpenShopVHBackend.Models
 {
+    public enum CartType
+    {
+        CART = 0,
+        PRELIMINAR = 1
+    };
+
     public class Cart
     {
         [Key]
@@ -16,6 +22,7 @@ namespace OpenShopVHBackend.Models
         public String Currency { get; set; }
         public virtual DeviceUser DeviceUser { get; set; }
         public virtual ICollection<CartProductItem> CartProductItems { get; set; }
+        public int Type { get; set; }
 
         public Double GetProductTotalPrice()
         {

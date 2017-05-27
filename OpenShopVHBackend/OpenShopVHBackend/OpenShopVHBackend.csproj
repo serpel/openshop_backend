@@ -258,6 +258,14 @@
     <Compile Include="Migrations\201705152217046_CreatedDateColumnOnOrders.Designer.cs">
       <DependentUpon>201705152217046_CreatedDateColumnOnOrders.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201705251402280_Wishlist.cs" />
+    <Compile Include="Migrations\201705251402280_Wishlist.Designer.cs">
+      <DependentUpon>201705251402280_Wishlist.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201705251954579_cartType.cs" />
+    <Compile Include="Migrations\201705251954579_cartType.Designer.cs">
+      <DependentUpon>201705251954579_cartType.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AppUser.cs" />
@@ -303,6 +311,8 @@
     <Compile Include="Models\Size.cs" />
     <Compile Include="Models\Transfer.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="Models\WishlistItem.cs" />
+    <Compile Include="Models\WishlistProductVariant.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -1718,7 +1728,9 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -1880,6 +1892,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201705152217046_CreatedDateColumnOnOrders.resx">
       <DependentUpon>201705152217046_CreatedDateColumnOnOrders.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705251402280_Wishlist.resx">
+      <DependentUpon>201705251402280_Wishlist.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705251954579_cartType.resx">
+      <DependentUpon>201705251954579_cartType.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

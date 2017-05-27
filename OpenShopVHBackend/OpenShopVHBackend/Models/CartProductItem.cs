@@ -25,5 +25,6 @@ namespace OpenShopVHBackend.Models
         public virtual Cart Cart { get; set; }
         public virtual Order Order { get; set; }
         public virtual CartProductVariant CartProductVariant { get; set; }
+        public int Type { get; set; }
     }
 }
