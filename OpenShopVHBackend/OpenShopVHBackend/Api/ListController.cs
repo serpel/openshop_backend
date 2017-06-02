@@ -1191,6 +1191,7 @@ namespace OpenShopVHBackend.Api
                 .FirstOrDefault();
 
             var orders = db.Orders
+                .Include(i => i.DeviceUser)
                 .Where(w => w.DeviceUser.SalesPersonId == user.SalesPersonId
                        && w.CreatedDate >= begin && w.CreatedDate <= end)
                 .OrderByDescending(o => o.OrderId)
