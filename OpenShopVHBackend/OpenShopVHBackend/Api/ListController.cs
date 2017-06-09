@@ -30,6 +30,32 @@ namespace OpenShopVHBackend.Api
 
 
         [HttpGet]
+        public HttpResponseMessage GetInvoiceHistory(String search = "")
+        {
+            var invoices = db.InvoiceHistory
+                .Where(w => w.DocNum.ToLower().Contains(search) ||
+               w.CardCode.ToLower().Contains(search) ||
+               w.CardName.ToLower().Contains(search))
+                .ToList()
+                .Take(100)
+                .Select(s => new
+                {
+                    id = s.InvoiceId,
+                    doc_num = s.DocNum,
+                    card_code = s.CardCode,
+                    card_name = s.CardName,
+                    total = s.Total                  
+                });
+
+            var result = new
+            {
+                invoices = invoices
+            };
+
+            return Request.CreateResponse(HttpStatusCode.OK, result, Configuration.Formatters.JsonFormatter);
+        }
+
+        [HttpGet]
         public HttpResponseMessage MoveToWishList(int userId)
         {
             var cart = db.Carts
@@ -252,12 +278,45 @@ namespace OpenShopVHBackend.Api
         }
 
         [HttpGet]
+        public HttpResponseMessage CancelPayment(int id)
+        {
+            var payment = db.Payments.Where(w => w.PaymentId == id)
+                .ToList()
+                .FirstOrDefault();
+
+            if (payment != null)
+            {
+                payment.Status = PaymentStatus.Canceled;
+                db.Entry(payment).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            var result = new
+            {
+                success = true
+            };
+
+            return Request.CreateResponse(HttpStatusCode.OK, result, Configuration.Formatters.JsonFormatter);
+        }
+
+        [HttpGet]
+        public HttpResponseMessage SentPayment(int id)
+        {
+            bool success = true;
+
+            BackgroundJob.Enqueue(() => CreatePaymentOnSAP(id));
+
+            return Request.CreateResponse(HttpStatusCode.OK, success, Configuration.Formatters.JsonFormatter);        
+        }
+
+        [HttpGet]
         public HttpResponseMessage GetPayments(int userId, DateTime begin, DateTime end)
         {
             end = end.AddDays(1);
 
             var payments = db.Payments
-                .Where(w => w.DeviceUserId == userId 
+                .Include(i => i.Client).Include(i => i.Cash).Include(i => i.Transfer).Include(i => i.Checks).Include(i => i.Invoices)
+                .Where(w => w.DeviceUserId == userId
                     && w.CreatedDate >= begin && w.CreatedDate <= end)
                 .OrderByDescending(o => o.PaymentId)
                 .ToList()
@@ -267,11 +326,29 @@ namespace OpenShopVHBackend.Api
                     userId = s.DeviceUserId,
                     doc_entry = s.DocEntry,
                     last_error = s.LastErrorMessage,
+                    status = s.Status,
+                    status_text = s.Status.ToString(),
+                    created_date = s.CreatedDate.ToString(),
+                    comment = s.Comment,
                     client = new
                     {
                         name = s.Client.Name,
-                        cardcode = s.Client.CardCode,
-                        balance = s.Client.Balance
+                        card_code = s.Client.CardCode,
+                        balance = s.Client.Balance,
+                        RTN = s.Client.RTN,
+                        invoices = s.Client.Invoices
+                        .OrderBy(o => o.CreatedDate)
+                        .ToList()
+                        .Select(d => new {
+                            document_code = d.DocumentCode,
+                            created_date = d.CreatedDate,
+                            doc_entry = d.DocEntry,
+                            dueDate = d.DueDate,
+                            total_amount = d.TotalAmount,
+                            payed_amount = d.PayedAmount,
+                            balance_due = d.BalanceDue,
+                            overdue_days = d.OverdueDays
+                        })
                     },
                     total = s.TotalAmount,
                     cash = new
@@ -283,8 +360,11 @@ namespace OpenShopVHBackend.Api
                     {
                         amount = s.Transfer.Amount,
                         account = s.Transfer.GeneralAccount,
-                        reference_number = s.Transfer.ReferenceNumber,
-                        date = s.Transfer.Date
+                        number = s.Transfer.ReferenceNumber,
+                        due_date = s.Transfer.Date,
+                        bank = new {
+                            general_account = s.Transfer.GeneralAccount
+                        }
                     },
                     checks = s.Checks
                     .ToList()
@@ -297,7 +377,7 @@ namespace OpenShopVHBackend.Api
                     invoices = s.Invoices
                     .ToList()
                     .Select(i => new {
-                        document_code = i.DocumentNumber,
+                        document_number = i.DocumentNumber,
                         total_amount = i.TotalAmount,
                         total_payed = i.PayedAmount,
                         doc_entry = i.DocEntry
@@ -463,15 +543,104 @@ namespace OpenShopVHBackend.Api
             return Request.CreateResponse(HttpStatusCode.OK, result, Configuration.Formatters.JsonFormatter);
         }
 
-
         [HttpGet]
-        public HttpResponseMessage ProcessPayment(int paymentId)
+        [HttpPut]
+        public HttpResponseMessage SentPayment(Int32 userId, Int32 clientId, Double totalPaid, String comment, String cash, String transfer = "", String checks = "", String invoices = "", Int32 paymentId = 0)
         {
             bool success = true;
 
-            BackgroundJob.Enqueue(() => CreatePaymentOnSAP(paymentId));
+            List<Check> myChecks;
+            Transfer myTransfer;
+            Cash myCash;
+            List<InvoiceItem> invoicesItems;
 
-            return Request.CreateResponse(HttpStatusCode.OK, success, Configuration.Formatters.JsonFormatter);
+            var payment = db.Payments
+                .Include(i => i.Cash).Include(i => i.Transfer).Include(i => i.Checks)
+                .Where(w => w.PaymentId == paymentId)
+                .ToList()
+                .FirstOrDefault();
+
+            try
+            {
+
+                if (cash.Count() > 0)
+                {
+                    myCash = JsonConvert.DeserializeObject<Cash>(cash);
+                    payment.Cash.Amount = myCash.Amount;
+                }
+
+                if (transfer.Count() > 0)
+                {
+                    myTransfer = JsonConvert.DeserializeObject<Transfer>(transfer);
+                    payment.Transfer.Amount = myTransfer.Amount;
+                    payment.Transfer.Date = myTransfer.Date;
+                    payment.Transfer.GeneralAccount = myTransfer.GeneralAccount;
+                    payment.Transfer.ReferenceNumber = myTransfer.ReferenceNumber;
+                }
+
+                if (checks.Count() > 0)
+                {
+                    myChecks = JsonConvert.DeserializeObject<List<Check>>(checks);
+                    payment.Checks.RemoveRange(0, payment.Checks.Count);
+
+                    if (myChecks != null)
+                    {
+                        foreach (var item in myChecks)
+                        {
+                            item.PaymentId = payment.PaymentId;
+                            db.Checks.Add(item);
+                        }
+                        db.SaveChanges();
+                    }
+                }        
+              
+                if (invoices.Count() > 0)
+                {
+                    payment.Invoices.RemoveRange(0, payment.Invoices.Count);
+                    db.SaveChanges();
+                    invoicesItems = JsonConvert.DeserializeObject<List<InvoiceItem>>(invoices);
+
+                    if (invoicesItems != null)
+                    {
+                        foreach (var item in invoicesItems)
+                        {
+                            item.PaymentId = payment.PaymentId;
+                            db.Invoices.Add(item);                          
+                        }
+                    }
+
+                    db.SaveChanges();
+                }
+
+                payment.CreatedDate = DateTime.Now;
+                payment.Comment = comment;
+                db.Entry(payment).State = EntityState.Modified;
+
+                if(db.SaveChanges() > 0)
+                {
+                    BackgroundJob.Enqueue(() => CreatePaymentOnSAP(paymentId));
+                }
+            }
+            catch (Exception e)
+            {
+                success = false;
+                MyLogger.GetInstance.Error(e.Message);
+
+                var result2 = new
+                {
+                    succes = false,
+                    message = e.Message
+                };
+
+                return Request.CreateResponse(HttpStatusCode.BadRequest, result2, Configuration.Formatters.JsonFormatter);
+            }
+
+            var result = new
+            {
+                success = success
+            };
+
+            return Request.CreateResponse(HttpStatusCode.OK, result, Configuration.Formatters.JsonFormatter);
         }
 
         [HttpGet]
@@ -911,7 +1080,7 @@ namespace OpenShopVHBackend.Api
                 .Select(s => new
                 {
                     id = s.BankId,
-                    name = s.Name,
+                    name = s.Name + " | " + s.FormatCode,
                     general_account = s.GeneralAccount
                 });
 

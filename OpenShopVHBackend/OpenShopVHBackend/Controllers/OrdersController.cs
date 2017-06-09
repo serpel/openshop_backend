@@ -9,6 +9,9 @@ using System.Web.Mvc;
 using OpenShopVHBackend.Models;
 using OpenShopVHBackend.BussinessLogic;
 using Hangfire;
+using Syncfusion.EJ.Export;
+using Syncfusion.JavaScript.Models;
+using Syncfusion.XlsIO;
 
 namespace OpenShopVHBackend.Controllers
 {
@@ -179,6 +182,61 @@ namespace OpenShopVHBackend.Controllers
             db.Orders.Remove(order);
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        public void ExportToExcel(string GridModel)
+        {
+            var orders = db.Orders
+               .Include(p => p.Client).Include(p => p.DeviceUser)
+               .OrderByDescending(o => o.OrderId)
+               .ToList()
+               .Select(s => new OrderViewModel()
+               {
+                   OrderId = s.OrderId,
+                   RemoteId = s.RemoteId,
+                   SalesPersonCode = s.DeviceUser.SalesPersonId,
+                   Status = s.Status.ToString(),
+                   Total = s.GetTotal(),
+                   CardCode = s.Client.CardCode,
+                   Comment = s.Comment,
+                   DeliveryDate = s.DeliveryDate,
+                   DateCreated = s.CreatedDate.ToShortDateString(),
+                   LastErrorMessage = s.LastErrorMessage
+               });
+
+            ExcelExport exp = new ExcelExport();
+
+            GridProperties obj = (GridProperties)Syncfusion.JavaScript.Utils.DeserializeToModel(typeof(GridProperties), GridModel);
+
+            exp.Export(obj, orders, "Export.xlsx", ExcelVersion.Excel2010, false, false, "flat-saffron");
+
+        }
+
+        public void ExportToPdf(string GridModel)
+        {
+            var orders = db.Orders
+               .Include(p => p.Client).Include(p => p.DeviceUser)
+               .OrderByDescending(o => o.OrderId)
+               .ToList()
+               .Select(s => new OrderViewModel()
+               {
+                   OrderId = s.OrderId,
+                   RemoteId = s.RemoteId,
+                   SalesPersonCode = s.DeviceUser.SalesPersonId,
+                   Status = s.Status.ToString(),
+                   Total = s.GetTotal(),
+                   CardCode = s.Client.CardCode,
+                   Comment = s.Comment,
+                   DeliveryDate = s.DeliveryDate,
+                   DateCreated = s.CreatedDate.ToShortDateString(),
+                   LastErrorMessage = s.LastErrorMessage
+               });
+
+            PdfExport exp = new PdfExport();
+
+            GridProperties obj = (GridProperties)Syncfusion.JavaScript.Utils.DeserializeToModel(typeof(GridProperties), GridModel);
+
+            exp.Export(obj, orders, "Export.pdf", false, false, "flat-saffron");
         }
 
         protected override void Dispose(bool disposing)

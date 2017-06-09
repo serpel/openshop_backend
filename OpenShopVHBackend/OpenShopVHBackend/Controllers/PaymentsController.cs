@@ -25,7 +25,7 @@ namespace OpenShopVHBackend.Controllers
         {
             var payments = db.Payments
                 .Include(p => p.Cash).Include(p => p.Client).Include(p => p.Transfer)
-                .OrderByDescending(o => o.CreatedDate)
+                .OrderByDescending(o => o.PaymentId)
                 .ToList()
                 .Select(s => new PaymentViewModel()
                 {
@@ -124,52 +124,52 @@ namespace OpenShopVHBackend.Controllers
             return View();
         }
 
-        //public void ExportToExcel(string GridModel)
-        //{
-        //    var payments = db.Payments
-        //       .Include(p => p.Cash).Include(p => p.Client).Include(p => p.Transfer)
-        //       .OrderByDescending(o => o.CreatedDate)
-        //       .ToList()
-        //       .Select(s => new PaymentViewModel()
-        //       {
-        //           PaymentId = s.PaymentId,
-        //           CreatedDate = s.CreatedDate,
-        //           DocEntry = s.DocEntry,
-        //           LastErrorMessage = s.LastErrorMessage,
-        //           TotalAmount = s.TotalAmount
-        //       });
+        public void ExportToExcel(string GridModel)
+        {
+            var payments = db.Payments
+               .Include(p => p.Cash).Include(p => p.Client).Include(p => p.Transfer)
+               .OrderByDescending(o => o.CreatedDate)
+               .ToList()
+               .Select(s => new PaymentViewModel()
+               {
+                   PaymentId = s.PaymentId,
+                   CreatedDate = s.CreatedDate,
+                   DocEntry = s.DocEntry,
+                   LastErrorMessage = s.LastErrorMessage,
+                   TotalAmount = s.TotalAmount
+               });
 
-        //    ExcelExport exp = new ExcelExport();
+            ExcelExport exp = new ExcelExport();
 
-        //    GridProperties obj = (GridProperties)Syncfusion.JavaScript.Utils.DeserializeToModel(typeof(GridProperties), GridModel);
+            GridProperties obj = (GridProperties)Syncfusion.JavaScript.Utils.DeserializeToModel(typeof(GridProperties), GridModel);
 
-        //    exp.Export(obj, payments, "Export.xlsx", ExcelVersion.Excel2010, false, false, "flat-saffron");
+            exp.Export(obj, payments, "Export.xlsx", ExcelVersion.Excel2010, false, false, "flat-saffron");
 
-        //}
+        }
 
-        //public void ExportToPdf(string GridModel)
-        //{
+        public void ExportToPdf(string GridModel)
+        {
 
-        //    var payments = db.Payments
-        //       .Include(p => p.Cash).Include(p => p.Client).Include(p => p.Transfer)
-        //       .OrderByDescending(o => o.CreatedDate)
-        //       .ToList()
-        //       .Select(s => new PaymentViewModel()
-        //       {
-        //           PaymentId = s.PaymentId,
-        //           CreatedDate = s.CreatedDate,
-        //           DocEntry = s.DocEntry,
-        //           LastErrorMessage = s.LastErrorMessage,
-        //           TotalAmount = s.TotalAmount
-        //       });
+            var payments = db.Payments
+               .Include(p => p.Cash).Include(p => p.Client).Include(p => p.Transfer)
+               .OrderByDescending(o => o.CreatedDate)
+               .ToList()
+               .Select(s => new PaymentViewModel()
+               {
+                   PaymentId = s.PaymentId,
+                   CreatedDate = s.CreatedDate,
+                   DocEntry = s.DocEntry,
+                   LastErrorMessage = s.LastErrorMessage,
+                   TotalAmount = s.TotalAmount
+               });
 
-        //    PdfExport exp = new PdfExport();
+            PdfExport exp = new PdfExport();
 
-        //    GridProperties obj = (GridProperties)Syncfusion.JavaScript.Utils.DeserializeToModel(typeof(GridProperties), GridModel);
+            GridProperties obj = (GridProperties)Syncfusion.JavaScript.Utils.DeserializeToModel(typeof(GridProperties), GridModel);
 
-        //    exp.Export(obj, payments, "Export.pdf", false, false, "flat-saffron");
+            exp.Export(obj, payments, "Export.pdf", false, false, "flat-saffron");
 
-        //}
+        }
 
 
         // GET: Payments/Details/5

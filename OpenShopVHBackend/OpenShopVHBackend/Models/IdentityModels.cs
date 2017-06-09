@@ -75,6 +75,7 @@ namespace OpenShopVHBackend.Models
         public DbSet<Bank> Banks { get; set; }
         public DbSet<Setting> Settings { get; set; }
         public DbSet<InvoiceItem> Invoices { get; set; }
+        public DbSet<InvoiceHistory> InvoiceHistory { get; set; }
         public DbSet<Fees> Fees { get; set; }
         public DbSet<ClientTransactions> ClientTransactions { get; set; }
         public DbSet<WishlistItem> WishlistItem { get; set; }

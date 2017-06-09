@@ -225,6 +225,7 @@
     <Compile Include="Controllers\BannersController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\BrandsController.cs" />
+    <Compile Include="Controllers\CartsController.cs" />
     <Compile Include="Controllers\CategoriesController.cs" />
     <Compile Include="Controllers\ClientsController.cs" />
     <Compile Include="Controllers\ClientTransactionsController.cs" />
@@ -266,6 +267,14 @@
     <Compile Include="Migrations\201705251954579_cartType.Designer.cs">
       <DependentUpon>201705251954579_cartType.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201706021931198_InvoiceHistory.cs" />
+    <Compile Include="Migrations\201706021931198_InvoiceHistory.Designer.cs">
+      <DependentUpon>201706021931198_InvoiceHistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201706071249127_FixInvoiceItem.cs" />
+    <Compile Include="Migrations\201706071249127_FixInvoiceItem.Designer.cs">
+      <DependentUpon>201706071249127_FixInvoiceItem.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AppUser.cs" />
@@ -293,7 +302,7 @@
     <Compile Include="Models\Helper\Record.cs" />
     <Compile Include="Models\Helper\Sort.cs" />
     <Compile Include="Models\IdentityModels.cs" />
-    <Compile Include="Models\Invoice.cs" />
+    <Compile Include="Models\InvoiceHistory.cs" />
     <Compile Include="Models\InvoiceItem.cs" />
     <Compile Include="Models\LogEntry.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
@@ -1868,6 +1877,11 @@
     <Content Include="Views\Fees\Edit.cshtml" />
     <Content Include="Views\Fees\Index.cshtml" />
     <Content Include="Views\Fees\Upload.cshtml" />
+    <Content Include="Views\Carts\Create.cshtml" />
+    <Content Include="Views\Carts\Delete.cshtml" />
+    <Content Include="Views\Carts\Details.cshtml" />
+    <Content Include="Views\Carts\Edit.cshtml" />
+    <Content Include="Views\Carts\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="SAPbobsCOM">
@@ -1899,6 +1913,12 @@
     <EmbeddedResource Include="Migrations\201705251954579_cartType.resx">
       <DependentUpon>201705251954579_cartType.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201706021931198_InvoiceHistory.resx">
+      <DependentUpon>201706021931198_InvoiceHistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201706071249127_FixInvoiceItem.resx">
+      <DependentUpon>201706071249127_FixInvoiceItem.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -1922,7 +1942,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>0</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:50167/</IISUrl>
+          <IISUrl>http://localhost:50168/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

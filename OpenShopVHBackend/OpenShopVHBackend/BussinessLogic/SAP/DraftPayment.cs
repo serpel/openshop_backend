@@ -47,12 +47,13 @@ namespace OpenShopVHBackend.BussinessLogic.SAP
                         payment.DocDate = DateTime.Now;
                         payment.VatDate = DateTime.Now;
                         payment.DueDate = DateTime.Now;
+                        payment.Remarks = p.Comment;
 
-                        if (p.Cash != null)
-                        {
-                            payment.CashAccount = p.Cash.GeneralAccount;
-                            payment.CashSum = p.Cash.Amount;
-                        }
+                        //if (p.Cash != null)
+                        //{
+                        //    payment.CashAccount = p.Cash.GeneralAccount;
+                        //    payment.CashSum = p.Cash.Amount;
+                        //}
 
                         if (p.Transfer != null)
                         {
@@ -62,17 +63,18 @@ namespace OpenShopVHBackend.BussinessLogic.SAP
                             payment.TransferSum = p.Transfer.Amount;
                         }
 
-                        if (p.Checks != null)
-                        {
-                            foreach (Check check in p.Checks)
-                            {
-                                payment.Checks.CheckAccount = check.GeneralAccount;
-                                payment.Checks.CheckSum = check.Amount;
-                                payment.Checks.DueDate = check.DueDate;
-                                payment.Checks.BankCode = check.Bank.FormatCode;
-                                payment.Checks.Add();
-                            }
-                        }
+                        //if (p.Checks != null)
+                        //{
+                        //    foreach (Check check in p.Checks)
+                        //    {
+                        //        payment.Checks.CheckAccount = check.GeneralAccount;
+                        //        payment.Checks.CheckSum = check.Amount;
+                        //        payment.Checks.DueDate = check.DueDate;
+                        //        payment.Checks.BankCode = check.Bank.FormatCode;
+                        //        payment.Checks.Add();
+                        //    }
+                        //}
+
 
                         if (p.Invoices != null)
                         {

@@ -10,7 +10,8 @@ namespace OpenShopVHBackend.Models
     {
         CreadoEnAplicacion = 1,
         CreadoEnSAP = 2,
-        Error = 3
+        Error = 3,
+        Canceled = 4
     }
 
     public class Payment
