@@ -10,5 +10,6 @@ namespace OpenShopVHBackend.Models.Helper
         public Link links { get; set; }
         public string sorting { get; set; }
         public int records_count { get; set; }
+        public List<FilterType> filters { get; set; }
     }
 }

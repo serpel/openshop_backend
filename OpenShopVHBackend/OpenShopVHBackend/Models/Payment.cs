@@ -28,6 +28,7 @@ namespace OpenShopVHBackend.Models
         public PaymentStatus Status { get; set; }
         public String Comment { get; set; }
         public DateTime CreatedDate { get; set; }
+        public String ReferenceNumber { get; set; }
         public virtual List<Check> Checks { get; set; }
         public virtual Cash Cash { get; set; }
         public virtual Transfer Transfer { get; set; }

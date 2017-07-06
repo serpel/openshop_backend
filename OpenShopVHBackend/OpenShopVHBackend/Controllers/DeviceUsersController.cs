@@ -45,10 +45,10 @@ namespace OpenShopVHBackend.Controllers
 
         // POST: DeviceUsers/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "DeviceUserId,Name,SalesPersonId,Username,Password,AccessToken")] DeviceUser deviceUser)
+        public ActionResult Create([Bind(Include = "DeviceUserId,Name,SalesPersonId,Username,Password,AccessToken,PrintBluetoothAddress,DebtCollerctor")] DeviceUser deviceUser)
         {
             if (ModelState.IsValid)
             {
@@ -77,10 +77,10 @@ namespace OpenShopVHBackend.Controllers
 
         // POST: DeviceUsers/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "DeviceUserId,Name,SalesPersonId,Username,Password,AccessToken")] DeviceUser deviceUser)
+        public ActionResult Edit([Bind(Include = "DeviceUserId,Name,SalesPersonId,Username,Password,AccessToken,PrintBluetoothAddress,DebtCollerctor")] DeviceUser deviceUser)
         {
             if (ModelState.IsValid)
             {

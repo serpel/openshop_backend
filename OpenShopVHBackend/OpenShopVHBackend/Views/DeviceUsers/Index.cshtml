@@ -24,7 +24,13 @@
             @Html.DisplayNameFor(model => model.Password)
         </th>
         <th>
+            @Html.DisplayNameFor(model => model.AccessToken)
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.PrintBluetoothAddress)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DebtCollerctor)
         </th>
         <th></th>
     </tr>
@@ -44,7 +50,13 @@
             @Html.DisplayFor(modelItem => item.Password)
         </td>
         <td>
+            @Html.DisplayFor(modelItem => item.AccessToken)
+        </td>
+        <td>
             @Html.DisplayFor(modelItem => item.PrintBluetoothAddress)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DebtCollerctor)
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.DeviceUserId }) |

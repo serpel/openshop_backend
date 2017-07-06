@@ -16,7 +16,7 @@ namespace OpenShopVHBackend.Models
         public String Password { get; set; }
         public String AccessToken { get; set; }
         public String PrintBluetoothAddress { get; set; }
-        public String DebtCollerctor { get; set; }
+        public String CollectId { get; set; }
         public virtual List<Order> Orders { get; set; }
     }
 }

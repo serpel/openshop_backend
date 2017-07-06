@@ -208,7 +208,7 @@ namespace OpenShopVHBackend.Controllers
 
             GridProperties obj = (GridProperties)Syncfusion.JavaScript.Utils.DeserializeToModel(typeof(GridProperties), GridModel);
 
-            exp.Export(obj, orders, "Export.xlsx", ExcelVersion.Excel2010, false, false, "flat-saffron");
+            //exp.Export(obj, orders, "Export.xlsx", ExcelVersion.Excel2010, false, false, "flat-saffron");
 
         }
 

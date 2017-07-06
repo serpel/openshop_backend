@@ -48,6 +48,12 @@ namespace OpenShopVHBackend.BussinessLogic.SAP
                         payment.VatDate = DateTime.Now;
                         payment.DueDate = DateTime.Now;
                         payment.Remarks = p.Comment;
+                        payment.CounterReference = p.ReferenceNumber != null && p.ReferenceNumber.Count() > 20 ? p.ReferenceNumber.Substring(0, 20): p.ReferenceNumber;
+
+                        if (payment.UserFields.Fields.Count > 0)
+                        {
+                            payment.UserFields.Fields.Item("U_Cobrador").Value = p.DeviceUser.CollectId;
+                        }
 
                         //if (p.Cash != null)
                         //{
@@ -61,6 +67,7 @@ namespace OpenShopVHBackend.BussinessLogic.SAP
                             payment.TransferDate = p.Transfer.Date;
                             payment.TransferReference = p.Transfer.ReferenceNumber;
                             payment.TransferSum = p.Transfer.Amount;
+                            payment.DueDate = p.Transfer.Date;
                         }
 
                         //if (p.Checks != null)

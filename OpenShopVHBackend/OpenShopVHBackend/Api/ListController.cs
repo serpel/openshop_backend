@@ -998,17 +998,25 @@ namespace OpenShopVHBackend.Api
         }
 
         [HttpGet]
-        public HttpResponseMessage GetProducts(int category = -1, string sort = "", string search = "")
+        public HttpResponseMessage GetProducts(int category = -1, string sort = "", string search = "", string brand = "")
         {
             var result = db.Products.AsQueryable();
 
             if(category > 0)
                 result = result.Where(w => w.Category.RemoteId == category);
             if (search.Count() > 0)
+            {
                 result = result.Where(w => w.Code.Contains(search.ToUpper())
                         || w.Brand.Name.Contains(search.ToUpper())
                         || w.Name.ToUpper().Contains(search.ToUpper())
                 );
+            }
+            if(brand.Count() > 0)
+            {
+                int brandId = Int32.Parse(brand);
+                result = result.Where(w => w.BrandId.Equals(brandId));
+            }
+            
             if (sort.ToLower().Count() > 0)
             {
                 switch (sort.ToLower())
@@ -1064,12 +1072,81 @@ namespace OpenShopVHBackend.Api
                 {
                     links = links,
                     records_count = products.Count(),
-                    sorting = "newest"
+                    sorting = "newest",
+                    filters = generateFilters()
                 },
                 records = products
             };
 
             return Request.CreateResponse(HttpStatusCode.OK, respond, Configuration.Formatters.JsonFormatter);
+        }
+
+
+        public List<FilterType> generateFilters()
+        {
+            List<FilterType> list = new List<FilterType>();
+
+            var categories = db.Categories
+                .Where(w => w.PartentId == 0)
+                .ToList()
+                .Select(s => new
+                {
+                    id = s.Id,
+                    value = s.Name,
+                    parent =  s.PartentId
+                });
+
+            list.Add(new FilterType()
+            {
+
+                id = 1,
+                name = "Categoria",
+                label = "category",
+                type = "select",
+                values = categories
+            });
+
+            var subcategories = db.Categories
+               .Where(w => w.PartentId > 0 && (w.Id > 99 && w.Id < 9999))
+               .ToList()
+               .Select(s => new
+               {
+                   id = s.Id,
+                   value = s.Name,
+                   parent = s.PartentId
+               });
+
+            list.Add(new FilterType()
+            {
+
+                id = 1,
+                name = "SubCategoria",
+                label = "subcategory",
+                type = "select",
+                values = subcategories
+            });
+
+            var brands = db.Brands
+              .ToList()
+              .Select(s => new
+              {
+                  id = s.BrandId,
+                  value = s.Name
+              });
+
+
+            list.Add(new FilterType()
+            {
+
+                id = 1,
+                name = "Marca",
+                label = "brand",
+                type = "select",
+                values = brands
+            });
+
+            return list;
+
         }
 
         [HttpGet]
