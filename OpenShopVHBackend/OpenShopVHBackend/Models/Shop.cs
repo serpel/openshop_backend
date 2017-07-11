@@ -18,7 +18,10 @@ namespace OpenShopVHBackend.Models
         public String GoogleUA { get; set; }
         public String Language { get; set; }
         public String Currency { get; set; }
+        public Double ISV { get; set; }
         [Required]
         public String FlagIcon { get; set; }
+        public String ConnectionString { get; set; }
+        public virtual List<DeviceUser> DevicesUsers { get; set; }
     }
 }

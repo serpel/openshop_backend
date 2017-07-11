@@ -281,6 +281,10 @@
     <Compile Include="Migrations\201707060723384_ReferenceNumberOnPaymentModel.Designer.cs">
       <DependentUpon>201707060723384_ReferenceNumberOnPaymentModel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201707110246497_ShopIdToDeviceUser.cs" />
+    <Compile Include="Migrations\201707110246497_ShopIdToDeviceUser.Designer.cs">
+      <DependentUpon>201707110246497_ShopIdToDeviceUser.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AppUser.cs" />
@@ -1931,6 +1935,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201707060723384_ReferenceNumberOnPaymentModel.resx">
       <DependentUpon>201707060723384_ReferenceNumberOnPaymentModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201707110246497_ShopIdToDeviceUser.resx">
+      <DependentUpon>201707110246497_ShopIdToDeviceUser.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

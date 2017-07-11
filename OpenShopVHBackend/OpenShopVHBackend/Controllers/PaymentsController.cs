@@ -254,21 +254,21 @@ namespace OpenShopVHBackend.Controllers
         }
 
         [HttpGet]
-        public ActionResult Process(int id)
+        public ActionResult Process(int userId, int id)
         {
-            BackgroundJob.Enqueue(() => CreatePaymentOnSAP(id));
+            BackgroundJob.Enqueue(() => CreatePaymentOnSAP(userId, id));
 
             return RedirectToAction("Index");
         }
 
         [AutomaticRetry(Attempts = 0)]
-        public void CreatePaymentOnSAP(int paymentId)
+        public void CreatePaymentOnSAP(int userId, int paymentId)
         {
 
             try
             {
                 DraftPayment draftPayment = new DraftPayment();
-                String message = draftPayment.MakePayment(paymentId);
+                String message = draftPayment.MakePayment(userId, paymentId);
 
             }catch(Exception e)
             {

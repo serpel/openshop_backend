@@ -87,7 +87,7 @@ namespace OpenShopVHBackend.Controllers
 
 
         [AutomaticRetry(Attempts = 0)]
-        public void CreateDraftOrderOnSap(int orderId)
+        public void CreateDraftOrderOnSap(int userId, int orderId)
         {
 
             String message = "";
@@ -95,7 +95,7 @@ namespace OpenShopVHBackend.Controllers
             try
             {
                 PreliminarSalesOrder salesorder = new PreliminarSalesOrder();
-                message = salesorder.AddSalesOrder(orderId);
+                message = salesorder.AddSalesOrder(userId, orderId);
             }
             catch (Exception e)
             {
@@ -103,9 +103,9 @@ namespace OpenShopVHBackend.Controllers
             }
         }
 
-        public ActionResult Process(int id)
+        public ActionResult Process(int userId, int id)
         {
-            BackgroundJob.Enqueue(() => CreateDraftOrderOnSap(id));
+            BackgroundJob.Enqueue(() => CreateDraftOrderOnSap(userId, id));
 
             return RedirectToAction("Index");
         }

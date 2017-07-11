@@ -3,6 +3,7 @@ using SAPbobsCOM;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Data.Entity;
 
 namespace OpenShopVHBackend.BussinessLogic
 {
@@ -33,111 +34,115 @@ namespace OpenShopVHBackend.BussinessLogic
             get { return this.lastMessage; }
         }
 
-        public String AddSalesOrder(int orderId)
+        public String AddSalesOrder(int userId, int orderId)
         {
             String lastMessage = "";
             String key = "";
             OrderStatus status = OrderStatus.CreadoEnAplicacion;
 
-            var order = db.Orders
-                .Where(w => w.OrderId == orderId)
-                .ToList()
-                .FirstOrDefault();
+            var user = db.DeviceUser.Where(w => w.DeviceUserId == userId).ToList().FirstOrDefault();
+            String connection = user.Shop == null ? "" : user.Shop.ConnectionString;
 
-            try
+            using (var db = new ApplicationDbContext(connection))
             {
-                if (order != null)
+
+                var order = db.Orders
+                    .Include(i => i.Client)
+                    .Include(i => i.DeviceUser)
+                    .Where(w => w.OrderId == orderId)
+                    .ToList()
+                    .FirstOrDefault();
+
+                try
                 {
-                    if (String.IsNullOrEmpty(order.RemoteId))
+                    if (order != null)
                     {
-                        if (_connection.Connect() == 0)
+                        if (String.IsNullOrEmpty(order.RemoteId))
                         {
-                            company = _connection.GetCompany();
-                            salesOrder = company.GetBusinessObject(BoObjectTypes.oDrafts);
-                            salesOrder.DocObjectCode = BoObjectTypes.oOrders;
-                            salesOrder.CardCode = order.Client.CardCode;
-                            salesOrder.Comments = order.Comment;
-                            salesOrder.SalesPersonCode = order.DeviceUser.SalesPersonId;
-                            salesOrder.DocDueDate = order.DeliveryDate != null ? DateTime.Parse(order.DeliveryDate) : DateTime.Now.AddDays(2);
-
-                            if (salesOrder.UserFields.Fields.Count > 0)
+                            if (_connection.Connect() == 0)
                             {
-                                salesOrder.UserFields.Fields.Item("U_FacFecha").Value = DateTime.Now.ToShortDateString();
-                                salesOrder.UserFields.Fields.Item("U_FacNit").Value = order.Client.RTN;
-                                salesOrder.UserFields.Fields.Item("U_FacNom").Value = order.Client.Name;
-                            }
+                                company = _connection.GetCompany();
+                                salesOrder = company.GetBusinessObject(BoObjectTypes.oDrafts);
+                                salesOrder.DocObjectCode = BoObjectTypes.oOrders;
+                                salesOrder.CardCode = order.Client.CardCode;
+                                salesOrder.Comments = order.Comment;
+                                salesOrder.SalesPersonCode = order.DeviceUser.SalesPersonId;
+                                salesOrder.DocDueDate = order.DeliveryDate != null ? DateTime.Parse(order.DeliveryDate) : DateTime.Now.AddDays(2);
 
-                            foreach (var item in order.OrderItems)
-                            {
-                                salesOrder.Lines.ItemCode = item.SKU;
-                                salesOrder.Lines.Quantity = item.Quantity;
-                                salesOrder.Lines.TaxCode = item.TaxCode;
-                                salesOrder.Lines.DiscountPercent = item.DiscountPercent;
-                                salesOrder.Lines.WarehouseCode = item.WarehouseCode;
-                                salesOrder.Lines.Add();
-                            }
+                                if (salesOrder.UserFields.Fields.Count > 0)
+                                {
+                                    salesOrder.UserFields.Fields.Item("U_FacFecha").Value = DateTime.Now.ToShortDateString();
+                                    salesOrder.UserFields.Fields.Item("U_FacNit").Value = order.Client.RTN;
+                                    salesOrder.UserFields.Fields.Item("U_FacNom").Value = order.Client.Name;
+                                }
 
-                            // add Sales Order to draft
-                            if (salesOrder.Add() == 0)
-                            {
-                                key = company.GetNewObjectKey();
-                                lastMessage = String.Format("Successfully, DocEntry: {0}", key);
-                                MyLogger.GetInstance.Info(lastMessage);
-                                status = OrderStatus.PreliminarEnSAP;
+                                foreach (var item in order.OrderItems)
+                                {
+                                    salesOrder.Lines.ItemCode = item.SKU;
+                                    salesOrder.Lines.Quantity = item.Quantity;
+                                    salesOrder.Lines.TaxCode = item.TaxCode;
+                                    salesOrder.Lines.DiscountPercent = item.DiscountPercent;
+                                    salesOrder.Lines.WarehouseCode = item.WarehouseCode;
+                                    salesOrder.Lines.Add();
+                                }
+
+                                // add Sales Order to draft
+                                if (salesOrder.Add() == 0)
+                                {
+                                    key = company.GetNewObjectKey();
+                                    lastMessage = String.Format("Successfully, DocEntry: {0}", key);
+                                    MyLogger.GetInstance.Info(lastMessage);
+                                    status = OrderStatus.PreliminarEnSAP;
+                                }
+                                else
+                                {
+                                    lastMessage = "Error Code: "
+                                            + company.GetLastErrorCode().ToString()
+                                            + " - "
+                                            + company.GetLastErrorDescription();
+
+                                    status = OrderStatus.ErrorAlCrearEnSAP;
+                                }
+                                //recomended from http://www.appseconnect.com/di-api-memory-leak-in-sap-business-one-9-0/
+                                System.Runtime.InteropServices.Marshal.ReleaseComObject(salesOrder);
+                                salesOrder = null;
+                                //company.Disconnect();
                             }
                             else
                             {
-                                lastMessage = "Error Code: "
-                                        + company.GetLastErrorCode().ToString()
-                                        + " - "
-                                        + company.GetLastErrorDescription();
+                                lastMessage = "AddSalesOrder - Connection error: "
+                                        + _connection.GetErrorMessage().ToString();
 
                                 status = OrderStatus.ErrorAlCrearEnSAP;
                             }
-                            //recomended from http://www.appseconnect.com/di-api-memory-leak-in-sap-business-one-9-0/
-                            System.Runtime.InteropServices.Marshal.ReleaseComObject(salesOrder);
-                            salesOrder = null;
-                            //company.Disconnect();
-                        }
-                        else
-                        {
-                            lastMessage = "AddSalesOrder - Connection error: "
-                                    + _connection.GetErrorMessage().ToString();
 
-                            status = OrderStatus.ErrorAlCrearEnSAP;
-                        }
-
-                        //var ord = db.Orders
-                        //    .Where(w => w.OrderId == orderId)
-                        //    .ToList()
-                        //    .FirstOrDefault();
-
-                        if (order != null)
-                        {
-                            order.RemoteId = key;
-                            order.LastErrorMessage = lastMessage;
-                            order.Status = status;
-                            db.Entry(order).State = System.Data.Entity.EntityState.Modified;
-                            db.SaveChanges();
+                            if (order != null)
+                            {
+                                order.RemoteId = key;
+                                order.LastErrorMessage = lastMessage;
+                                order.Status = status;
+                                db.Entry(order).State = System.Data.Entity.EntityState.Modified;
+                                db.SaveChanges();
+                            }
                         }
                     }
                 }
-            }
-            catch (Exception e)
-            {
-                lastMessage += "AddSalesOrder - error" + e.Message;
-                MyLogger.GetInstance.Error(lastMessage, e);
-
-                if (order != null)
+                catch (Exception e)
                 {
-                    order.LastErrorMessage = lastMessage;
-                    order.Status = OrderStatus.ErrorAlCrearEnSAP;
-                    db.Entry(order).State = System.Data.Entity.EntityState.Modified;
-                    db.SaveChanges();
-                }
-            }
+                    lastMessage += "AddSalesOrder - error" + e.Message;
+                    MyLogger.GetInstance.Error(lastMessage, e);
 
-            return key;
+                    if (order != null)
+                    {
+                        order.LastErrorMessage = lastMessage;
+                        order.Status = OrderStatus.ErrorAlCrearEnSAP;
+                        db.Entry(order).State = System.Data.Entity.EntityState.Modified;
+                        db.SaveChanges();
+                    }
+                }
+
+                return key;
+            }
         }
     }
 }
