@@ -795,7 +795,7 @@ namespace OpenShopVHBackend.Api
                       name = s.Name,
                       email = s.Username,
                       print_bluetooth_address = s.PrintBluetoothAddress,
-                      shop = s.Shop.Name
+                      country = s.Shop.Name
                   }).FirstOrDefault();
 
             return Request.CreateResponse(HttpStatusCode.OK, user, Configuration.Formatters.JsonFormatter);
@@ -818,7 +818,7 @@ namespace OpenShopVHBackend.Api
                       name = s.Name,
                       username = s.Username,
                       print_bluetooth_address = s.PrintBluetoothAddress,
-                      shop = s.Shop.Name
+                      country = s.Shop.Name
                   }).FirstOrDefault();
 
                 MyLogger.GetInstance.Debug(String.Format("LoginByEmail - username: {0}, pass: {1}", user.username, user.name));

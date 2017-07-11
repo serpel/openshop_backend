@@ -19,7 +19,8 @@ namespace OpenShopVHBackend.Controllers
         // GET: DeviceUsers
         public ActionResult Index()
         {
-            return View(db.DeviceUser.ToList());
+            var deviceUser = db.DeviceUser.Include(d => d.Shop);
+            return View(deviceUser.ToList());
         }
 
         // GET: DeviceUsers/Details/5
@@ -40,6 +41,7 @@ namespace OpenShopVHBackend.Controllers
         // GET: DeviceUsers/Create
         public ActionResult Create()
         {
+            ViewBag.ShopId = new SelectList(db.Shops, "ShopId", "Name");
             return View();
         }
 
@@ -48,7 +50,7 @@ namespace OpenShopVHBackend.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "DeviceUserId,Name,SalesPersonId,Username,Password,AccessToken,PrintBluetoothAddress,DebtCollerctor")] DeviceUser deviceUser)
+        public ActionResult Create([Bind(Include = "DeviceUserId,Name,SalesPersonId,Username,Password,AccessToken,PrintBluetoothAddress,CollectId,ShopId")] DeviceUser deviceUser)
         {
             if (ModelState.IsValid)
             {
@@ -57,6 +59,7 @@ namespace OpenShopVHBackend.Controllers
                 return RedirectToAction("Index");
             }
 
+            ViewBag.ShopId = new SelectList(db.Shops, "ShopId", "Name", deviceUser.ShopId);
             return View(deviceUser);
         }
 
@@ -72,6 +75,7 @@ namespace OpenShopVHBackend.Controllers
             {
                 return HttpNotFound();
             }
+            ViewBag.ShopId = new SelectList(db.Shops, "ShopId", "Name", deviceUser.ShopId);
             return View(deviceUser);
         }
 
@@ -80,7 +84,7 @@ namespace OpenShopVHBackend.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "DeviceUserId,Name,SalesPersonId,Username,Password,AccessToken,PrintBluetoothAddress,DebtCollerctor")] DeviceUser deviceUser)
+        public ActionResult Edit([Bind(Include = "DeviceUserId,Name,SalesPersonId,Username,Password,AccessToken,PrintBluetoothAddress,CollectId,ShopId")] DeviceUser deviceUser)
         {
             if (ModelState.IsValid)
             {
@@ -88,6 +92,7 @@ namespace OpenShopVHBackend.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
+            ViewBag.ShopId = new SelectList(db.Shops, "ShopId", "Name", deviceUser.ShopId);
             return View(deviceUser);
         }
 

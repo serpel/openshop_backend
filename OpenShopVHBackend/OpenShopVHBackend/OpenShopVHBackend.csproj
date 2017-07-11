@@ -229,7 +229,6 @@
     <Compile Include="Controllers\ClientTransactionsController.cs" />
     <Compile Include="Controllers\ColorsController.cs" />
     <Compile Include="Controllers\DevicesController.cs" />
-    <Compile Include="Controllers\DeviceUsersController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\FeesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -245,6 +244,7 @@
     <Compile Include="Controllers\ShopsController.cs" />
     <Compile Include="Controllers\SizesController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
+    <Compile Include="Controllers\DeviceUsersController.cs" />
     <Compile Include="ErrorHandler\AiHandleErrorAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -284,6 +284,10 @@
     <Compile Include="Migrations\201707110246497_ShopIdToDeviceUser.cs" />
     <Compile Include="Migrations\201707110246497_ShopIdToDeviceUser.Designer.cs">
       <DependentUpon>201707110246497_ShopIdToDeviceUser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201707112302053_ISVFieldOnShopModel.cs" />
+    <Compile Include="Migrations\201707112302053_ISVFieldOnShopModel.Designer.cs">
+      <DependentUpon>201707112302053_ISVFieldOnShopModel.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -1823,11 +1827,6 @@
     <Content Include="Views\Devices\Details.cshtml" />
     <Content Include="Views\Devices\Edit.cshtml" />
     <Content Include="Views\Devices\Index.cshtml" />
-    <Content Include="Views\DeviceUsers\Create.cshtml" />
-    <Content Include="Views\DeviceUsers\Delete.cshtml" />
-    <Content Include="Views\DeviceUsers\Details.cshtml" />
-    <Content Include="Views\DeviceUsers\Edit.cshtml" />
-    <Content Include="Views\DeviceUsers\Index.cshtml" />
     <Content Include="Views\Orders\Create.cshtml" />
     <Content Include="Views\Orders\Delete.cshtml" />
     <Content Include="Views\Orders\Details.cshtml" />
@@ -1893,6 +1892,11 @@
     <Content Include="Views\Carts\Details.cshtml" />
     <Content Include="Views\Carts\Edit.cshtml" />
     <Content Include="Views\Carts\Index.cshtml" />
+    <Content Include="Views\DeviceUsers\Create.cshtml" />
+    <Content Include="Views\DeviceUsers\Delete.cshtml" />
+    <Content Include="Views\DeviceUsers\Details.cshtml" />
+    <Content Include="Views\DeviceUsers\Edit.cshtml" />
+    <Content Include="Views\DeviceUsers\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="SAPbobsCOM">
@@ -1938,6 +1942,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201707110246497_ShopIdToDeviceUser.resx">
       <DependentUpon>201707110246497_ShopIdToDeviceUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201707112302053_ISVFieldOnShopModel.resx">
+      <DependentUpon>201707112302053_ISVFieldOnShopModel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
