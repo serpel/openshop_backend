@@ -1087,7 +1087,7 @@ namespace OpenShopVHBackend.Api
             List<FilterType> list = new List<FilterType>();
 
             var categories = db.Categories
-                .Where(w => w.PartentId == 0)
+                .Where(w => w.PartentId == 0 && w.Id > 0)
                 .ToList()
                 .Select(s => new
                 {
@@ -1095,6 +1095,37 @@ namespace OpenShopVHBackend.Api
                     value = s.Name,
                     parent =  s.PartentId
                 });
+
+            var subcategories = db.Categories
+               .Where(w => w.Id >= 101 && w.Id <= 9999)
+               .ToList()
+               .Select(s => new
+               {
+                   id = s.Id,
+                   value = s.Name,
+                   parent = s.PartentId
+               });
+
+            var familia = db.Categories
+              .Where(w => w.Id >= 10101 && w.Id <= 999999)
+              .ToList()
+              .Select(s => new
+              {
+                  id = s.Id,
+                  value = s.Name,
+                  parent = s.PartentId
+              });
+
+            var subfamily = db.Categories
+              .Where(w => w.Id >= 1010101 && w.Id <= 99999999)
+              .ToList()
+              .Select(s => new
+              {
+                  id = s.RemoteId,
+                  value = s.Name,
+                  parent = s.PartentId
+              });
+
 
             list.Add(new FilterType()
             {
@@ -1106,25 +1137,36 @@ namespace OpenShopVHBackend.Api
                 values = categories
             });
 
-            var subcategories = db.Categories
-               .Where(w => w.PartentId > 0 && (w.Id > 99 && w.Id < 9999))
-               .ToList()
-               .Select(s => new
-               {
-                   id = s.Id,
-                   value = s.Name,
-                   parent = s.PartentId
-               });
-
             list.Add(new FilterType()
             {
 
-                id = 1,
+                id = 2,
                 name = "SubCategoria",
                 label = "subcategory",
                 type = "select",
                 values = subcategories
             });
+
+            list.Add(new FilterType()
+            {
+
+                id = 3,
+                name = "Familia",
+                label = "family",
+                type = "select",
+                values = familia
+            });
+
+            list.Add(new FilterType()
+            {
+
+                id = 4,
+                name = "SubFamily",
+                label = "subfamily",
+                type = "select",
+                values = subfamily
+            });
+
 
             var brands = db.Brands
               .ToList()
@@ -1138,7 +1180,7 @@ namespace OpenShopVHBackend.Api
             list.Add(new FilterType()
             {
 
-                id = 1,
+                id = 5,
                 name = "Marca",
                 label = "brand",
                 type = "select",

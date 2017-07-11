@@ -32,35 +32,35 @@ namespace OpenShopVHBackend.Models
             return new ApplicationDbContext();
         }
 
-        public System.Data.Entity.DbSet<OpenShopVHBackend.Models.Category> Categories { get; set; }
+        public DbSet<Category> Categories { get; set; }
 
-        public System.Data.Entity.DbSet<OpenShopVHBackend.Models.Product> Products { get; set; }
+        public DbSet<Product> Products { get; set; }
 
-        public System.Data.Entity.DbSet<OpenShopVHBackend.Models.ProductVariant> ProductVariants { get; set; }
+        public DbSet<ProductVariant> ProductVariants { get; set; }
 
-        public System.Data.Entity.DbSet<OpenShopVHBackend.Models.Brand> Brands { get; set; }
+        public DbSet<Brand> Brands { get; set; }
 
-        public System.Data.Entity.DbSet<OpenShopVHBackend.Models.Color> Colors { get; set; }
+        public DbSet<Color> Colors { get; set; }
 
-        public System.Data.Entity.DbSet<OpenShopVHBackend.Models.Size> Sizes { get; set; }
+        public DbSet<Size> Sizes { get; set; }
 
-        public System.Data.Entity.DbSet<OpenShopVHBackend.Models.Shop> Shops { get; set; }
+        public DbSet<Shop> Shops { get; set; }
 
-        public System.Data.Entity.DbSet<OpenShopVHBackend.Models.Banner> Banners { get; set; }
+        public DbSet<Banner> Banners { get; set; }
 
-        public System.Data.Entity.DbSet<OpenShopVHBackend.Models.Device> Devices { get; set; }
+        public DbSet<Device> Devices { get; set; }
 
-        public System.Data.Entity.DbSet<OpenShopVHBackend.Models.DeviceUser> DeviceUser { get; set; }
+        public DbSet<DeviceUser> DeviceUser { get; set; }
 
-        public System.Data.Entity.DbSet<OpenShopVHBackend.Models.Cart> Carts { get; set; }
+        public DbSet<Cart> Carts { get; set; }
 
-        public System.Data.Entity.DbSet<OpenShopVHBackend.Models.CartProductItem> CartProductItems { get; set; }
+        public DbSet<CartProductItem> CartProductItems { get; set; }
 
-        public System.Data.Entity.DbSet<OpenShopVHBackend.Models.CartProductVariant> CartProductVariants { get; set; }
+        public DbSet<CartProductVariant> CartProductVariants { get; set; }
 
-        public System.Data.Entity.DbSet<OpenShopVHBackend.Models.Order> Orders { get; set; }
+        public DbSet<Order> Orders { get; set; }
 
-        public System.Data.Entity.DbSet<OpenShopVHBackend.Models.OrderItem> OrderItems { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
 
         public DbSet<Client> Clients { get; set; }
 
