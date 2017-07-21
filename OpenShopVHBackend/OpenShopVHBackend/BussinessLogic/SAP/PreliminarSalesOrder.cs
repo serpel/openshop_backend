@@ -45,10 +45,8 @@ namespace OpenShopVHBackend.BussinessLogic
 
             using (var db = new ApplicationDbContext(connection))
             {
-
                 var order = db.Orders
-                    .Include(i => i.Client)
-                    .Include(i => i.DeviceUser)
+                    .Include(i => i.Client).Include(i => i.DeviceUser)
                     .Where(w => w.OrderId == orderId)
                     .ToList()
                     .FirstOrDefault();

@@ -25,11 +25,13 @@ namespace OpenShopVHBackend.Models
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
         {
+            //this.Configuration.LazyLoadingEnabled = false;
         }
 
         public ApplicationDbContext(string nameOrConnectionString)
            : base(nameOrConnectionString, throwIfV1Schema: false)
         {
+            //this.Configuration.LazyLoadingEnabled = false;
         }
 
         public static ApplicationDbContext Create()

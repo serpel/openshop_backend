@@ -42,7 +42,7 @@ namespace OpenShopVHBackend.BussinessLogic.SAP
                 {
                     if (String.IsNullOrEmpty(p.DocEntry))
                     {
-                        if (_connection.Connect() == 0)
+                        if (_connection.Connect(connection) == 0)
                         {
                             company = _connection.GetCompany();
 

@@ -976,8 +976,12 @@ namespace OpenShopVHBackend.Api
                 var product = db.Products.AsQueryable();
                 product = product.Where(w => w.ProductId == id);
 
+                //Fix lazy loading MVC
+                //db.Entry(product).Collection("Variants").Load();
+
                 var result = product
-                    .Include(i => i.Variants)
+                    .Include(i => i.Variants.Select(s => s.Color))
+                    .Include(i => i.Variants.Select(s => s.Size))
                     .ToList()
                     .Select(s => new
                     {
@@ -1573,7 +1577,9 @@ namespace OpenShopVHBackend.Api
                 end = end.AddDays(1);
 
                 var orders = db.Orders
+                    .Include(i => i.OrderItems)
                     .Include(i => i.DeviceUser)
+                    .Include(i => i.Client)
                     .Where(w => w.DeviceUser.SalesPersonId == user.SalesPersonId
                            && w.CreatedDate >= begin && w.CreatedDate <= end)
                     .OrderByDescending(o => o.OrderId)
@@ -1633,6 +1639,8 @@ namespace OpenShopVHBackend.Api
             using (var db = new ApplicationDbContext(connection))
             {
                 var order = db.Orders
+                    .Include(i => i.DeviceUser)
+                    .Include(i => i.Client)
                     .Include(i => i.OrderItems)
                     .ToList()
                     .Where(w => w.OrderId == id)
@@ -1986,8 +1994,12 @@ namespace OpenShopVHBackend.Api
 
             using (var db = new ApplicationDbContext(connection))
             {
+                //fix lazy loading with .Include(i => i.CartProductItems.Select(s => s.CartProductVariant))
                 var cart = db.Carts
-                    .Include(i => i.CartProductItems)
+                    .Include(i => i.CartProductItems.Select(s => s.CartProductVariant))
+                    .Include(i => i.CartProductItems.Select(s => s.CartProductVariant.Size))
+                    .Include(i => i.CartProductItems.Select(s => s.CartProductVariant.Color))
+                    .Include(i => i.CartProductItems.Select(s => s.CartProductVariant.ProductVariant))
                     .Where(w => w.DeviceUserId == userId && w.Type == type)
                     .ToList()
                     .Select(s => new
@@ -2000,7 +2012,7 @@ namespace OpenShopVHBackend.Api
                         subtotal = s.GetProductSubtotalPrice(),
                         currency = s.Currency,
                         discounts = new String[] { },
-                        items = s.CartProductItems
+                        items = s.CartProductItems                 
                         .OrderBy(o => o.CartProductVariant.Name)
                         .ToList()
                         .Select(p => new
