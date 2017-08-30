@@ -729,9 +729,8 @@ namespace OpenShopVHBackend.Api
             var user = db.DeviceUser.Where(w => w.DeviceUserId == userId).ToList().FirstOrDefault();
             String connection = user.Shop == null ? "" : user.Shop.ConnectionString;
 
-            using (var db = new ApplicationDbContext(connection))
-            {
-                var users = db.DeviceUser
+            var users = db.DeviceUser
+                    .Where(w => w.Shop.ConnectionString == user.Shop.ConnectionString)
                     .ToList()
                     .Select(s => new
                     {
@@ -740,13 +739,12 @@ namespace OpenShopVHBackend.Api
                         name = s.Name
                     });
 
-                var result = new
-                {
-                    records = users
-                };
+            var result = new
+            {
+                records = users
+            };
 
-                return Request.CreateResponse(HttpStatusCode.OK, result, Configuration.Formatters.JsonFormatter);
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, result, Configuration.Formatters.JsonFormatter);
         }
 
 
@@ -1453,6 +1451,7 @@ namespace OpenShopVHBackend.Api
 
             var user = db.DeviceUser.Where(w => w.DeviceUserId == userId).ToList().FirstOrDefault();
             String connection = user.Shop == null ? "" : user.Shop.ConnectionString;
+            double isv = user.Shop.ISV / 100;
 
             using (var db = new ApplicationDbContext(connection))
             {
@@ -1514,9 +1513,6 @@ namespace OpenShopVHBackend.Api
 
                         db.CartProductVariants.Add(cart_item_variant);
                         db.SaveChanges();
-
-                        var setting = db.Settings.ToList().FirstOrDefault();
-                        var isv = setting != null ? setting.ISV : 0.0;
 
                         var discountvalue = (discount != null ? (((product_variant.Price * quantity) * discount.Discount) / 100) : 0.0);
                         var cart_item = new CartProductItem()
@@ -1597,7 +1593,7 @@ namespace OpenShopVHBackend.Api
                             discount = s.GetDiscount(),
                             IVA = s.GetIVA(),
                             total = s.GetTotal(),
-                            total_formatted = default_currency + s.GetTotal(),
+                            total_formatted = s.GetTotal(),
                             items = s.OrderItems
                                     .ToList()
                                     .Select(i => new
@@ -1659,7 +1655,7 @@ namespace OpenShopVHBackend.Api
                     discount = order.GetDiscount(),
                     IVA = order.GetIVA(),
                     total = order.GetTotal(),
-                    total_formatted = default_currency + order.GetTotal(),
+                    total_formatted = order.GetTotal(),
                     items = order.OrderItems
                                     .ToList()
                                     .Select(i => new
@@ -1724,7 +1720,6 @@ namespace OpenShopVHBackend.Api
                     OrderViewModel myOrder = JsonConvert.DeserializeObject<OrderViewModel>(jo);
 
                     var deviceuser = db.DeviceUser
-                        .Include(i => i.Shop)
                         .Where(w => w.DeviceUserId == userId)
                         .ToList()
                         .FirstOrDefault();
@@ -1768,7 +1763,7 @@ namespace OpenShopVHBackend.Api
                                 Quantity = item.Quantity,
                                 SKU = item.CartProductVariant.Name,
                                 Price = item.CartProductVariant.Price,
-                                TaxValue = user.Shop != null ? user.Shop.ISV : 0.1,
+                                TaxValue = user.Shop != null ? user.Shop.ISV : 0.0,
                                 TaxCode = "IVA",
                                 Discount = item.CartProductVariant.Discount,
                                 DiscountPercent = item.CartProductVariant.DiscountPercent,
@@ -1804,7 +1799,7 @@ namespace OpenShopVHBackend.Api
                             discount = order.GetDiscount(),
                             IVA = order.GetIVA(),
                             total = order.GetTotal(),
-                            total_formatted = default_currency + order.GetTotal(),
+                            total_formatted = order.GetTotal(),
                             items = order.OrderItems
                                     .ToList()
                                     .Select(i => new
