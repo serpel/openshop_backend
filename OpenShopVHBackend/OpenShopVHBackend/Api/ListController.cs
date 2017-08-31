@@ -1860,8 +1860,11 @@ namespace OpenShopVHBackend.Api
             //String message = "";
             try
             {
-                PreliminarSalesOrder salesorder = new PreliminarSalesOrder();
-                salesorder.AddSalesOrder(userId, orderId);
+                //PreliminarSalesOrder salesorder = new PreliminarSalesOrder();
+                //salesorder.AddSalesOrder(userId, orderId);
+
+                SalesOrder salesorder = new SalesOrder();
+                salesorder.AddSalesOrder(orderId, userId);
             }
             catch (Exception e)
             {

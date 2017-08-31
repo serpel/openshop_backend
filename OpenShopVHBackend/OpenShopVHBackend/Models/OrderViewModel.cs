@@ -21,6 +21,7 @@ namespace OpenShopVHBackend.Models
         [JsonProperty(PropertyName = "sales_person_code")]
         public Int32 SalesPersonCode { get; set; }
         public String SalesPersonName { get; set; }
+        public Int32 UserId { get; set; }
         [JsonProperty(PropertyName = "series")]
         public Int32 Series { get; set; }
         public String LastErrorMessage { get; set; }

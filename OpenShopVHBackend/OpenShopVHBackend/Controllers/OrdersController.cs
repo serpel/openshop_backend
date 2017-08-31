@@ -25,6 +25,7 @@ namespace OpenShopVHBackend.Controllers
         {
             var orders = db.Orders
                 .Include(p => p.Client)
+                .Include(p => p.DeviceUser)
                 .OrderByDescending(o => o.OrderId)
                 .ToList()
                 .Select(s => new OrderViewModel()
@@ -39,7 +40,8 @@ namespace OpenShopVHBackend.Controllers
                     Status = s.Status.ToString(),
                     DateCreated = s.DateCreated,
                     LastErrorMessage = s.LastErrorMessage,
-                    Total = s.GetTotal()
+                    Total = s.GetTotal(),
+                    UserId = s.DeviceUser.DeviceUserId
                 });
 
             ViewBag.datasource = orders;
@@ -105,7 +107,10 @@ namespace OpenShopVHBackend.Controllers
 
         public ActionResult Process(int userId, int id)
         {
-            BackgroundJob.Enqueue(() => CreateDraftOrderOnSap(userId, id));
+            //BackgroundJob.Enqueue(() => CreateDraftOrderOnSap(userId, id));
+
+            SalesOrder salesorder = new SalesOrder();
+            salesorder.AddSalesOrder(id, userId);
 
             return RedirectToAction("Index");
         }

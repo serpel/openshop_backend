@@ -29,7 +29,7 @@
          col.Field(p => p.CardCode).TextAlign(TextAlign.Left).Width(90).Add();
          col.Field(p => p.SalesPersonName).TextAlign(TextAlign.Left).Width(120).Add();
          col.Field(p => p.LastErrorMessage).TextAlign(TextAlign.Left).Width(200).Add();
-         col.HeaderText("Options").Template("<a href=./Orders/Process/{{:OrderId}}>Process</a>").Add();
+         col.HeaderText("Options").Template("<a href=./Orders/Process?userId={{:UserId}}&id={{:OrderId}}>Process</a>").Add();
      }))
 
     </div>

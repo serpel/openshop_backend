@@ -28,7 +28,10 @@ namespace OpenShopVHBackend.BussinessLogic
             }
         }
 
-        public SalesOrder(){}
+        public SalesOrder()
+        {
+            _connection = new ServerConnection();
+        }
 
         public SalesOrder(ServerConnection serverConnection)
         {
@@ -70,7 +73,7 @@ namespace OpenShopVHBackend.BussinessLogic
                     {
                         if (String.IsNullOrEmpty(order.RemoteId))
                         {
-                            if (_connection.Connect() == 0)
+                            if (_connection.Connect(connection) == 0)
                             {
                                 company = _connection.GetCompany();
                                 salesOrder = company.GetBusinessObject(BoObjectTypes.oOrders);
@@ -105,16 +108,17 @@ namespace OpenShopVHBackend.BussinessLogic
                                     salesOrder.Document_ApprovalRequests.Remarks = "Add Doc from DI API";
                                 }
 
-                                // add Sales Order to draft
+                                // add Sales Order 
                                 if (salesOrder.Add() == 0)
                                 {
                                     key = company.GetNewObjectKey();
                                     lastMessage = String.Format("Successfully, DocEntry: {0}", key);
                                     MyLogger.GetInstance.Info(lastMessage);
-                                    status = OrderStatus.PreliminarEnSAP;
+                                    status = OrderStatus.Autorizado;
                                 }
                                 else
                                 {
+                                    //here we should to create a draft sales order
                                     lastMessage = "Error Code: "
                                             + company.GetLastErrorCode().ToString()
                                             + " - "
